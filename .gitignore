@@ -1,0 +1,51 @@
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+
+# Google Cloud service account JSON (TUYỆT ĐỐI KHÔNG commit)
+*service-account*.json
+*credentials*.json
+gdrive-*.json
+insight-miner-prod-*.json
+gcp-key*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output (chứa data scraped + classified)
+output/
+*.log
+
+# Usage log (chứa tên nhân viên + niche họ chạy — privacy)
+usage_log.csv
+
+# Cloudflare Tunnel (deprecated sau khi deploy Railway, KHÔNG cần push)
+cloudflared.exe
+config.yml
+start-tunnel*.bat
+start-webapp.bat
+start-digest.bat
+
+# OS
+.DS_Store
+Thumbs.db

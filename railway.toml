@@ -1,0 +1,17 @@
+# Railway deployment config
+# Tham khảo: https://docs.railway.com/reference/config-as-code
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+# Streamlit start command — Railway tự inject $PORT
+startCommand = "python -m streamlit run webapp.py --server.address 0.0.0.0 --server.port $PORT --server.headless true --server.enableCORS false --server.enableXsrfProtection false --browser.gatherUsageStats false"
+
+# Health check: Streamlit endpoint
+healthcheckPath = "/_stcore/health"
+healthcheckTimeout = 30
+
+# Restart policy
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

@@ -1,0 +1,17 @@
+# Cloudflare Named Tunnel config cho TikTok Insight Miner
+#
+# CACH SU DUNG:
+# 1. Sau khi chay `cloudflared tunnel create tim`, copy tunnel UUID (dang xxx-xxx-xxx-xxx-xxx)
+# 2. Doi ten file nay thanh `config.yml`
+# 3. Thay 2 cho <TUNNEL_ID> ben duoi bang UUID that
+# 4. Thay <USERNAME> trong credentials-file bang username Windows cua anh
+#    (vd: "This PC", "Tuan", "Administrator", ...)
+#    Co the tim bang lenh: echo %USERNAME%
+
+tunnel: <TUNNEL_ID>
+credentials-file: C:\Users\<USERNAME>\.cloudflared\<TUNNEL_ID>.json
+
+ingress:
+  - hostname: insight.lenguyenkhang.com
+    service: http://localhost:8501
+  - service: http_status:404

@@ -1,0 +1,705 @@
+{
+  "$schema_version": "1.0",
+  "_doc": "MVP config cho niche 'phụ nữ 27-45 làm kinh doanh'. Dùng làm input cho insight_bank module (sẽ tạo ở Bước 2). KHÔNG sửa file này khi pipeline chạy — chỉ đọc.",
+
+  "niche_slug": "kinh-doanh-27-45",
+  "niche_name": "Phụ nữ 27–45 tuổi làm kinh doanh",
+
+  "persona": {
+    "summary": "Phụ nữ Việt Nam 27–45 tuổi, đang làm chủ hoặc co-founder doanh nghiệp nhỏ (online shop, dịch vụ, F&B, beauty, coaching). Đa phần đã có gia đình, con nhỏ. Thu nhập 20–200tr/tháng nhưng cash-flow không ổn định. Tự học marketing/content qua TikTok-FB-khóa học online.",
+    "age_range": [27, 45],
+    "life_stage": [
+      "đã/đang lập gia đình, có con 0-12 tuổi (60%)",
+      "single, tập trung sự nghiệp (25%)",
+      "ly hôn / single mom (15%)"
+    ],
+    "business_stage": [
+      "khởi nghiệp 0-2 năm (40%)",
+      "đã chạy 2-5 năm, đang plateau (35%)",
+      "đã scale 5+ năm, muốn nhẹ đầu hơn (25%)"
+    ],
+    "media_behavior": [
+      "TikTok 1-3h/ngày, vừa giải trí vừa research",
+      "follow 5-15 KOL nữ kinh doanh / chữa lành / phong cách",
+      "ngại bình luận công khai, hay save / share private",
+      "ra quyết định mua khóa/coaching sau khi 'cảm nhận năng lượng' KOL"
+    ],
+    "core_tensions": [
+      "vừa muốn doanh thu vừa muốn sống bình yên",
+      "vừa muốn xuất hiện build brand vừa sợ bị đánh giá",
+      "vừa lo gia đình vừa khát khao là 'chính mình'",
+      "biết phải kỷ luật nhưng burnout không nổi"
+    ]
+  },
+
+  "positioning": {
+    "for_whom": "phụ nữ kinh doanh 27–45 đang chông chênh giữa doanh thu và bình yên",
+    "promise": "biến comment TikTok thật của họ thành ý tưởng content nói trúng tim, không sáo rỗng",
+    "tone": "peer-level (chị / em / mình), ấm, không lên lớp, không giáo điều, không 'bạn ơi cố lên'",
+    "anti_pattern": [
+      "tránh ngôn ngữ guru / motivation cliché ('bạn xứng đáng', 'tin vào chính mình')",
+      "tránh dùng English thuật ngữ marketing (CAC, LTV, funnel) — họ không quan tâm",
+      "tránh hứa giàu nhanh / 7 ngày kiếm X triệu",
+      "không dùng 'quý khách / kính thưa'"
+    ]
+  },
+
+  "method": {
+    "name": "Liệt kê → Sắp xếp → Lựa chọn → Thực thi",
+    "steps": [
+      {
+        "code": "LIET_KE",
+        "label": "Liệt kê",
+        "goal": "Lấy hết insight thô ra khỏi comment, không bỏ sót",
+        "output": "1-liệt-kê.csv"
+      },
+      {
+        "code": "SAP_XEP",
+        "label": "Sắp xếp",
+        "goal": "Group theo 9 nhóm chính + sort theo demand_score",
+        "output": "2-sắp-xếp.md"
+      },
+      {
+        "code": "LUA_CHON",
+        "label": "Lựa chọn",
+        "goal": "Anh tick top 5-10 angle muốn quay tuần này",
+        "output": "3-lựa-chọn.md"
+      },
+      {
+        "code": "THUC_THI",
+        "label": "Thực thi",
+        "goal": "Mỗi angle đã pick → 1 file script đầy đủ + B-roll + checklist",
+        "output": "4-thực-thi/angle-XX-<slug>.md"
+      }
+    ]
+  },
+
+  "main_problems": [
+    {
+      "code": "KINH_DOANH_KIET_SUC",
+      "name_vi": "Kinh doanh kiệt sức",
+      "freedom_layer": 2,
+      "freedom_layer_secondary": 3,
+      "suggested_mode": "B",
+      "combo_visual_hint": 2,
+      "description": "Phụ nữ làm chủ nhưng kiệt sức — vừa bán hàng, vừa lo team, vừa lo con. Cảm giác 'một mình gồng', không ai chia sẻ áp lực kinh doanh thực sự.",
+      "keywords": [
+        "kiệt sức", "burn out", "burnout", "đuối", "quá tải", "gồng",
+        "một mình gánh", "không ai hiểu", "không ai chia sẻ",
+        "cày ngày cày đêm", "không có thời gian", "không có cuối tuần",
+        "vừa làm chủ vừa làm nhân viên", "ôm hết việc",
+        "doanh thu giảm", "ế ẩm", "khách không quay lại",
+        "team yếu", "tuyển không được người", "nhân viên nghỉ",
+        "stress kinh doanh", "muốn nghỉ", "muốn buông", "kiệt quệ",
+        "làm hoài không thấy đâu", "đầu tư hoài không hồi vốn",
+        "đóng cửa hàng", "đóng quán", "trả mặt bằng",
+        "quán tâm huyết",
+        "cửa hàng thất bại", "cửa hàng từng thất bại",
+        "khởi nghiệp không thành công", "khởi nghiệp ko thành công",
+        "khởi nghiệp thất bại",
+        "làm ăn khó khăn", "kinh doanh khó khăn",
+        "thất bại kinh doanh", "kinh doanh thất bại",
+        "dân hạn chế chi tiêu", "khách hạn chế chi tiêu"
+      ],
+      "sub_problems": [
+        "ôm việc — không delegate được",
+        "thiếu hệ thống / SOP, mọi thứ phụ thuộc bản thân",
+        "doanh thu lên xuống thất thường, lo cash-flow tháng sau",
+        "đối thủ giá rẻ, thị trường saturate",
+        "sản phẩm không khác biệt, không có moat",
+        "nhân sự yếu, không tuyển được người tin cậy",
+        "khách hàng khó tính, drama review",
+        "không có thời gian cho bản thân, cho con"
+      ],
+      "common_emotions": ["mệt mỏi", "tuyệt vọng", "cô đơn", "tự trách", "muốn từ bỏ", "tê liệt"],
+      "hidden_desires": [
+        "muốn có 1 ngày KHÔNG phải nghĩ về business",
+        "muốn delegate mà vẫn yên tâm",
+        "muốn 'nhẹ đầu' mà doanh thu vẫn chạy",
+        "muốn được công nhận là đã cố gắng đủ rồi"
+      ],
+      "content_angles": [
+        "1 dấu hiệu burn out mà chị chủ shop hay bỏ qua",
+        "tại sao càng cày càng nghèo (3 lý do thực)",
+        "công thức 'nhẹ đầu' khi đang 1 mình gánh tất cả",
+        "lỗi delegate phổ biến nhất của chị em mới làm chủ",
+        "khi nào nên dừng, khi nào nên cố — checklist 5 câu"
+      ]
+    },
+    {
+      "code": "GIA_TRI_BAN_THAN",
+      "name_vi": "Giá trị bản thân",
+      "freedom_layer": 3,
+      "freedom_layer_secondary": 2,
+      "suggested_mode": "B",
+      "combo_visual_hint": 1,
+      "description": "Tự tin, sợ bị đánh giá, không dám xuất hiện. 'Mình có gì để chia sẻ?', 'lên TikTok bị soi'. Imposter syndrome khi build personal brand.",
+      "keywords": [
+        "tự ti", "không đủ giỏi", "không đủ tốt", "không xứng đáng",
+        "sợ bị đánh giá", "sợ bị soi", "sợ ánh nhìn", "sợ nói trước máy",
+        "mình có gì để nói", "có ai nghe mình đâu", "ai là gì mà nghe mình",
+        "imposter", "fake it", "chưa đủ kinh nghiệm",
+        "ngại xuất hiện", "không quay được", "đứng trước camera là khớp",
+        "sợ người quen thấy", "sợ bạn cũ comment", "sợ gia đình biết",
+        "mình là ai", "bản thân mình", "giá trị mình ở đâu",
+        "không tin vào mình", "tự nghi ngờ", "self-doubt",
+        "để ý người khác", "để ý j mà người khác", "để ý gì mà người khác",
+        "quan tâm người ta nghĩ", "người khác nghĩ gì", "người khác đang nghĩ",
+        "ai quan tâm mình", "chả ai quan tâm", "không ai quan tâm",
+        "muốn không quan tâm họ", "muốn ko quan tâm họ", "mặc kệ không được", "kệ không được",
+        "mảng tiêu cực", "ảnh hưởng tới ai", "đừng dính dán",
+        "chả có gì trong tay", "không có gì trong tay", "không có gì cả",
+        "sợ quay video", "không dám quay", "không dám xuất hiện",
+        "sợ camera", "sợ lên hình", "sợ lộ mặt",
+        "show cái mặt", "miệng run", "nói giọng thật",
+        "giọng không hay", "giọng thì ko hay", "ngại quay", "run khi nói",
+        "tự công nhận", "không cần ai công nhận", "được công nhận",
+        "khắt khe với bản thân", "chưa hài lòng với mình",
+        "tự ti vì", "hạ thấp tiêu chuẩn", "hạ thấp giá trị"
+      ],
+      "sub_problems": [
+        "không biết điểm mạnh của mình là gì",
+        "so sánh với KOL khác → nản",
+        "sợ comment tiêu cực, screenshot drama",
+        "gia đình chồng / cha mẹ không ủng hộ lên TikTok",
+        "đăng video 0 view → tự kết luận 'mình dở'",
+        "không dám nói thẳng quan điểm vì sợ mất follower"
+      ],
+      "common_emotions": ["xấu hổ", "tự ti", "sợ hãi", "ngại ngùng", "co rút", "trống rỗng"],
+      "hidden_desires": [
+        "muốn được công nhận là chuyên gia trong lĩnh vực mình",
+        "muốn xuất hiện mà không phải 'diễn'",
+        "muốn nói thẳng mà không sợ mất lòng",
+        "muốn có 'năng lượng' tự nhiên trên camera"
+      ],
+      "content_angles": [
+        "3 dấu hiệu chị đang 'tự bóp' giá trị của mình",
+        "cách đứng trước camera mà không bị 'đơ' (không cần học diễn xuất)",
+        "khi nào im lặng là khôn, khi nào im lặng là thiệt",
+        "comment tiêu cực: nên trả lời hay block?",
+        "thật ra chả ai để ý chị nhiều như chị nghĩ — đây là bằng chứng"
+      ]
+    },
+    {
+      "code": "KY_LUAT_THOI_QUEN",
+      "name_vi": "Kỷ luật & thói quen",
+      "freedom_layer": 3,
+      "freedom_layer_secondary": 1,
+      "suggested_mode": "A",
+      "combo_visual_hint": 1,
+      "description": "Thiếu động lực, không kiên trì, dậy sớm thất bại, tập gym bỏ giữa chừng, plan đẹp mà không follow-through. Tự trách 'mình không kỷ luật'.",
+      "keywords": [
+        "kỷ luật", "không có kỷ luật", "thiếu kỷ luật",
+        "động lực", "mất động lực", "không có động lực",
+        "thói quen", "build habit", "morning routine", "5h sáng", "dậy sớm",
+        "kiên trì", "không kiên trì", "bỏ giữa chừng", "halfway",
+        "lười", "trì hoãn", "procrastinate",
+        "đặt mục tiêu", "to-do list", "plan ra rồi không làm",
+        "thay đổi bản thân", "thay đổi cuộc đời", "reset", "version 2.0",
+        "gym", "tập thể dục", "diet", "ăn uống lành mạnh",
+        "đọc sách", "không đọc được", "deep work",
+        "đàm phán với bản thân", "ngừng đàm phán với bản thân",
+        "tự trách mình", "tự trách bản thân",
+        "muốn ai đó tạo động lực", "cần động lực",
+        "duy trì kỉ luật", "duy trì kỷ luật", "mất kỷ luật", "mất kỉ luật",
+        "kỷ luật bản thân đi xuống", "kỷ luật giảm",
+        "ôm đồm quá nhiều việc", "ôm dồm quá nhiều việc",
+        "lười biếng", "buông thả bản thân"
+      ],
+      "sub_problems": [
+        "đặt mục tiêu quá lớn → fail → bỏ luôn",
+        "compare với người khác trên TikTok → áp lực",
+        "không có accountability partner",
+        "1 ngày miss → cảm giác 'thôi xong, bỏ luôn' (all-or-nothing)",
+        "buổi sáng bận lo con → không có 'me time'",
+        "tối kiệt sức → scroll TikTok thay vì làm việc quan trọng"
+      ],
+      "common_emotions": ["thất vọng bản thân", "tự trách", "guilty", "uể oải", "chán nản"],
+      "hidden_desires": [
+        "muốn dậy sớm tự nhiên không cần báo thức",
+        "muốn 'làm là làm', không phải dỗ dành bản thân",
+        "muốn có 1 thói quen duy trì được 90+ ngày",
+        "muốn tự hào khi nhìn lại tuần vừa rồi"
+      ],
+      "content_angles": [
+        "tại sao morning routine 5h sáng KHÔNG hợp với chị em làm mẹ",
+        "1 thói quen duy nhất em làm 365 ngày liên tục — và 4 thói quen em đã bỏ",
+        "lỗi 'all-or-nothing' giết kỷ luật của 80% chị em",
+        "cách quay lại sau khi miss 7 ngày liên tiếp (không cần restart)",
+        "to-do list không work — làm cái này thay thế"
+      ]
+    },
+    {
+      "code": "TIEN_BAC_BINH_YEN",
+      "name_vi": "Tiền bạc & bình yên",
+      "freedom_layer": 4,
+      "freedom_layer_secondary": 3,
+      "suggested_mode": "B",
+      "combo_visual_hint": 2,
+      "description": "Tiền không phải để giàu — tiền để bình yên. Độc lập tài chính, không phụ thuộc chồng / cha mẹ / công ty. Sợ rủi ro, ám ảnh cash-flow, money trauma từ tuổi thơ.",
+      "keywords": [
+        "tiền", "tiền bạc", "tài chính", "money",
+        "độc lập tài chính", "tự chủ tài chính", "FIRE",
+        "không phụ thuộc", "không xin chồng", "tự lo được",
+        "an toàn tài chính", "tiết kiệm", "quỹ dự phòng", "emergency fund",
+        "đầu tư", "không biết đầu tư", "sợ mất tiền",
+        "nợ", "trả nợ", "vay ngân hàng", "credit",
+        "cash flow", "dòng tiền", "tháng nào lo tháng đó",
+        "lương đủ sống", "đủ", "biết đủ", "bao nhiêu là đủ",
+        "money mindset", "money trauma", "ám ảnh tiền",
+        "tiêu tiền", "tiêu không kiểm soát", "hết tiền không biết tiêu vào đâu",
+        "không thấy vui", "không vui nữa", "k thấy vui", "k vui", "ko vui", "không hạnh phúc thêm",
+        "vật chất có", "có hết rồi", "có hết mà", "đạt được rồi", "đạt rồi vẫn", "đạt rồi mà",
+        "lạc trôi", "lạc lối giữa đời", "trống rỗng",
+        "lòng tham", "tham muốn", "ước mơ vô tận", "ước mơ hướng tới",
+        "appreciate what", "trân trọng hiện tại", "trân trọng những gì",
+        "hồi nhỏ vui hơn", "ước được lớn", "muốn quay lại tuổi thơ",
+        "lương tăng nhưng", "lương cao nhưng", "lương 20", "lương hơn",
+        "đánh đổi", "phải đánh đổi", "đánh đổi thời gian",
+        "trúng số", "trúng 1 tỷ"
+      ],
+      "sub_problems": [
+        "kinh doanh có doanh thu nhưng cuối tháng không còn gì",
+        "không tách tiền cá nhân và tiền công ty",
+        "không biết bắt đầu đầu tư từ đâu (sợ chứng khoán, sợ bất động sản)",
+        "ám ảnh nghèo từ tuổi thơ → tiêu là thấy tội lỗi",
+        "muốn 'free' nhưng vẫn phải lo cho cha mẹ / con",
+        "chồng giữ tiền → không có quyền quyết định"
+      ],
+      "common_emotions": ["lo lắng", "bất an", "tội lỗi khi tiêu", "tham", "sợ mất"],
+      "hidden_desires": [
+        "muốn sáng dậy không phải nghĩ 'hôm nay phải kiếm bao nhiêu'",
+        "muốn có quỹ 6 tháng tiêu để dám nghỉ ngơi",
+        "muốn 'chia tiền' với chồng mà vẫn giữ độc lập",
+        "muốn dạy con về tiền khác cách cha mẹ đã dạy mình"
+      ],
+      "content_angles": [
+        "phụ nữ kinh doanh: tách tiền cá nhân vs tiền công ty thế nào (template Excel)",
+        "bao nhiêu tiền là đủ để 'nhẹ đầu' — công thức của em",
+        "money trauma từ mẹ: dấu hiệu chị đang lặp lại với con",
+        "3 cách phụ nữ giữ độc lập tài chính khi đã có chồng",
+        "mỗi tháng dư 5tr — nên tiết kiệm hay đầu tư? (góc nhìn cho người lười)"
+      ]
+    },
+    {
+      "code": "DONG_GOI_CHUYEN_MON",
+      "name_vi": "Đóng gói chuyên môn",
+      "freedom_layer": 2,
+      "freedom_layer_secondary": null,
+      "suggested_mode": "A",
+      "combo_visual_hint": 2,
+      "description": "Có chuyên môn, kinh nghiệm 5-15 năm nhưng không biết 'đóng gói' thành sản phẩm số / khóa học / coaching. Bán dịch vụ 1-1 thì cap doanh thu, không scale được.",
+      "keywords": [
+        "đóng gói", "đóng gói kiến thức", "đóng gói chuyên môn",
+        "sản phẩm số", "digital product", "course", "khóa học",
+        "ebook", "template", "workbook", "checklist",
+        "coach", "coaching", "mentor", "consult", "tư vấn",
+        "bán kiến thức", "monetize knowledge",
+        "expertise", "chuyên gia", "expert",
+        "bán cái mình biết", "kiếm tiền từ kinh nghiệm",
+        "cap doanh thu", "không scale được", "stuck 1-1",
+        "chuyển từ dịch vụ sang sản phẩm",
+        "framework", "method", "phương pháp riêng",
+        "định giá", "pricing", "giá khóa học bao nhiêu",
+        "mù công nghệ",
+        "lớn tuổi có làm được không", "lớn tuổi thì có làm được",
+        "lớn tuổi thì có làm được không",
+        "không rành công nghệ", "ko rành công nghệ",
+        "không biết công nghệ", "ko biết công nghệ",
+        "không phải dân tech", "ko phải dân tech",
+        "sợ không theo kịp", "sợ ko theo kịp",
+        "không biết quay video", "không biết cách quay video",
+        "khoá học có dạy quay video", "khóa học có dạy quay video",
+        "có dạy quay video không", "có bao gồm quay video"
+      ],
+      "sub_problems": [
+        "biết nhiều nhưng không biết 'đóng gói' thành cái bán được",
+        "sợ học viên không đủ giỏi → bị refund / negative review",
+        "không biết định giá khóa học (rẻ thì sợ cheap, đắt thì sợ ế)",
+        "1-1 hết slot → không dám tăng giá vì sợ mất khách",
+        "muốn passive income nhưng không biết bắt đầu từ đâu",
+        "sợ chia sẻ hết kiến thức → không còn ai thuê mình"
+      ],
+      "common_emotions": ["bí bách", "tiếc", "lúng túng", "sợ thất bại"],
+      "hidden_desires": [
+        "muốn ngủ dậy thấy 5 đơn khóa học chạy tự động",
+        "muốn nói 'em có sản phẩm X' khi người ta hỏi mình làm gì",
+        "muốn đắt giá mà vẫn full slot",
+        "muốn để lại 1 'asset' lâu dài, không phải bán thời gian"
+      ],
+      "content_angles": [
+        "3 dấu hiệu chị đã sẵn sàng làm khóa học (không phải đợi giỏi hơn)",
+        "công thức định giá khóa học cho người mới (3 mức)",
+        "vì sao 'cho miễn phí hết' lại làm khóa học bán đắt hơn",
+        "mini-course 990k vs full course 9tr9 — chọn cái nào để bắt đầu",
+        "1 page bán hàng đơn giản nhất cho coach mới"
+      ]
+    },
+    {
+      "code": "THUONG_HIEU_CA_NHAN",
+      "name_vi": "Thương hiệu cá nhân",
+      "freedom_layer": 2,
+      "freedom_layer_secondary": null,
+      "suggested_mode": "A",
+      "combo_visual_hint": 2,
+      "description": "Muốn build personal brand trên TikTok / FB nhưng không biết bắt đầu, không biết viết về gì, không có 'concept'. Đăng vài video 0 view → bỏ.",
+      "keywords": [
+        "thương hiệu cá nhân", "personal brand", "branding",
+        "xây kênh", "build kênh", "build TikTok", "build channel",
+        "định vị", "positioning", "USP",
+        "concept kênh", "ý tưởng content", "không biết viết gì",
+        "0 view", "không ai xem", "không lên xu hướng",
+        "thuật toán", "algorithm", "fyp",
+        "follower", "tăng follower", "không có người theo dõi",
+        "engagement", "tương tác", "like share comment",
+        "viral", "trending", "hook",
+        "profile", "bio", "fanpage", "fb cá nhân",
+        "content pillar", "lịch đăng", "schedule",
+        "không biết bắt đầu từ đâu", "chưa biết bắt đầu", "bắt đầu thế nào",
+        "chưa định hướng", "không định hướng được", "đống bùn lầy",
+        "chưa biết đi đâu", "chưa biết làm gì trước",
+        "loay hoay xây kênh", "loay hoay mãi", "bí ý tưởng",
+        "không có ý tưởng gì để quay", "không có ý tưởng quay",
+        "rén quá", "muốn xây dựng thương hiệu cá nhân", "muốn xây kênh"
+      ],
+      "sub_problems": [
+        "không biết kênh mình về cái gì (multi-passion)",
+        "sợ niche quá hẹp → ít người xem",
+        "đăng đều mà không lên — không hiểu thuật toán",
+        "không có thời gian quay vì bận business",
+        "sợ giống KOL khác — không có 'tone' riêng",
+        "comment ít / xấu → mất động lực đăng tiếp"
+      ],
+      "common_emotions": ["bối rối", "nản", "ghen tị", "vô vọng"],
+      "hidden_desires": [
+        "muốn 1 video viral 'overnight' để khẳng định bản thân",
+        "muốn được 'biết đến' trong giới của mình",
+        "muốn người ta inbox 'chị ơi em đã follow chị từ lâu'",
+        "muốn brand giúp business chạy mà không phải chạy ads"
+      ],
+      "content_angles": [
+        "vì sao chị đăng đều 30 ngày mà 0 view (root cause #1)",
+        "công thức 'concept kênh trong 1 câu' cho phụ nữ kinh doanh",
+        "3 loại video đầu tiên nên đăng khi mới build brand",
+        "không cần edit cao siêu — 5 setup quay đơn giản tại nhà",
+        "comment tiêu cực đầu tiên: làm gì để không bỏ kênh"
+      ]
+    },
+    {
+      "code": "GIA_DINH_GONG_GANH",
+      "name_vi": "Gia đình & gồng gánh",
+      "freedom_layer": 1,
+      "freedom_layer_secondary": 2,
+      "suggested_mode": "B",
+      "combo_visual_hint": 3,
+      "description": "Vai trò mẹ / vợ / con dâu / con gái — gồng quá nhiều vai cùng lúc. Sau sinh trầm cảm. Hôn nhân lệch nhịp khi vợ kinh doanh thành công hơn chồng. Gánh tài chính cha mẹ.",
+      "keywords": [
+        "làm mẹ", "mẹ bỉm", "sau sinh", "trầm cảm sau sinh",
+        "hôn nhân", "vợ chồng", "mâu thuẫn vợ chồng",
+        "chồng không hiểu", "chồng không ủng hộ", "chồng ghen",
+        "con cái", "dạy con", "con quấy", "con ốm",
+        "nhà chồng", "mẹ chồng", "con dâu",
+        "gồng", "gồng gánh", "quá tải vai trò",
+        "ba mẹ", "cha mẹ", "lo cho ba mẹ", "báo hiếu",
+        "bữa cơm gia đình", "việc nhà", "san sẻ",
+        "single mom", "ly hôn", "mẹ đơn thân",
+        "không có thời gian cho con", "cảm giác có lỗi với con",
+        "mommy guilt", "mom guilt",
+        "vợ giỏi hơn chồng", "kiếm nhiều hơn chồng",
+        "lo toan", "lo toan nhiều thứ", "trách nhiệm gia đình",
+        "lấy vợ", "lấy chồng", "lấy vk", "lấy ck", "kết hôn",
+        "muốn lấy vợ", "muốn lấy chồng", "trước khi lấy",
+        "thèm con lớn", "con lớn nhanh", "con lớn quá nhanh", "sợ con lớn",
+        "chồng chỉ là cái danh", "chồng chỉ là cái mác",
+        "có chồng như không", "chồng không lo", "chồng không giúp",
+        "chồng không cảm ơn", "chồng chua bao giờ biết cám ơn",
+        "chồng chê bai", "bị chồng xem thường", "chồng là người hay chê",
+        "thúc vợ phải trưởng thành", "thúc vk phải trưởng thành",
+        "không nhận đc 1 món quà từ chồng", "không nhận quà từ chồng",
+        "không công nhận", "ai sẽ làm thay", "ai sẽ lo con",
+        "đang dần biến mất", "biến mất khỏi cuộc đời mình",
+        "lấy chồng quá sớm", "lấy chồng bất chấp"
+      ],
+      "sub_problems": [
+        "kiếm tiền nhiều hơn chồng → chồng tự ái → căng thẳng",
+        "mẹ chồng không hiểu vì sao 'con dâu cứ ôm điện thoại'",
+        "con khóc khi mẹ làm việc → guilt",
+        "gánh tài chính cho cha mẹ ruột → áp lực thầm lặng",
+        "sau sinh trầm cảm nhưng không ai nhận ra",
+        "không có 'me time', không có bạn bè để tâm sự"
+      ],
+      "common_emotions": ["mệt", "có lỗi (guilt)", "cô đơn trong gia đình", "ấm ức", "yêu thương đan với mệt"],
+      "hidden_desires": [
+        "muốn chồng coi mình là 'partner' không phải 'người chăm sóc gia đình'",
+        "muốn 1 buổi tối 1 mình, không ai đòi gì",
+        "muốn dạy con khác cách cha mẹ đã dạy mình",
+        "muốn làm con gái 'hiếu' mà không phải hi sinh sự nghiệp"
+      ],
+      "content_angles": [
+        "khi vợ kiếm nhiều hơn chồng — cách giữ hôn nhân không lệch",
+        "1 câu nói với chồng để chồng hiểu áp lực kinh doanh",
+        "mom guilt: chị làm gì khi con khóc giữa lúc chị họp?",
+        "ba mẹ già: hỗ trợ tài chính bao nhiêu là đủ?",
+        "30 phút 'me time' mỗi ngày — protocol cho mẹ bỉm kinh doanh"
+      ]
+    },
+    {
+      "code": "BINH_YEN_CHUA_LANH",
+      "name_vi": "Bình yên & chữa lành",
+      "freedom_layer": 3,
+      "freedom_layer_secondary": 1,
+      "suggested_mode": "B",
+      "combo_visual_hint": 1,
+      "description": "Nội tâm rối, overthinking, people pleasing, không biết nói 'không'. Tìm bình yên qua thiền / yoga / chữa lành / coach tâm linh. Ranh giới cá nhân lỏng lẻo với người thân.",
+      "keywords": [
+        "bình yên", "an yên", "an nhiên", "an lạc",
+        "chữa lành", "healing", "heal",
+        "thiền", "thiền định", "meditate", "meditation",
+        "yoga", "tâm linh", "spiritual",
+        "buông bỏ", "buông", "let go",
+        "ranh giới", "ranh giới cá nhân", "boundary", "boundaries",
+        "people pleasing", "không biết nói không", "không dám từ chối",
+        "overthinking", "suy nghĩ nhiều", "nghĩ quá",
+        "lo âu", "anxiety", "anxious",
+        "trauma", "tổn thương", "vết thương lòng",
+        "inner child", "đứa trẻ bên trong",
+        "tha thứ", "tha thứ cha mẹ", "forgive",
+        "năng lượng", "energy", "vibration", "rung động",
+        "cô đơn dù", "có nhiều thứ vẫn cô đơn", "có nhiều mà cô đơn",
+        "thấy cô đơn", "vẫn thấy cô đơn",
+        "tâm bình", "an với hiện tại",
+        "bạn bè không còn", "bạn bè ko còn", "bạn bè xung quanh thì ko còn",
+        "môi trường tiêu cực", "môi trường đó tiêu cực",
+        "người nói lời tiêu cực", "ng nói lời tiêu cực",
+        "ở cạnh người tiêu cực", "ở cạnh những ng nói lời tiêu cực",
+        "lao đầu vào công việc", "lao đầu công việc",
+        "bận để khỏi suy nghĩ", "để khỏi phải suy nghĩ", "tránh suy nghĩ",
+        "không thích kết giao", "ko thích kết giao",
+        "dành thời gian cho bản thân", "giành thời gian cho bản thân",
+        "ranh giới với người khác",
+        "quay về bên trong", "quay về làm chủ chính mình",
+        "sống chậm sống sâu sắc", "sống chậm hơn"
+      ],
+      "sub_problems": [
+        "không biết nói 'không' với khách / nhân viên / người thân",
+        "cảm xúc thay đổi theo comment / message của người khác",
+        "khó ngủ, suy nghĩ trước khi ngủ về việc đã làm trong ngày",
+        "tha thứ cha mẹ là điều khó nhất, lặp lại pattern với con",
+        "thiền / yoga thử rồi nhưng không duy trì được",
+        "đầu tư khóa chữa lành 10-50tr nhưng vẫn lặp pattern cũ"
+      ],
+      "common_emotions": ["lo âu", "trống rỗng", "rối", "ấm ức", "buồn không lý do"],
+      "hidden_desires": [
+        "muốn nói 'không' mà không phải giải thích",
+        "muốn ngồi yên 1 mình mà không thấy bứt rứt",
+        "muốn không bị người khác 'chiếm sóng' cảm xúc",
+        "muốn 'đủ' với chính mình, không cần ai validate"
+      ],
+      "content_angles": [
+        "5 dấu hiệu chị là people pleaser (mà chị tưởng là 'tốt bụng')",
+        "công thức nói 'không' với mẹ chồng / khách khó / nhân viên",
+        "thiền 5 phút cho phụ nữ kinh doanh — phiên bản không kiểu cách",
+        "tại sao chữa lành 5 năm vẫn rối — root cause #1",
+        "ranh giới với cha mẹ ruột — nói thế nào không bị mang tiếng 'bất hiếu'"
+      ]
+    },
+    {
+      "code": "HINH_ANH_PHONG_CACH",
+      "name_vi": "Hình ảnh & phong cách",
+      "freedom_layer": 1,
+      "freedom_layer_secondary": 3,
+      "suggested_mode": "A",
+      "combo_visual_hint": 3,
+      "description": "Sau 35 thấy ngoại hình 'xuống', không biết mặc gì. Muốn 'glow up', tìm khí chất phụ nữ trưởng thành. Self-care như cách yêu bản thân. Đầu tư tủ đồ / skincare / aesthetic clinic.",
+      "keywords": [
+        "phong cách", "style", "gu",
+        "khí chất", "khí chất phụ nữ", "thần thái", "aura",
+        "glow up", "lột xác", "thay đổi diện mạo",
+        "ngoại hình", "xuống sắc", "già đi",
+        "tủ đồ", "wardrobe", "capsule wardrobe",
+        "phối đồ", "outfit", "look",
+        "skincare", "chăm da", "da xấu", "lão hóa",
+        "tóc", "kiểu tóc", "highlight",
+        "make up", "makeup tự nhiên", "no makeup look",
+        "tự tin với ngoại hình", "soi gương",
+        "self-care", "yêu bản thân", "chăm sóc bản thân",
+        "spa", "thẩm mỹ", "filler", "botox",
+        "giảm cân", "cân nặng", "vóc dáng"
+      ],
+      "sub_problems": [
+        "không có thời gian self-care vì bận con + business",
+        "sau sinh body thay đổi, mặc gì cũng không đẹp",
+        "tủ đồ đầy nhưng 'không có gì để mặc'",
+        "lên TikTok không biết quay góc nào đẹp",
+        "đầu tư skincare 10-30tr/tháng nhưng vẫn không tự tin",
+        "so với KOL trẻ hơn → áp lực 'xuống sắc'"
+      ],
+      "common_emotions": ["mặc cảm", "tiếc nuối tuổi xuân", "không tự tin", "ngại chụp ảnh"],
+      "hidden_desires": [
+        "muốn có 'khí chất' làm người ta nhớ dù ăn mặc đơn giản",
+        "muốn nhìn mình trong gương buổi sáng và mỉm cười",
+        "muốn được khen 'chị toát ra năng lượng đẹp'",
+        "muốn không phụ thuộc filter / chỉnh ảnh"
+      ],
+      "content_angles": [
+        "5 món đồ phụ nữ kinh doanh 30+ nên có trong tủ (mặc 100 cách)",
+        "khí chất phụ nữ trưởng thành: khác gì với 'sang chảnh giả'?",
+        "skincare cho mẹ bỉm bận: 3 bước 5 phút mỗi sáng",
+        "góc quay TikTok đẹp tại nhà — không cần studio",
+        "mặc gì khi đi pitch khách / gặp đối tác (3 outfit công thức)"
+      ]
+    }
+  ],
+
+  "intent_labels": {
+    "_doc": "Layer phụ trên 7 bucket gốc (pain/desire/question/...). Mỗi insight có thể gán 1+ intent label để bộ lọc downstream phong phú hơn.",
+    "labels": [
+      {"code": "VENT", "label": "Trút bầu tâm sự", "signal": "không hỏi gì, chỉ kể cảm xúc — hint cho content empathy"},
+      {"code": "SEEK_VALIDATION", "label": "Tìm sự đồng cảm", "signal": "'mình cũng vậy', 'có ai như mình không' — hint cho content 'không một mình'"},
+      {"code": "SEEK_HOWTO", "label": "Hỏi cách làm cụ thể", "signal": "'làm sao để', 'có công thức nào' — hint cho content tutorial"},
+      {"code": "SEEK_RECOMMENDATION", "label": "Xin gợi ý", "signal": "'có khóa nào', 'sách nào hay', 'tool gì' — hint cho content review/affiliate"},
+      {"code": "SHARE_EXPERIENCE", "label": "Chia sẻ trải nghiệm", "signal": "kể câu chuyện cá nhân — gold cho social proof"},
+      {"code": "DISAGREE", "label": "Phản đối / counter-narrative", "signal": "'không đúng đâu', 'theo em thì' — hint cho content myth-busting"},
+      {"code": "TAG_FRIEND", "label": "Tag bạn", "signal": "@username — sharing signal, không phải insight"},
+      {"code": "PRAISE_KOL", "label": "Khen KOL gốc", "signal": "'chị nói hay quá' — không actionable"}
+    ]
+  },
+
+  "content_opportunity_labels": {
+    "_doc": "Phân loại insight thành 1 trong 6 dạng cơ hội content. Dùng để map sang format video phù hợp.",
+    "labels": [
+      {"code": "HOOK_QUOTE", "label": "Quote trực tiếp làm hook", "format": "Reel 15s đọc nguyên văn quote + reaction"},
+      {"code": "PAIN_SOLUTION", "label": "Pain rõ → giải pháp 60s", "format": "Reel 60s: validate → root cause → 1 action"},
+      {"code": "FAQ_ANSWER", "label": "Câu hỏi cụ thể → trả lời thẳng", "format": "Reel 30-60s Q&A series"},
+      {"code": "MYTH_BUST", "label": "Niềm tin sai phổ biến → counter", "format": "Reel 60s: 'người ta nghĩ X, thực ra Y'"},
+      {"code": "SOCIAL_PROOF", "label": "Story user → testimonial", "format": "Reel 60-90s case study"},
+      {"code": "FRAMEWORK", "label": "Khái niệm cần explain → khung", "format": "Carousel hoặc Reel 90s 'X bước để...'"}
+    ]
+  },
+
+  "scoring_rules": {
+    "_doc": "Công thức tính demand_score cho mỗi insight. Score càng cao càng nên ưu tiên quay. Áp dụng ở Bước 'Sắp xếp'.",
+    "formula": "demand_score = (likes * w_likes) + (replies * w_replies) + bucket_bonus + problem_priority_bonus + intent_bonus",
+    "weights": {
+      "w_likes": 1.0,
+      "w_replies": 3.0,
+      "_doc_w_replies": "1 reply = signal mạnh hơn 1 like vì người ta tốn effort hơn"
+    },
+    "bucket_bonus": {
+      "pain": 5,
+      "desire": 4,
+      "question": 4,
+      "objection": 3,
+      "praise": 0,
+      "mention": 0,
+      "other": 0
+    },
+    "problem_priority_bonus": {
+      "_doc": "Bonus theo 9 nhóm. Niche này ưu tiên KINH_DOANH_KIET_SUC + GIA_VALUE + TIEN_BAC vì hit core tension nhất. Có thể tune sau khi chạy 5-10 niche thật.",
+      "KINH_DOANH_KIET_SUC": 5,
+      "GIA_TRI_BAN_THAN": 5,
+      "TIEN_BAC_BINH_YEN": 5,
+      "DONG_GOI_CHUYEN_MON": 4,
+      "GIA_DINH_GONG_GANH": 4,
+      "BINH_YEN_CHUA_LANH": 3,
+      "THUONG_HIEU_CA_NHAN": 3,
+      "KY_LUAT_THOI_QUEN": 2,
+      "HINH_ANH_PHONG_CACH": 2,
+      "_unmatched": 0
+    },
+    "intent_bonus": {
+      "SEEK_HOWTO": 3,
+      "SEEK_RECOMMENDATION": 3,
+      "VENT": 2,
+      "SEEK_VALIDATION": 2,
+      "SHARE_EXPERIENCE": 2,
+      "DISAGREE": 2,
+      "TAG_FRIEND": 0,
+      "PRAISE_KOL": 0
+    },
+    "thresholds": {
+      "must_review": 10,
+      "_doc_must_review": "score >= 10 → bắt buộc anh nhìn qua, không bỏ lỡ",
+      "auto_promote_to_top": 20,
+      "_doc_auto_promote": "score >= 20 → tự động vào danh sách 3-lựa-chọn.md"
+    }
+  },
+
+  "output_files": {
+    "_doc": "4 file output cho 4 bước. Đây là CONTRACT, module insight_bank/selection/production sẽ generate đúng các path này.",
+    "step_1_liet_ke": {
+      "path": "1-liệt-kê.csv",
+      "purpose": "Mọi insight (đã loại praise/mention/other), Excel-friendly, có cột status để anh tick tay nếu muốn",
+      "columns": [
+        "id",
+        "problem_code",
+        "bucket",
+        "intent_label",
+        "opportunity_label",
+        "demand_score",
+        "likes",
+        "replies",
+        "author",
+        "quote",
+        "summary",
+        "video_url",
+        "status"
+      ],
+      "default_status": "todo",
+      "encoding": "utf-8-sig"
+    },
+    "step_2_sap_xep": {
+      "path": "2-sắp-xếp.md",
+      "purpose": "Browse có cấu trúc: 9 problem groups, mỗi group sort theo demand_score desc",
+      "sections": [
+        "Tổng quan (count + total demand mỗi nhóm)",
+        "Top 10 cross-niche (xuyên 9 nhóm, sort thuần theo demand_score)",
+        "Chi tiết từng nhóm (9 sections, expand)"
+      ]
+    },
+    "step_3_lua_chon": {
+      "path": "3-lựa-chọn.md",
+      "purpose": "Top 30 candidates auto-promote (score >= 20). Mỗi candidate có checkbox để anh tick.",
+      "checkbox_format": "- [ ] [SCORE 24] [P03 KINH_DOANH_KIET_SUC] \"quote ngắn gọn\" — @author (12 likes)",
+      "max_candidates": 30
+    },
+    "step_4_thuc_thi": {
+      "path": "4-thực-thi/",
+      "is_folder": true,
+      "purpose": "Mỗi angle anh đã tick → 1 file script đầy đủ",
+      "file_pattern": "angle-{idx:02d}-{problem_code_lower}-{slug}.md",
+      "template_sections": [
+        "Metadata (problem, score, source quote)",
+        "Hook (3 variants — chọn 1 khi quay)",
+        "Script word-by-word 60s",
+        "B-roll suggestions",
+        "Props checklist",
+        "CTA + caption + hashtag",
+        "Schedule slot (date + time đăng)",
+        "Post-mortem placeholder (view, engagement sau 7 ngày)"
+      ]
+    },
+    "_master_aggregate": {
+      "path": "_master/insight-bank.md",
+      "purpose": "Cộng dồn insight qua nhiều run của cùng niche (xuyên ngày). Generate riêng, không phải mỗi run.",
+      "trigger": "manual qua `tim bank --aggregate-niche kinh-doanh-27-45`"
+    }
+  },
+
+  "evolution_notes": {
+    "_doc": "Lưu ý cho lần tune lại config này",
+    "v1_assumptions": [
+      "9 nhóm này dựa trên kinh nghiệm anh + insight folder gia-tri-ban-than. Sau 5-10 niche run, có thể merge/split nhóm.",
+      "Weights trong scoring_rules là guess đầu tiên — sau MVP test sẽ tune dựa trên angle nào thực sự viral.",
+      "Keywords list chưa cover hết slang TikTok — sẽ bổ sung sau khi chạy thật và thấy comment match thiếu."
+    ],
+    "review_after": "5 run thực với niche này → mở file này lại, sửa keywords/weights",
+    "version_log": {
+      "v1.0 (2026-05-08)": "Init: 9 nhóm + ~25-35 keyword/nhóm, scoring_rules + thresholds default",
+      "v1.1 (2026-05-08)": "Bước 2.5 tune từ phu-nu-kinh-doanh (100 cmt) + gia-tri-ban-than (62 cmt). Add: +30 kw TIEN_BAC (pattern 'đạt rồi không vui', 'lòng tham', 'đánh đổi'), +20 kw GIA_TRI (pattern 'để ý người khác', 'mảng tiêu cực'), +14 kw GIA_DINH (pattern 'lo toan', 'lấy vợ/chồng'), +10 kw BINH_YEN (pattern 'cô đơn dù có nhiều'). Kết quả: UNCLASSIFIED giảm 39-50%. Side effect: HINH_ANH_PHONG_CACH bị shift -1 quote do keyword 'vật chất có' (broad) + tie-break priority.",
+      "v1.2 (2026-05-09)": "Tune từ Round 2 manual import (81 cmt, 48 actionable, 22 UNCLASSIFIED = 46%). Thêm 4 patterns: (A) 'không biết bắt đầu/đống bùn lầy/loay hoay' → +14 kw THUONG_HIEU_CA_NHAN; (B) 'sợ camera/giọng không hay/run khi nói' → +14 kw GIA_TRI_BAN_THAN; (C) 'chồng chỉ là cái danh/chồng không lo/biến mất khỏi cuộc đời' → +18 kw GIA_DINH_GONG_GANH; (D) 'tự công nhận/đàm phán bản thân/duy trì kỷ luật' → +6 kw GIA_TRI + +12 kw KY_LUAT. SKIP các kw broad ('hoang mang', 'mông lung', 'sợ nói', 'không dám nói', 'phát triển bản thân', 'muốn tốt hơn', 'thay đổi chính mình') để tránh side effect đánh cắp nhóm khác. Total +64 keyword cross 4 nhóm.",
+      "v1.3 (2026-05-09)": "Tune nhẹ từ Round 3 manual import (20 cmt, 12 actionable, 9 UNCLASSIFIED = 75%). 3 patterns gap rõ rệt từ data thật: (E) 'đóng cửa hàng/trả mặt bằng/khởi nghiệp ko thành công/làm ăn khó khăn' → +14 kw KINH_DOANH_KIET_SUC; (F) 'môi trường tiêu cực/lao đầu công việc tránh suy nghĩ/sống chậm/quay về bên trong' → +18 kw BINH_YEN_CHUA_LANH; (G) 'mù công nghệ/lớn tuổi/không biết quay video/không phải dân tech' → +14 kw DONG_GOI_CHUYEN_MON. SKIP các kw broad ('thất bại', 'tiêu cực', 'không thành công' đứng 1 mình) để tránh false positive. Total +46 keyword cross 3 nhóm.",
+      "v1.4 (2026-05-16)": "Add 4 field metadata vào mỗi main_problem để handoff sang Nhi Hien CoWork: freedom_layer (1-4 = lớp tự do chính), freedom_layer_secondary (lớp phụ hoặc null), suggested_mode (A=Framework / B=Storytelling), combo_visual_hint (1=Phòng Thiền+Mic / 2=Vườn+Macbook / 3=Hồ Sen+iPad). Mapping logic chi tiết: xem docs/MAPPING_FREEDOM_LAYER.md v1. KHÔNG đổi keyword/scoring/persona, chỉ add metadata cho downstream CoWork Content Proposal Protocol chấm Trục 5 (Brand match)."
+    }
+  }
+}

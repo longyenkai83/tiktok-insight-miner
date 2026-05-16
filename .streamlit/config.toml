@@ -1,0 +1,18 @@
+# Streamlit theme — Insight Miner (Light Warm Premium)
+# Phù hợp brand chị Hiền: ấm, rõ, đẹp, sâu, vững
+# Inspired by: Notion, Linear, premium content tools (KHÔNG luxury bold)
+
+[theme]
+base = "light"
+primaryColor = "#8B6F47"               # Warm brown (nâu gỗ — earth, grounded)
+backgroundColor = "#FAFAF7"            # Off-white cream (ấm hơn pure white)
+secondaryBackgroundColor = "#F0EBE2"   # Warm cream for cards/sidebar
+textColor = "#2D2A26"                  # Dark warm gray (không đen lạnh)
+font = "serif"                         # Default — sẽ override CSS để dùng Cormorant cho heading
+
+[server]
+runOnSave = true
+headless = true
+
+[browser]
+gatherUsageStats = false

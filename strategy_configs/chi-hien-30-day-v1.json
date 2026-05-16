@@ -1,0 +1,122 @@
+{
+  "$schema_version": "1.0",
+  "_doc": "Strategy config 30 ngày chương 1 cho chị Trịnh Nhi Hiền. KHÔNG hardcode chị Hiền vào module — module đọc file này + brand_profile + niche_config làm context. Đổi brand = tạo strategy_configs/<brand>-30-day-v1.json mới, KHÔNG đụng code.",
+
+  "strategy_id": "chi-hien-30-day-v1",
+  "strategy_name": "30 ngày chương 1 — Trịnh Nhi Hiền",
+  "output_filename_base": "content-calendar-30-days-chi-hien-v1",
+
+  "brand_profile": "profiles/chi-hien",
+  "niche_config": "niche_configs/kinh-doanh-27-45.json",
+
+  "period_days": 30,
+  "start_date": null,
+
+  "core_big_idea": "Bạn không phải biến mất để xứng đáng được yêu — và không phải chạy đua để xứng đáng có tiền.",
+
+  "content_pillars": [
+    "Động lực thật & kỷ luật nhẹ",
+    "Giá trị bản thân & mục tiêu sống",
+    "Gia đình, công việc & sự gồng gánh",
+    "Tiền bạc, bình yên & tự do lựa chọn"
+  ],
+
+  "awareness_stages": [
+    {"code": "AWARE",    "label": "Nhận thức vấn đề",       "weeks": [1, 2]},
+    {"code": "CONSIDER", "label": "Cân nhắc thay đổi",      "weeks": [2, 3]},
+    {"code": "DECIDE",   "label": "Quyết định hành động",   "weeks": [3, 4]},
+    {"code": "RETAIN",   "label": "Duy trì kết nối",        "weeks": [4]}
+  ],
+
+  "weeks": [
+    {
+      "week_no": 1,
+      "days": [1, 7],
+      "pillar": "Động lực thật & kỷ luật nhẹ",
+      "sub_big_idea": "Bắt đầu lại — không cần gồng",
+      "primary_problems":   ["KY_LUAT_THOI_QUEN", "BINH_YEN_CHUA_LANH"],
+      "secondary_problems": ["KINH_DOANH_KIET_SUC"],
+      "goal": "Người đọc cảm thấy có thể bắt đầu lại không gồng cứng",
+      "default_awareness": "AWARE"
+    },
+    {
+      "week_no": 2,
+      "days": [8, 14],
+      "pillar": "Giá trị bản thân & mục tiêu sống",
+      "sub_big_idea": "Trước khi xuất hiện ra thế giới — biết mình là ai chưa?",
+      "primary_problems":   ["GIA_TRI_BAN_THAN", "THUONG_HIEU_CA_NHAN"],
+      "secondary_problems": ["KY_LUAT_THOI_QUEN"],
+      "goal": "Người đọc tự hỏi mình là ai, muốn gì, đang sống vì điều gì",
+      "default_awareness": "CONSIDER"
+    },
+    {
+      "week_no": 3,
+      "days": [15, 21],
+      "pillar": "Gia đình, công việc & sự gồng gánh",
+      "sub_big_idea": "Bạn không phải biến mất để xứng đáng được yêu",
+      "primary_problems":   ["GIA_DINH_GONG_GANH", "KINH_DOANH_KIET_SUC"],
+      "secondary_problems": ["GIA_TRI_BAN_THAN"],
+      "goal": "Chạm pain phụ nữ vừa làm mẹ/vợ/vừa kiếm tiền/vừa tự chủ",
+      "default_awareness": "CONSIDER"
+    },
+    {
+      "week_no": 4,
+      "days": [22, 30],
+      "pillar": "Tiền bạc, bình yên & tự do lựa chọn",
+      "sub_big_idea": "Tiền để mình thở — không phải để mình chạy đua",
+      "primary_problems":   ["TIEN_BAC_BINH_YEN", "BINH_YEN_CHUA_LANH"],
+      "secondary_problems": ["KINH_DOANH_KIET_SUC", "DONG_GOI_CHUYEN_MON"],
+      "goal": "Dẫn về big idea cốt lõi — tiền để bình yên, không để chạy đua",
+      "default_awareness": "DECIDE"
+    }
+  ],
+
+  "format_ratio": {
+    "reel_60s":      12,
+    "short_fb_post": 8,
+    "long_fb_post":  4,
+    "educational":   4,
+    "soft_cta":      2
+  },
+
+  "format_distribution_per_week": {
+    "_doc": "Default applies to weeks 1-3 (7 days each). Week 4 (9 days) có override với 2 soft_cta cuối tháng.",
+    "default": {
+      "reel_60s":      3,
+      "short_fb_post": 2,
+      "long_fb_post":  1,
+      "educational":   1,
+      "soft_cta":      0
+    },
+    "week_4_override": {
+      "reel_60s":      3,
+      "short_fb_post": 2,
+      "long_fb_post":  1,
+      "educational":   1,
+      "soft_cta":      2
+    }
+  },
+
+  "measurement_targets": {
+    "min_comment_per_post": 5,
+    "track_top_n_post": 5,
+    "feedback_loop_days": 30,
+    "primary_metrics": ["comment", "save", "share", "inbox", "profile_visit"]
+  },
+
+  "constraints": {
+    "_doc": "Hard rules — module phải tuân, không được override bằng arg flag",
+    "banned_problem_groups": ["HINH_ANH_PHONG_CACH"],
+    "no_hard_sell": true,
+    "no_fomo": true,
+    "no_guru_tone": true,
+    "no_personal_story_invention": true,
+    "max_personal_story_per_week": 2,
+    "respect_brand_write_rules": true
+  },
+
+  "evolution_notes": {
+    "_doc": "Version log của strategy này. Ghi rõ mỗi lần update.",
+    "v1 (2026-05-09)": "Initial 30-day strategy chương 1 cho chị Hiền. Focus 4 trục: (W1) Động lực + kỷ luật, (W2) Giá trị bản thân, (W3) Gia đình + gồng gánh, (W4) Tiền + bình yên. Skip HINH_ANH_PHONG_CACH cho roadmap sau. Format ratio: 12 reel + 8 short FB + 4 long FB + 4 educational + 2 soft CTA = 30 ngày."
+  }
+}
