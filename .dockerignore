@@ -1,0 +1,57 @@
+# Files KHÔNG copy vào Docker image (giảm size + tránh leak)
+
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+*service-account*.json
+*credentials*.json
+gdrive-*.json
+insight-miner-prod-*.json
+gcp-key*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+
+# Git
+.git
+.gitignore
+.github/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output (chứa data scraped + classified, không cần trong image)
+output/
+*.log
+usage_log.csv
+
+# Cloudflare Tunnel (không cần trên cloud)
+cloudflared.exe
+config.yml
+start-tunnel*.bat
+start-webapp.bat
+start-digest.bat
+
+# Docs (không cần ở runtime)
+docs/
+
+# OS
+.DS_Store
+Thumbs.db
