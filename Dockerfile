@@ -26,5 +26,6 @@ ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
 EXPOSE 8501
 
-# Start command — Railway/Render tự inject $PORT
-CMD streamlit run webapp.py --server.address 0.0.0.0 --server.port ${PORT:-8501}
+# Start command — exec form với sh -c để đảm bảo $PORT expand đúng
+# Railway/Render tự inject $PORT env var khi container chạy
+CMD ["/bin/sh", "-c", "streamlit run webapp.py --server.address 0.0.0.0 --server.port ${PORT:-8501} --server.headless true --server.enableCORS false --server.enableXsrfProtection false --browser.gatherUsageStats false"]
