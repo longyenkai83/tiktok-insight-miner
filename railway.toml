@@ -7,10 +7,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# CMD đã định nghĩa trong Dockerfile — Railway không cần startCommand riêng
-# Nhưng vẫn override để chắc chắn dùng $PORT của Railway
-# Flat layout (tiktok_insight_miner ở root), KHÔNG cần PYTHONPATH
-startCommand = "streamlit run webapp.py --server.address 0.0.0.0 --server.port $PORT --server.headless true --server.enableCORS false --server.enableXsrfProtection false --browser.gatherUsageStats false"
+# KHÔNG dùng startCommand — để Dockerfile CMD chạy (shell form expand $PORT đúng)
+# Nếu set startCommand ở đây, Railway exec form sẽ không expand $PORT → "Invalid integer" error
 
 # Health check: Streamlit endpoint
 healthcheckPath = "/_stcore/health"
