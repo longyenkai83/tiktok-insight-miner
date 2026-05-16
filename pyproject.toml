@@ -28,7 +28,5 @@ webapp = []
 tim = "tiktok_insight_miner.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-dir]
-"" = "src"
+where = ["."]
+include = ["tiktok_insight_miner*"]

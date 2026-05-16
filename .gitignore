@@ -26,6 +26,9 @@ venv/
 .venv/
 env/
 
+# Old src/ folder (đã move sang flat layout — chỉ còn .egg-info rác)
+src/
+
 # IDE
 .vscode/
 .idea/

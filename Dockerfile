@@ -15,11 +15,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy toàn bộ source code
+# Copy toàn bộ source code (flat layout — tiktok_insight_miner ở root)
 COPY . .
-
-# PYTHONPATH=/app/src để Python import được package tiktok_insight_miner
-ENV PYTHONPATH=/app/src
 
 # Streamlit settings
 ENV STREAMLIT_SERVER_HEADLESS=true
