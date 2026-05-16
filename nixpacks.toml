@@ -1,0 +1,17 @@
+# Nixpacks override — TRÁNH `pip install .` (gốc của mọi lỗi build wheel)
+# Chỉ install từ requirements.txt + chạy streamlit thẳng
+
+providers = ["python"]
+
+[phases.setup]
+nixPkgs = ["python311", "gcc"]
+
+[phases.install]
+cmds = [
+    "python -m venv --copies /opt/venv",
+    ". /opt/venv/bin/activate && pip install --upgrade pip",
+    ". /opt/venv/bin/activate && pip install --no-cache-dir -r requirements.txt"
+]
+
+[start]
+cmd = ". /opt/venv/bin/activate && streamlit run webapp.py --server.address 0.0.0.0 --server.port $PORT --server.headless true --server.enableCORS false --server.enableXsrfProtection false --browser.gatherUsageStats false"
