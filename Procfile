@@ -1,1 +1,1 @@
-web: streamlit run webapp.py --server.address 0.0.0.0 --server.port $PORT --server.headless true --server.enableCORS false --server.enableXsrfProtection false --browser.gatherUsageStats false
+web: /bin/sh -c "streamlit run webapp.py --server.address 0.0.0.0 --server.port ${PORT:-8501} --server.headless true --server.enableCORS false --server.enableXsrfProtection false --browser.gatherUsageStats false"
