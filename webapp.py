@@ -30,6 +30,7 @@ from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
 from tiktok_insight_miner.reporter import generate_report
 from tiktok_insight_miner.scraper import save_comments_json, scrape_tiktok_comments
 from tiktok_insight_miner.selection import run_selection
+from tiktok_insight_miner.strategy_analyst import generate_strategy_analysis
 from tiktok_insight_miner.suggester import generate_brief
 
 MIN_TEXT_LENGTH = 5  # Comment phải dài tối thiểu 5 ký tự
@@ -751,13 +752,21 @@ def get_user_runs_24h(user: str) -> int:
     return count
 
 
-def estimate_cost(num_comments: int, with_brief: bool, mode: str = "scrape") -> float:
-    """Rough estimate (USD): Apify $0.001/cmt + Haiku classify $0.0003/cmt + brief $0.02.
+def estimate_cost(
+    num_comments: int,
+    with_brief: bool,
+    mode: str = "scrape",
+    with_strategy: bool = False,
+) -> float:
+    """Rough estimate (USD): Apify $0.001/cmt + Haiku classify $0.0003/cmt +
+    brief $0.02 + strategy $0.07.
 
-    Mode 'paste' → không có Apify cost (chỉ classify + brief).
+    Mode 'paste' → không có Apify cost (chỉ classify + brief + strategy).
     """
     apify = num_comments * 0.001 if mode == "scrape" else 0.0
-    return apify + num_comments * 0.0003 + (0.02 if with_brief else 0.0)
+    brief = 0.02 if with_brief else 0.0
+    strategy = 0.07 if (with_brief and with_strategy) else 0.0
+    return apify + num_comments * 0.0003 + brief + strategy
 
 
 def parse_text_to_comments(text: str, platform: str = "manual") -> list[Comment]:
@@ -799,12 +808,15 @@ def run_pipeline(
     status,
     comments_paste: str | None = None,
     platform: str = "manual",
+    with_strategy: bool = True,
 ) -> dict:
     """Chạy pipeline, update progress qua status block. Trả về dict paths + counts.
 
     2 mode:
     - Scrape TikTok: pass `urls`, `comments_paste=None`. Output → output/<niche>/<date>/
     - Paste manual: pass `comments_paste`, platform. Output → output/<niche>/<date>__manual-import/
+
+    v0.5 (Stage 5): with_strategy → generate phan-tich-toan-dien.md (Canvas + Chấm brief + Synthesis)
     """
     today = date.today().isoformat()
     mode = "paste" if comments_paste else "scrape"
@@ -820,10 +832,14 @@ def run_pipeline(
     classified_path = output_dir / "classified.json"
     report_path = output_dir / "report.md"
     brief_path = output_dir / "brief.md"
+    strategy_path = output_dir / "phan-tich-toan-dien.md"
+
+    # Tính tổng stages cho label progress
+    total_stages = 3 + (1 if with_brief else 0) + (1 if (with_brief and with_strategy) else 0)
 
     # Stage 1: scrape HOẶC parse paste
     if mode == "paste":
-        status.update(label="✍️ [1/4] Đang parse comment paste...", state="running")
+        status.update(label=f"✍️ [1/{total_stages}] Đang parse comment paste...", state="running")
         comments = parse_text_to_comments(comments_paste, platform=platform)
         save_comments_json(comments, raw_path)
         status.write(f"✓ Parsed **{len(comments)}** comments từ paste (platform: {platform})")
@@ -832,7 +848,7 @@ def run_pipeline(
                 "Không parse được comment nào — kiểm tra paste có nội dung không + mỗi dòng tối thiểu 5 ký tự."
             )
     else:
-        status.update(label="🔍 [1/4] Đang scrape TikTok comments (Apify)...", state="running")
+        status.update(label=f"🔍 [1/{total_stages}] Đang scrape TikTok comments (Apify)...", state="running")
         comments = scrape_tiktok_comments(urls, max_comments_per_video=max_comments)
         save_comments_json(comments, raw_path)
         status.write(f"✓ Scraped **{len(comments)}** comments từ {len(urls)} URLs")
@@ -841,7 +857,7 @@ def run_pipeline(
 
     # Stage 2: classify
     status.update(
-        label=f"🤖 [2/4] Đang classify {len(comments)} comments (Claude)... "
+        label=f"🤖 [2/{total_stages}] Đang classify {len(comments)} comments (Claude)... "
               f"~{(len(comments) // 20 + 1) * 7}s",
     )
     classified = classify_comments(comments)
@@ -849,17 +865,34 @@ def run_pipeline(
     status.write(f"✓ Classified **{len(classified)}** comments")
 
     # Stage 3: report
-    status.update(label="📊 [3/4] Đang generate report...")
+    status.update(label=f"📊 [3/{total_stages}] Đang generate report...")
     generate_report(classified, report_path)
     status.write(f"✓ Report saved")
 
     # Stage 4: brief (optional)
     angles_count = 0
     if with_brief:
-        status.update(label="🎬 [4/4] Đang generate content angle brief (Claude, 30-60s)...")
+        status.update(label=f"🎬 [4/{total_stages}] Đang generate content angle brief (Claude Opus, 30-60s)...")
         angles = generate_brief(classified, brief_path, num_angles=num_angles)
         angles_count = len(angles)
         status.write(f"✓ Generated **{angles_count}** content angles")
+
+    # Stage 5: strategy analysis (chỉ chạy nếu with_brief=True vì cần brief làm input)
+    strategy_generated = False
+    if with_brief and with_strategy:
+        status.update(label=f"🧠 [5/{total_stages}] Đang phân tích strategy (Canvas + Chấm brief + Synthesis, Opus, 30-60s)...")
+        try:
+            generate_strategy_analysis(
+                classified=classified,
+                brief_md_path=brief_path,
+                output_path=strategy_path,
+                niche_slug=niche,
+            )
+            strategy_generated = True
+            status.write(f"✓ Strategy analysis saved (Canvas + Chấm brief + Synthesis)")
+        except Exception as e:
+            # Strategy fail KHÔNG fail toàn pipeline — brief + report đã có
+            status.write(f"⚠️ Strategy analysis lỗi (brief + report vẫn OK): {e}")
 
     status.update(label="🎉 Pipeline complete!", state="complete")
     return {
@@ -868,6 +901,7 @@ def run_pipeline(
         "classified_path": classified_path,
         "report_path": report_path,
         "brief_path": brief_path if with_brief else None,
+        "strategy_path": strategy_path if strategy_generated else None,
         "num_comments": len(comments),
         "num_classified": len(classified),
         "num_angles": angles_count,
@@ -875,8 +909,11 @@ def run_pipeline(
 
 
 # --- UI ---
-def render_sidebar() -> tuple[str, int, bool, int]:
-    """Render sidebar: user info, settings, recent runs."""
+def render_sidebar() -> tuple[str, int, bool, int, bool]:
+    """Render sidebar: user info, settings, recent runs.
+
+    v0.5: returns thêm with_strategy flag (Stage 5).
+    """
     with st.sidebar:
         st.header("👤 Người dùng")
         user = st.text_input(
@@ -911,6 +948,16 @@ def render_sidebar() -> tuple[str, int, bool, int]:
             "Số content angle", 5, 20, 10,
             disabled=not with_brief,
         )
+        with_strategy = st.checkbox(
+            "🧠 Generate Phân tích toàn diện (+~$0.07)",
+            value=True,
+            disabled=not with_brief,
+            help=(
+                "Stage 5 — Claude Opus tổng hợp Customer Profile Canvas "
+                "(Pains/Gains/Jobs) + chấm điểm brief + 3 phát hiện chiến lược + "
+                "product offer + content roadmap 30 ngày. Cost ~$0.07, +30-60s."
+            ),
+        )
 
         st.divider()
         st.header("📚 10 runs gần nhất")
@@ -927,7 +974,7 @@ def render_sidebar() -> tuple[str, int, bool, int]:
         else:
             st.caption("_Chưa có run nào._")
 
-    return user, max_comments, with_brief, num_angles
+    return user, max_comments, with_brief, num_angles, with_strategy
 
 
 # --- Bước 2-4 helpers: Sắp xếp + Lựa chọn + Upload Drive ---
@@ -1211,15 +1258,22 @@ def render_handoff_section(
 
 
 def render_results(result: dict, with_brief: bool, duration: float) -> None:
-    """Hiển thị download buttons + inline render."""
+    """Hiển thị download buttons + inline render.
+
+    v0.5: thêm tab Phân tích toàn diện nếu strategy_path có.
+    """
+    has_strategy = result.get("strategy_path") is not None
+
     st.success(
         f"🎉 Done in **{duration:.0f}s** — "
         f"{result['num_comments']} comments classified"
         + (f", {result['num_angles']} angles" if with_brief else "")
+        + (" + 🧠 Phân tích toàn diện" if has_strategy else "")
     )
 
     st.subheader("📁 Download files")
-    cols = st.columns(4 if with_brief else 3)
+
+    # Build files list dynamic
     files_to_show = [
         ("📊 report.md", result["report_path"], "text/markdown"),
         ("💾 classified.json", result["classified_path"], "application/json"),
@@ -1227,7 +1281,11 @@ def render_results(result: dict, with_brief: bool, duration: float) -> None:
     ]
     if with_brief and result["brief_path"]:
         files_to_show.insert(1, ("🎬 brief.md", result["brief_path"], "text/markdown"))
+    if has_strategy:
+        files_to_show.insert(2 if with_brief else 1,
+            ("🧠 phan-tich-toan-dien.md", result["strategy_path"], "text/markdown"))
 
+    cols = st.columns(len(files_to_show))
     for col, (label, path, mime) in zip(cols, files_to_show):
         with col:
             st.download_button(
@@ -1242,13 +1300,20 @@ def render_results(result: dict, with_brief: bool, duration: float) -> None:
     tab_labels = ["📊 Report"]
     if with_brief:
         tab_labels.append("🎬 Brief")
+    if has_strategy:
+        tab_labels.append("🧠 Phân tích toàn diện")
     tabs = st.tabs(tab_labels)
 
     with tabs[0]:
         st.markdown(result["report_path"].read_text(encoding="utf-8"))
+    tab_idx = 1
     if with_brief:
-        with tabs[1]:
+        with tabs[tab_idx]:
             st.markdown(result["brief_path"].read_text(encoding="utf-8"))
+        tab_idx += 1
+    if has_strategy:
+        with tabs[tab_idx]:
+            st.markdown(result["strategy_path"].read_text(encoding="utf-8"))
 
 
 def _render_landing_sections() -> None:
@@ -1272,7 +1337,7 @@ def main() -> None:
             f"Quota nội bộ: {MAX_RUNS_PER_USER_PER_DAY} runs/người/24h."
         )
 
-        user, max_comments, with_brief, num_angles = render_sidebar()
+        user, max_comments, with_brief, num_angles, with_strategy = render_sidebar()
 
         if not user:
             st.warning("👈 Nhập tên/mã ở sidebar trước khi tiếp tục.")
@@ -1326,7 +1391,7 @@ def main() -> None:
             # Cost preview cho scrape mode
             if urls_list:
                 est_total = len(urls_list) * max_comments
-                est_cost = estimate_cost(est_total, with_brief, mode="scrape")
+                est_cost = estimate_cost(est_total, with_brief, mode="scrape", with_strategy=with_strategy)
                 st.info(
                     f"📊 **Preview**: {len(urls_list)} videos × {max_comments} = ~{est_total} comments. "
                     f"**Cost estimate ~${est_cost:.2f}** (Apify + Claude). "
@@ -1378,7 +1443,7 @@ def main() -> None:
             ]
 
             if valid_lines:
-                est_cost = estimate_cost(len(valid_lines), with_brief, mode="paste")
+                est_cost = estimate_cost(len(valid_lines), with_brief, mode="paste", with_strategy=with_strategy)
                 st.info(
                     f"📊 **Preview**: {len(valid_lines)} comments hợp lệ. "
                     f"**Cost estimate ~${est_cost:.2f}** (chỉ Claude — không có Apify). "
@@ -1428,15 +1493,17 @@ def main() -> None:
                             max_comments=max_comments, with_brief=with_brief,
                             num_angles=num_angles, status=status,
                             comments_paste=comments_paste, platform=platform,
+                            with_strategy=with_strategy,
                         )
                     else:
                         result = run_pipeline(
                             urls=urls_list, niche=niche, user=user,
                             max_comments=max_comments, with_brief=with_brief,
                             num_angles=num_angles, status=status,
+                            with_strategy=with_strategy,
                         )
                     duration = time.time() - start_time
-                    cost = estimate_cost(result["num_comments"], with_brief, mode=source_mode)
+                    cost = estimate_cost(result["num_comments"], with_brief, mode=source_mode, with_strategy=with_strategy)
                     log_run(
                         user=user, niche=niche,
                         num_urls=len(urls_list) if source_mode == "scrape" else 0,
