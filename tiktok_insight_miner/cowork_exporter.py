@@ -416,6 +416,7 @@ def snapshot_to_drive_api(
             body=file_metadata,
             media_body=media,
             fields="id, name, webViewLink",
+            supportsAllDrives=True,
         ).execute()
 
         logger.info(
@@ -437,27 +438,41 @@ def snapshot_to_drive_api(
 
 
 def _drive_find_or_create_folder(service: Any, name: str, parent_id: str) -> str | None:
-    """Tìm subfolder cùng tên trong parent. Nếu chưa có → tạo mới. Return folder ID."""
+    """Tìm subfolder cùng tên trong parent. Nếu chưa có → tạo mới. Return folder ID.
+
+    Hỗ trợ cả My Drive và Shared Drive (supportsAllDrives=True).
+    """
     try:
-        # Search existing folder
+        # Search existing folder — include Shared Drives
         query = (
             f"name='{name}' and "
             f"mimeType='application/vnd.google-apps.folder' and "
             f"'{parent_id}' in parents and "
             f"trashed=false"
         )
-        results = service.files().list(q=query, fields="files(id, name)", pageSize=1).execute()
+        results = service.files().list(
+            q=query,
+            fields="files(id, name)",
+            pageSize=1,
+            supportsAllDrives=True,
+            includeItemsFromAllDrives=True,
+            corpora="allDrives",
+        ).execute()
         files = results.get("files", [])
         if files:
             return files[0]["id"]
 
-        # Create new folder
+        # Create new folder — Shared Drive support
         folder_metadata = {
             "name": name,
             "mimeType": "application/vnd.google-apps.folder",
             "parents": [parent_id],
         }
-        folder = service.files().create(body=folder_metadata, fields="id").execute()
+        folder = service.files().create(
+            body=folder_metadata,
+            fields="id",
+            supportsAllDrives=True,
+        ).execute()
         logger.info("Created Drive subfolder: %s (id=%s)", name, folder.get("id"))
         return folder.get("id")
     except Exception as e:
@@ -466,14 +481,24 @@ def _drive_find_or_create_folder(service: Any, name: str, parent_id: str) -> str
 
 
 def _drive_find_next_version(service: Any, folder_id: str) -> int:
-    """Scan files insights-pack_v<N>.md trong folder, return next version (max + 1)."""
+    """Scan files insights-pack_v<N>.md trong folder, return next version (max + 1).
+
+    Hỗ trợ cả My Drive và Shared Drive (supportsAllDrives=True).
+    """
     try:
         query = (
             f"'{folder_id}' in parents and "
             f"name contains 'insights-pack_v' and "
             f"trashed=false"
         )
-        results = service.files().list(q=query, fields="files(name)", pageSize=1000).execute()
+        results = service.files().list(
+            q=query,
+            fields="files(name)",
+            pageSize=1000,
+            supportsAllDrives=True,
+            includeItemsFromAllDrives=True,
+            corpora="allDrives",
+        ).execute()
         files = results.get("files", [])
         max_v = 0
         for f in files:

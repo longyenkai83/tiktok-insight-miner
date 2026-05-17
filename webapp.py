@@ -1107,13 +1107,18 @@ def render_handoff_section(
 
     st.info(f"✓ Đã chọn **{len(selected_ids)}** insight")
 
-    # Bước 4: Upload Drive button
+    # Bước 4: Build pack + Upload Drive button
+    pack_bytes_key = f"{state_key}_pack_bytes"
+    pack_fname_key = f"{state_key}_pack_fname"
+    pack_drive_key = f"{state_key}_pack_drive"
+    pack_logs_key = f"{state_key}_pack_logs"
+
     if st.button(
-        f"📤 Upload {len(selected_ids)} insight sang Google Drive",
+        f"📦 Tạo insight pack + Upload Drive ({len(selected_ids)} insight)",
         type="primary",
         key=f"{state_key}_upload",
     ):
-        with st.spinner("Đang upload..."):
+        with st.spinner("Đang tạo insight pack + thử upload Drive..."):
             try:
                 # 1. Mark ticked in 3-lựa-chọn.md
                 ticked = mark_ticked(lua_chon_path, selected_ids)
@@ -1123,30 +1128,86 @@ def render_handoff_section(
                 sel_result = run_selection(lua_chon_path, niche_slug=niche)
                 st.caption(f"✓ Selection: {sel_result['added']} mới, {sel_result['total']} tổng")
 
-                # 3. Export to Drive via API
-                export_result = export_for_cowork(
-                    selected_path=sel_result["json_path"],
-                    config_path=config_path,
-                    drive_folder_id=drive_folder_id,
-                    gdrive_service_account_json=gdrive_json,
-                )
-                drive_info = export_result.get("snapshot_drive_info")
-                if drive_info:
-                    st.success(
-                        f"🎉 Upload thành công — `insights-pack_v{drive_info['version']}.md` "
-                        f"({export_result['unique_count']} insight)"
+                # 3. Export pack — LUÔN build file local. Drive upload là best-effort.
+                import logging as _logging
+                _log_records: list[str] = []
+
+                class _UIHandler(_logging.Handler):
+                    def emit(self, record):
+                        if record.levelno >= _logging.WARNING:
+                            _log_records.append(self.format(record))
+
+                _ui_handler = _UIHandler()
+                _ui_handler.setFormatter(_logging.Formatter("%(levelname)s: %(message)s"))
+                _logger_root = _logging.getLogger("tiktok_insight_miner.cowork_exporter")
+                _logger_root.addHandler(_ui_handler)
+
+                try:
+                    export_result = export_for_cowork(
+                        selected_path=sel_result["json_path"],
+                        config_path=config_path,
+                        drive_folder_id=drive_folder_id,
+                        gdrive_service_account_json=gdrive_json,
                     )
-                    st.markdown(f"🔗 [Xem trên Google Drive]({drive_info['web_link']})")
-                    st.caption(
-                        "CoWork máy nào cũng pull được file này từ Drive ngay sau khi sync xong."
-                    )
+                finally:
+                    _logger_root.removeHandler(_ui_handler)
+
+                # File pack LUÔN có (export_for_cowork build trước khi upload Drive)
+                pack_path = export_result["output_path"]
+                if pack_path and pack_path.exists():
+                    pack_bytes = pack_path.read_bytes()
+                    pack_fname = f"insights-pack_{niche}_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
+                    st.session_state[pack_bytes_key] = pack_bytes
+                    st.session_state[pack_fname_key] = pack_fname
+                    st.session_state[pack_logs_key] = _log_records
+                    drive_info = export_result.get("snapshot_drive_info")
+                    if drive_info:
+                        st.session_state[pack_drive_key] = drive_info
+                    else:
+                        st.session_state[pack_drive_key] = None
                 else:
-                    st.warning(
-                        "⚠️ Drive upload không trả về kết quả. Check Railway logs để debug."
-                    )
+                    st.error("❌ Build pack fail — file output không tồn tại.")
+
             except Exception as e:
-                st.error(f"❌ Lỗi upload: {e}")
+                st.error(f"❌ Lỗi tạo pack: {e}")
                 st.exception(e)
+
+    # ALWAYS render kết quả từ session_state (persist qua re-run khi click download)
+    if pack_bytes_key in st.session_state:
+        drive_info = st.session_state.get(pack_drive_key)
+        _log_records = st.session_state.get(pack_logs_key, [])
+
+        if drive_info:
+            st.success(
+                f"🎉 Upload Drive thành công — `insights-pack_v{drive_info['version']}.md`"
+            )
+            st.markdown(f"🔗 [Xem trên Google Drive]({drive_info['web_link']})")
+        else:
+            st.warning(
+                "⚠️ **Upload Drive fail — nhưng file insight pack đã tạo xong.** "
+                "Anh tải về máy ở nút bên dưới rồi upload thủ công vào Drive folder Shared Drive "
+                "(drag drop trên drive.google.com)."
+            )
+            if _log_records:
+                with st.expander("🔧 Chi tiết lỗi Drive"):
+                    for rec in _log_records:
+                        st.code(rec)
+
+        # LUÔN show download button — anh upload thủ công nếu Drive auto fail
+        st.markdown("**📥 Tải insight pack về máy** (để upload thủ công nếu cần):")
+        st.download_button(
+            label=f"⬇️ Download {st.session_state[pack_fname_key]}",
+            data=st.session_state[pack_bytes_key],
+            file_name=st.session_state[pack_fname_key],
+            mime="text/markdown",
+            type="primary" if not drive_info else "secondary",
+            key=f"{state_key}_dl_pack",
+            use_container_width=True,
+        )
+        st.caption(
+            "💡 **Upload thủ công**: mở https://drive.google.com → vào Shared Drive folder "
+            "`insights-packs/kinh-doanh-27-45/` → New → File upload → chọn file vừa tải."
+        )
 
 
 def render_results(result: dict, with_brief: bool, duration: float) -> None:
