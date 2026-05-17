@@ -480,6 +480,217 @@ def _drive_find_or_create_folder(service: Any, name: str, parent_id: str) -> str
         return None
 
 
+# --- v0.5: Upload pipeline run files (F1 structure: niche/date/time-user) ---
+
+def _drive_navigate_or_create_path(
+    service: Any,
+    root_folder_id: str,
+    path_segments: list[str],
+) -> str | None:
+    """Navigate hoặc create chain of folders.
+
+    Ví dụ path_segments=["runs", "kinh-doanh-27-45", "2026-05-17", "18-20_tuan"]
+    → tạo 4 nested folders, trả ID của folder cuối cùng.
+
+    Returns: folder ID cuối cùng, None nếu fail.
+    """
+    current_id = root_folder_id
+    for segment in path_segments:
+        next_id = _drive_find_or_create_folder(service, segment, current_id)
+        if not next_id:
+            logger.error("Failed to navigate/create folder segment: %s", segment)
+            return None
+        current_id = next_id
+    return current_id
+
+
+def upload_run_files_to_drive_api(
+    files: dict[str, Path],
+    niche_slug: str,
+    user: str,
+    root_folder_id: str,
+    service_account_json: str,
+    run_timestamp: datetime | None = None,
+) -> dict[str, Any] | None:
+    """Upload nhiều file pipeline run lên Drive theo F1 structure.
+
+    Path Drive: <root>/runs/<niche>/<YYYY-MM-DD>/<HH-MM>_<user>/<filename>
+
+    Args:
+        files: dict {label: Path} — vd {"report.md": Path(...), "brief.md": Path(...), ...}
+        niche_slug: tên niche → subfolder cấp 2
+        user: tên user → suffix subfolder cấp 4
+        root_folder_id: Drive root (env INSIGHTS_PACK_DRIVE_FOLDER_ID)
+        service_account_json: JSON service account
+        run_timestamp: optional — default now()
+
+    Returns:
+        dict {folder_id, folder_web_link, uploaded_files: [{label, file_id, web_link}], skipped: [...]}
+        None nếu fail toàn bộ.
+    """
+    try:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        from googleapiclient.http import MediaFileUpload
+        from googleapiclient.errors import HttpError
+    except ImportError as e:
+        logger.error("Drive API libs chưa cài: %s", e)
+        return None
+
+    if not files:
+        logger.warning("upload_run_files: files dict rỗng — skip")
+        return None
+
+    if run_timestamp is None:
+        run_timestamp = datetime.now()
+    date_str = run_timestamp.strftime("%Y-%m-%d")
+    time_str = run_timestamp.strftime("%H-%M")
+    # Sanitize user (Drive folder name không nên có ký tự đặc biệt)
+    user_safe = re.sub(r"[^a-zA-Z0-9_-]", "_", user or "anon")[:30]
+    run_folder_name = f"{time_str}_{user_safe}"
+
+    try:
+        credentials_info = json.loads(service_account_json)
+        credentials = service_account.Credentials.from_service_account_info(
+            credentials_info,
+            scopes=["https://www.googleapis.com/auth/drive"],
+        )
+        service = build("drive", "v3", credentials=credentials, cache_discovery=False)
+    except (json.JSONDecodeError, Exception) as e:
+        logger.error("Drive API client init failed: %s", e)
+        return None
+
+    # Navigate / create folder chain: runs/<niche>/<date>/<time-user>
+    path_segments = ["runs", niche_slug, date_str, run_folder_name]
+    run_folder_id = _drive_navigate_or_create_path(service, root_folder_id, path_segments)
+    if not run_folder_id:
+        logger.error("Failed to create run folder path on Drive")
+        return None
+
+    # Get folder web link
+    try:
+        folder_meta = service.files().get(
+            fileId=run_folder_id,
+            fields="id, name, webViewLink",
+            supportsAllDrives=True,
+        ).execute()
+        folder_web_link = folder_meta.get("webViewLink", "")
+    except Exception as e:
+        logger.warning("Get folder webViewLink failed: %s", e)
+        folder_web_link = ""
+
+    uploaded: list[dict[str, Any]] = []
+    skipped: list[str] = []
+
+    for label, file_path in files.items():
+        if not file_path or not file_path.exists():
+            skipped.append(label)
+            logger.warning("Skip upload (file không tồn tại): %s = %s", label, file_path)
+            continue
+
+        try:
+            file_metadata = {
+                "name": file_path.name,
+                "parents": [run_folder_id],
+            }
+            mimetype = "text/markdown" if file_path.suffix == ".md" else "application/json"
+            media = MediaFileUpload(str(file_path), mimetype=mimetype, resumable=False)
+            result = service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields="id, name, webViewLink",
+                supportsAllDrives=True,
+            ).execute()
+            uploaded.append({
+                "label": label,
+                "file_name": result.get("name"),
+                "file_id": result.get("id"),
+                "web_link": result.get("webViewLink"),
+            })
+            logger.info("Uploaded run file: %s → Drive (id=%s)", file_path.name, result.get("id"))
+        except HttpError as e:
+            logger.error("Drive HTTP error uploading %s: %s", file_path.name, e)
+            skipped.append(label)
+        except Exception as e:
+            logger.error("Drive upload failed for %s: %s", file_path.name, e)
+            skipped.append(label)
+
+    if not uploaded:
+        logger.error("upload_run_files: 0 files uploaded successfully")
+        return None
+
+    return {
+        "folder_id": run_folder_id,
+        "folder_name": run_folder_name,
+        "folder_path": "/".join(path_segments),
+        "folder_web_link": folder_web_link,
+        "uploaded_files": uploaded,
+        "skipped": skipped,
+        "date_str": date_str,
+        "time_str": time_str,
+    }
+
+
+def upload_run_files_to_drive_local(
+    files: dict[str, Path],
+    niche_slug: str,
+    user: str,
+    snapshot_root: Path,
+    run_timestamp: datetime | None = None,
+) -> dict[str, Any] | None:
+    """Local mode (Drive Desktop sync): copy files theo F1 structure.
+
+    Path local: <snapshot_root>/runs/<niche>/<YYYY-MM-DD>/<HH-MM>_<user>/<filename>
+
+    Returns: dict tương tự API mode (folder_path, uploaded_files: list of dict with local path).
+    """
+    if not snapshot_root.exists():
+        logger.warning("Snapshot root không tồn tại: %s — skip local upload", snapshot_root)
+        return None
+
+    if run_timestamp is None:
+        run_timestamp = datetime.now()
+    date_str = run_timestamp.strftime("%Y-%m-%d")
+    time_str = run_timestamp.strftime("%H-%M")
+    user_safe = re.sub(r"[^a-zA-Z0-9_-]", "_", user or "anon")[:30]
+    run_folder_name = f"{time_str}_{user_safe}"
+
+    run_folder = snapshot_root / "runs" / niche_slug / date_str / run_folder_name
+    run_folder.mkdir(parents=True, exist_ok=True)
+
+    uploaded: list[dict[str, Any]] = []
+    skipped: list[str] = []
+
+    for label, file_path in files.items():
+        if not file_path or not file_path.exists():
+            skipped.append(label)
+            continue
+        dest = run_folder / file_path.name
+        try:
+            shutil.copy2(file_path, dest)
+            uploaded.append({
+                "label": label,
+                "file_name": dest.name,
+                "local_path": str(dest),
+            })
+            logger.info("Copied to local Drive sync: %s → %s", file_path.name, dest)
+        except Exception as e:
+            logger.error("Local copy failed for %s: %s", file_path.name, e)
+            skipped.append(label)
+
+    if not uploaded:
+        return None
+
+    return {
+        "folder_path": f"runs/{niche_slug}/{date_str}/{run_folder_name}",
+        "folder_local_path": str(run_folder),
+        "uploaded_files": uploaded,
+        "skipped": skipped,
+        "date_str": date_str,
+        "time_str": time_str,
+    }
+
+
 def _drive_find_next_version(service: Any, folder_id: str) -> int:
     """Scan files insights-pack_v<N>.md trong folder, return next version (max + 1).
 

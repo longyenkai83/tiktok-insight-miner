@@ -23,7 +23,11 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from tiktok_insight_miner.classifier import classify_comments, save_classified_json
-from tiktok_insight_miner.cowork_exporter import export_for_cowork
+from tiktok_insight_miner.cowork_exporter import (
+    export_for_cowork,
+    upload_run_files_to_drive_api,
+    upload_run_files_to_drive_local,
+)
 from tiktok_insight_miner.insight_bank import build_insight_bank
 from tiktok_insight_miner.models import Comment
 from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
@@ -894,6 +898,52 @@ def run_pipeline(
             # Strategy fail KHÔNG fail toàn pipeline — brief + report đã có
             status.write(f"⚠️ Strategy analysis lỗi (brief + report vẫn OK): {e}")
 
+    # v0.5: Auto-upload run files lên Drive (F1 structure: runs/niche/date/time-user/)
+    # Best-effort: nếu Drive config có. Không fail pipeline nếu upload fail.
+    drive_run_info: dict | None = None
+    drive_folder_id = os.environ.get("INSIGHTS_PACK_DRIVE_FOLDER_ID", "").strip()
+    gdrive_json = os.environ.get("GDRIVE_SERVICE_ACCOUNT_JSON", "").strip()
+    drive_local_dir = os.environ.get("INSIGHTS_PACK_DRIVE_DIR", "").strip()
+
+    files_to_upload: dict[str, Path] = {
+        "report": report_path,
+    }
+    if with_brief and brief_path.exists():
+        files_to_upload["brief"] = brief_path
+    if strategy_generated and strategy_path.exists():
+        files_to_upload["strategy"] = strategy_path
+
+    if drive_folder_id and gdrive_json:
+        status.update(label="☁️ Đang upload run files lên Google Drive...")
+        try:
+            drive_run_info = upload_run_files_to_drive_api(
+                files=files_to_upload,
+                niche_slug=niche,
+                user=user,
+                root_folder_id=drive_folder_id,
+                service_account_json=gdrive_json,
+            )
+            if drive_run_info:
+                num_up = len(drive_run_info.get("uploaded_files", []))
+                num_skip = len(drive_run_info.get("skipped", []))
+                status.write(f"✓ Drive uploaded {num_up} files (skipped {num_skip}) → folder `{drive_run_info.get('folder_path')}`")
+        except Exception as e:
+            status.write(f"⚠️ Drive upload lỗi (file vẫn save local): {e}")
+    elif drive_local_dir:
+        status.update(label="📂 Đang copy run files sang Drive Desktop sync...")
+        try:
+            drive_run_info = upload_run_files_to_drive_local(
+                files=files_to_upload,
+                niche_slug=niche,
+                user=user,
+                snapshot_root=Path(drive_local_dir),
+            )
+            if drive_run_info:
+                num_up = len(drive_run_info.get("uploaded_files", []))
+                status.write(f"✓ Local Drive sync: {num_up} files → `{drive_run_info.get('folder_local_path')}`")
+        except Exception as e:
+            status.write(f"⚠️ Local Drive copy lỗi: {e}")
+
     status.update(label="🎉 Pipeline complete!", state="complete")
     return {
         "output_dir": output_dir,
@@ -902,6 +952,7 @@ def run_pipeline(
         "report_path": report_path,
         "brief_path": brief_path if with_brief else None,
         "strategy_path": strategy_path if strategy_generated else None,
+        "drive_run_info": drive_run_info,
         "num_comments": len(comments),
         "num_classified": len(classified),
         "num_angles": angles_count,
@@ -1263,6 +1314,7 @@ def render_results(result: dict, with_brief: bool, duration: float) -> None:
     v0.5: thêm tab Phân tích toàn diện nếu strategy_path có.
     """
     has_strategy = result.get("strategy_path") is not None
+    drive_info = result.get("drive_run_info")
 
     st.success(
         f"🎉 Done in **{duration:.0f}s** — "
@@ -1270,6 +1322,31 @@ def render_results(result: dict, with_brief: bool, duration: float) -> None:
         + (f", {result['num_angles']} angles" if with_brief else "")
         + (" + 🧠 Phân tích toàn diện" if has_strategy else "")
     )
+
+    # v0.5: Drive auto-upload status
+    if drive_info:
+        num_uploaded = len(drive_info.get("uploaded_files", []))
+        folder_path = drive_info.get("folder_path", "")
+        folder_link = drive_info.get("folder_web_link") or drive_info.get("folder_local_path", "")
+        st.info(
+            f"☁️ **Auto-uploaded {num_uploaded} files lên Google Drive** — "
+            f"folder: `{folder_path}`"
+        )
+        if folder_link and folder_link.startswith("http"):
+            st.markdown(f"🔗 [Mở folder trên Google Drive]({folder_link})")
+        # List uploaded files
+        with st.expander(f"📋 Chi tiết {num_uploaded} files đã upload", expanded=False):
+            for f in drive_info.get("uploaded_files", []):
+                label = f.get("label", "?")
+                name = f.get("file_name", "?")
+                link = f.get("web_link", "")
+                if link:
+                    st.markdown(f"- **{label}**: [{name}]({link})")
+                else:
+                    st.markdown(f"- **{label}**: `{name}`")
+            skipped = drive_info.get("skipped", [])
+            if skipped:
+                st.caption(f"⚠️ Skipped (không upload được): {', '.join(skipped)}")
 
     st.subheader("📁 Download files")
 
