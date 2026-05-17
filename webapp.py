@@ -23,10 +23,13 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from tiktok_insight_miner.classifier import classify_comments, save_classified_json
+from tiktok_insight_miner.cowork_exporter import export_for_cowork
+from tiktok_insight_miner.insight_bank import build_insight_bank
 from tiktok_insight_miner.models import Comment
 from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
 from tiktok_insight_miner.reporter import generate_report
 from tiktok_insight_miner.scraper import save_comments_json, scrape_tiktok_comments
+from tiktok_insight_miner.selection import run_selection
 from tiktok_insight_miner.suggester import generate_brief
 
 MIN_TEXT_LENGTH = 5  # Comment phải dài tối thiểu 5 ký tự
@@ -925,6 +928,225 @@ def render_sidebar() -> tuple[str, int, bool, int]:
     return user, max_comments, with_brief, num_angles
 
 
+# --- Bước 2-4 helpers: Sắp xếp + Lựa chọn + Upload Drive ---
+
+# Match cả [ ], [x], [X] và biến thể có space — accept mọi state
+CANDIDATE_RE = re.compile(
+    r"^\s*-\s*\[\s*[xX ]\s*\]\s*"
+    r"`\[SCORE\s+(?P<score>\d+)\]`\s*"
+    r"`\[(?P<id>\S+)\s+(?P<problem>[A-Z_]+)\]`\s*"
+    r"`\[(?P<opportunity>[A-Z_]+)\]`\s*"
+    r"\"(?P<quote>.+?)\"\s*"
+    r"—\s*@(?P<author>\S+)\s*"
+    r"\((?P<likes>\d+)\s*likes?\)",
+    re.MULTILINE,
+)
+
+
+def parse_candidates(md_path: Path) -> list[dict]:
+    """Parse 3-lựa-chọn.md → list candidates với metadata cho UI checkbox."""
+    if not md_path.exists():
+        return []
+    text = md_path.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    candidates: list[dict] = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        m = CANDIDATE_RE.match(line)
+        if m:
+            cand = {
+                "id": m.group("id"),
+                "score": int(m.group("score")),
+                "problem_code": m.group("problem"),
+                "opportunity": m.group("opportunity"),
+                "quote": m.group("quote"),
+                "author": m.group("author"),
+                "likes": int(m.group("likes")),
+                "summary": "",
+                "ticked_already": "[x]" in line or "[X]" in line,
+            }
+            # Get summary from next continuation lines
+            j = i + 1
+            while j < len(lines) and (lines[j].startswith(" ") or lines[j].startswith("\t")):
+                if "💡" in lines[j]:
+                    cand["summary"] = lines[j].split("💡", 1)[1].strip()
+                    break
+                j += 1
+            candidates.append(cand)
+            i = j if j > i else i + 1
+        else:
+            i += 1
+    return candidates
+
+
+def mark_ticked(md_path: Path, selected_ids: set[str]) -> int:
+    """Edit 3-lựa-chọn.md — replace `[ ]` thành `[x]` cho candidate có id trong selected_ids.
+
+    Returns: số dòng đã tick.
+    """
+    text = md_path.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    ticked_count = 0
+    for i, line in enumerate(lines):
+        for id_ in selected_ids:
+            if f"[{id_} " in line and ("- [ ]" in line or "- [  ]" in line):
+                lines[i] = re.sub(r"- \[\s*\]", "- [x]", line, count=1)
+                ticked_count += 1
+                break
+    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return ticked_count
+
+
+def render_handoff_section(
+    result: dict,
+    niche: str,
+    user: str,
+) -> None:
+    """Render UI Bước 2-4: bank + tick + select + export-to-Drive.
+
+    Chỉ work khi niche có sẵn niche_configs/<slug>.json.
+    """
+    st.markdown("---")
+    st.subheader("4️⃣ Chọn insight + Upload sang Google Drive")
+    st.caption(
+        "Sau khi pipeline xong, anh chọn các insight đáng dùng → upload sang Google Drive "
+        "để CoWork pull về viết bài. Bước này không bắt buộc — anh có thể bỏ qua nếu chỉ test."
+    )
+
+    # Check niche config exists
+    config_path = PROJECT_ROOT / "niche_configs" / f"{niche}.json"
+    if not config_path.exists():
+        st.info(
+            f"💡 Niche `{niche}` chưa có config taxonomy. Để dùng tính năng này, "
+            f"cần file `niche_configs/{niche}.json`. Hiện chỉ niche `kinh-doanh-27-45` có sẵn — "
+            f"liên hệ anh Tuấn để setup niche mới (~30 phút)."
+        )
+        return
+
+    # Check Drive env vars
+    drive_folder_id = os.environ.get("INSIGHTS_PACK_DRIVE_FOLDER_ID", "").strip()
+    gdrive_json = os.environ.get("GDRIVE_SERVICE_ACCOUNT_JSON", "").strip()
+    if not (drive_folder_id and gdrive_json):
+        st.warning(
+            "⚠️ Drive upload chưa cấu hình. Cần env var `INSIGHTS_PACK_DRIVE_FOLDER_ID` + "
+            "`GDRIVE_SERVICE_ACCOUNT_JSON` trên Railway. Liên hệ anh Tuấn."
+        )
+        return
+
+    output_dir = result["classified_path"].parent
+
+    # State key prefix — unique per run để session_state không lẫn giữa các pipeline run
+    state_key = f"handoff_{result['classified_path'].stat().st_mtime_ns}"
+
+    # Bước 2: Auto run bank (chỉ chạy 1 lần)
+    bank_key = f"{state_key}_bank"
+    if bank_key not in st.session_state:
+        with st.spinner("📊 Đang sắp xếp insight theo nhóm vấn đề..."):
+            try:
+                bank_stats = build_insight_bank(
+                    result["classified_path"],
+                    config_path,
+                    output_dir=output_dir,
+                )
+                st.session_state[bank_key] = bank_stats
+            except Exception as e:
+                st.error(f"❌ Lỗi sắp xếp: {e}")
+                return
+    else:
+        bank_stats = st.session_state[bank_key]
+
+    # Hiển thị tổng quan
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Tổng insight", bank_stats["total"])
+    col2.metric("Actionable", bank_stats["kept"])
+    col3.metric("Loại bỏ", bank_stats["skipped_bucket"] + bank_stats["skipped_short"])
+
+    # Bước 3: Parse candidates + render checkbox
+    lua_chon_path = bank_stats["lua_chon_path"]
+    candidates = parse_candidates(lua_chon_path)
+
+    if not candidates:
+        st.warning(
+            "Không có candidate nào đạt threshold (score ≥ 20). "
+            "Pipeline này chưa đủ insight chất lượng cao — anh có thể scrape thêm video / paste thêm comment."
+        )
+        return
+
+    st.markdown(f"**Top {len(candidates)} insight** — anh tick chọn các angle muốn handoff sang CoWork:")
+
+    # Render checkboxes (group theo problem_code để dễ scan)
+    by_problem: dict[str, list[dict]] = {}
+    for c in candidates:
+        by_problem.setdefault(c["problem_code"], []).append(c)
+
+    selected_ids: set[str] = set()
+    for problem_code, cands in by_problem.items():
+        with st.expander(f"📂 {problem_code} ({len(cands)} insight)", expanded=True):
+            for c in cands:
+                label = (
+                    f"`{c['id']}` **[{c['score']}]** — "
+                    f"_{c['summary'] or c['quote'][:80]}_ "
+                    f"({c['author']} · {c['likes']} likes)"
+                )
+                # Default check nếu đã tick từ trước
+                key = f"{state_key}_cb_{c['id']}"
+                checked = st.checkbox(
+                    label,
+                    value=c["ticked_already"],
+                    key=key,
+                )
+                if checked:
+                    selected_ids.add(c["id"])
+
+    if not selected_ids:
+        st.caption("👆 Anh chưa chọn insight nào. Tick checkbox để chọn.")
+        return
+
+    st.info(f"✓ Đã chọn **{len(selected_ids)}** insight")
+
+    # Bước 4: Upload Drive button
+    if st.button(
+        f"📤 Upload {len(selected_ids)} insight sang Google Drive",
+        type="primary",
+        key=f"{state_key}_upload",
+    ):
+        with st.spinner("Đang upload..."):
+            try:
+                # 1. Mark ticked in 3-lựa-chọn.md
+                ticked = mark_ticked(lua_chon_path, selected_ids)
+                st.caption(f"✓ Tick {ticked} insight trong 3-lựa-chọn.md")
+
+                # 2. Run selection → tạo selected_angles.json
+                sel_result = run_selection(lua_chon_path, niche_slug=niche)
+                st.caption(f"✓ Selection: {sel_result['added']} mới, {sel_result['total']} tổng")
+
+                # 3. Export to Drive via API
+                export_result = export_for_cowork(
+                    selected_path=sel_result["json_path"],
+                    config_path=config_path,
+                    drive_folder_id=drive_folder_id,
+                    gdrive_service_account_json=gdrive_json,
+                )
+                drive_info = export_result.get("snapshot_drive_info")
+                if drive_info:
+                    st.success(
+                        f"🎉 Upload thành công — `insights-pack_v{drive_info['version']}.md` "
+                        f"({export_result['unique_count']} insight)"
+                    )
+                    st.markdown(f"🔗 [Xem trên Google Drive]({drive_info['web_link']})")
+                    st.caption(
+                        "CoWork máy nào cũng pull được file này từ Drive ngay sau khi sync xong."
+                    )
+                else:
+                    st.warning(
+                        "⚠️ Drive upload không trả về kết quả. Check Railway logs để debug."
+                    )
+            except Exception as e:
+                st.error(f"❌ Lỗi upload: {e}")
+                st.exception(e)
+
+
 def render_results(result: dict, with_brief: bool, duration: float) -> None:
     """Hiển thị download buttons + inline render."""
     st.success(
@@ -1177,6 +1399,9 @@ def main() -> None:
 
                 st.subheader("3️⃣ Kết quả")
                 render_results(result, with_brief, duration)
+
+                # Bước 2-4: Sắp xếp + chọn insight + upload Drive
+                render_handoff_section(result, niche, user)
 
             except Exception as e:
                 duration = time.time() - start_time
