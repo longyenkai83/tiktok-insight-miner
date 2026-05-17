@@ -714,15 +714,17 @@ def check_auth() -> bool:
 
 
 # --- Logging + quota ---
+# v0.6: thêm output_dir để click history → restore download buttons
 LOG_HEADER = [
     "timestamp", "user", "niche", "num_urls", "num_comments",
-    "with_brief", "duration_s", "status", "cost_est_usd",
+    "with_brief", "duration_s", "status", "cost_est_usd", "output_dir",
 ]
 
 
 def log_run(
     user: str, niche: str, num_urls: int, num_comments: int,
     with_brief: bool, duration_s: float, status: str, cost_est: float,
+    output_dir: str | None = None,
 ) -> None:
     # utf-8-sig (BOM) để Excel mở đúng tiếng Việt; tránh mojibake (TuÃ¢Ìn → Tuấn)
     is_new = not LOG_PATH.exists()
@@ -734,6 +736,7 @@ def log_run(
             datetime.now().isoformat(timespec="seconds"),
             user, niche, num_urls, num_comments,
             with_brief, round(duration_s, 1), status, round(cost_est, 4),
+            output_dir or "",
         ])
 
 
@@ -1012,20 +1015,105 @@ def render_sidebar() -> tuple[str, int, bool, int, bool]:
 
         st.divider()
         st.header("📚 10 runs gần nhất")
+        st.caption("👆 Click vào run để xem lại + tải file")
         if LOG_PATH.exists():
             with open(LOG_PATH, "r", encoding="utf-8-sig") as f:
                 rows = list(csv.DictReader(f))[-10:][::-1]
-            for r in rows:
-                ts = r["timestamp"][:16].replace("T", " ")
+            for idx, r in enumerate(rows):
+                ts = r.get("timestamp", "")[:16].replace("T", " ")
                 icon = "✅" if r.get("status") == "success" else "❌"
-                st.caption(
-                    f"{icon} `{ts}` **{r['user']}** · {r['niche']} · "
-                    f"{r['num_comments']}cmt · ${r['cost_est_usd']}"
+                label = (
+                    f"{icon} {ts} · {r.get('user', '?')} · {r.get('niche', '?')[:20]}\n"
+                    f"{r.get('num_comments', '0')}cmt · ${r.get('cost_est_usd', '0')}"
                 )
+                # Chỉ run success + có output_dir mới clickable
+                out_dir = r.get("output_dir", "").strip()
+                if r.get("status") == "success" and out_dir:
+                    if st.button(label, key=f"hist_{idx}_{ts}", use_container_width=True):
+                        st.session_state["selected_history_run"] = {
+                            "output_dir": out_dir,
+                            "timestamp": ts,
+                            "user": r.get("user", ""),
+                            "niche": r.get("niche", ""),
+                            "num_comments": r.get("num_comments", "0"),
+                            "cost": r.get("cost_est_usd", "0"),
+                        }
+                        st.rerun()
+                else:
+                    st.caption(label.replace("\n", " — "))
         else:
             st.caption("_Chưa có run nào._")
 
     return user, max_comments, with_brief, num_angles, with_strategy
+
+
+def render_history_run(history: dict) -> None:
+    """Restore download buttons + preview cho 1 run trong history.
+
+    v0.6: Click 1 run trong sidebar history → load lại files từ output_dir
+    để tải về (nếu file vẫn còn trên Railway Volume).
+    """
+    out_dir = Path(history["output_dir"])
+
+    st.markdown("---")
+    st.subheader(f"📚 Xem lại run: {history['timestamp']}")
+    col_a, col_b, col_c, col_d = st.columns(4)
+    col_a.metric("User", history["user"])
+    col_b.metric("Niche", history["niche"])
+    col_c.metric("Comments", history["num_comments"])
+    col_d.metric("Cost", f"${history['cost']}")
+
+    if not out_dir.exists():
+        st.error(
+            f"⚠️ Folder không còn tồn tại: `{out_dir}`. "
+            "File có thể đã bị xoá hoặc Railway Volume đã reset. "
+            "Check Google Drive backup (folder runs/...) thay thế."
+        )
+        if st.button("🔙 Đóng (về run hiện tại)"):
+            del st.session_state["selected_history_run"]
+            st.rerun()
+        return
+
+    # Tìm các file output có thể tải
+    candidates = {
+        "📊 report.md": out_dir / "report.md",
+        "🎬 brief.md": out_dir / "brief.md",
+        "🧠 phan-tich-toan-dien.md": out_dir / "phan-tich-toan-dien.md",
+        "💾 classified.json": out_dir / "classified.json",
+        "📦 raw_comments.json": out_dir / "raw_comments.json",
+    }
+    existing = [(label, p) for label, p in candidates.items() if p.exists()]
+
+    if not existing:
+        st.warning(f"Folder tồn tại nhưng KHÔNG có file output: `{out_dir}`")
+    else:
+        st.markdown(f"**📁 Files ({len(existing)} files):**")
+        # Render download buttons
+        cols = st.columns(min(len(existing), 5))
+        for col, (label, path) in zip(cols, existing):
+            with col:
+                mime = "text/markdown" if path.suffix == ".md" else "application/json"
+                st.download_button(
+                    f"⬇️ {label}",
+                    data=path.read_bytes(),
+                    file_name=path.name,
+                    mime=mime,
+                    use_container_width=True,
+                    key=f"hist_dl_{path.name}",
+                )
+
+        # Inline preview với tabs
+        md_files = [(label, path) for label, path in existing if path.suffix == ".md"]
+        if md_files:
+            tab_labels = [label for label, _ in md_files]
+            tabs = st.tabs(tab_labels)
+            for tab, (_, path) in zip(tabs, md_files):
+                with tab:
+                    st.markdown(path.read_text(encoding="utf-8"))
+
+    if st.button("🔙 Đóng (về run hiện tại)", key="close_history"):
+        del st.session_state["selected_history_run"]
+        st.rerun()
 
 
 # --- Bước 2-4 helpers: Sắp xếp + Lựa chọn + Upload Drive ---
@@ -1587,6 +1675,7 @@ def main() -> None:
                         num_comments=result["num_comments"],
                         with_brief=with_brief, duration_s=duration,
                         status="success", cost_est=cost,
+                        output_dir=str(result["output_dir"]),
                     )
                     # Post-run hooks (best-effort)
                     try:
@@ -1633,6 +1722,10 @@ def main() -> None:
             st.subheader("3️⃣ Kết quả")
             render_results(saved["result"], saved["with_brief"], saved["duration"])
             render_handoff_section(saved["result"], saved["niche"], saved["user"])
+
+        # v0.6: Render history run nếu user click trong sidebar
+        if "selected_history_run" in st.session_state:
+            render_history_run(st.session_state["selected_history_run"])
 
     finally:
         # Always render landing sections — chạy DÙ return ở đâu trong try block
