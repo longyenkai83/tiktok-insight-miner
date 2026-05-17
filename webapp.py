@@ -38,10 +38,12 @@ load_dotenv()
 
 # --- Config ---
 PROJECT_ROOT = Path(__file__).resolve().parent
-LOG_PATH = PROJECT_ROOT / "usage_log.csv"
 OUTPUT_ROOT = Path(os.environ.get("DEFAULT_OUTPUT_DIR", "./output"))
 if not OUTPUT_ROOT.is_absolute():
     OUTPUT_ROOT = (PROJECT_ROOT / OUTPUT_ROOT).resolve()
+# Lưu log trong OUTPUT_ROOT để Railway Volume persist (cùng mount với output files)
+OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+LOG_PATH = OUTPUT_ROOT / "usage_log.csv"
 MAX_RUNS_PER_USER_PER_DAY = int(os.environ.get("MAX_RUNS_PER_USER_PER_DAY", "20"))
 WEBAPP_PASSWORD = os.environ.get("WEBAPP_PASSWORD", "").strip()
 
