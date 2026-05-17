@@ -23,44 +23,128 @@ from tiktok_insight_miner.models import (
 logger = logging.getLogger(__name__)
 
 
-# Buckets có actionable insight cho content angle (loại praise, mention, other ra)
+# Buckets có actionable insight cho content angle.
+# v0.3 (framework v1.0): praise được include với min_likes filter — top praise
+# thường là UGC "Bài học: ..." (audience tự tóm tắt) — social proof gold.
 ACTIONABLE_BUCKETS = ("pain", "desire", "question", "objection")
+PRAISE_MIN_LIKES = 30  # praise comments với likes ≥30 cũng đưa vào pool top insights
 
 
-SYSTEM_PROMPT = """Bạn là content strategist chuyên ý tưởng video TikTok ngắn (<60s) cho audience Việt Nam.
+SYSTEM_PROMPT = """Bạn là chuyên gia tâm lý học hành vi marketing cho audience Việt Nam, chuyên biến comment TikTok/FB/YT thành content angle có chiều sâu psychology + cultural fit VN.
 
-Input: Danh sách insight từ comment audience đã được phân loại (pain, desire, question, objection) cùng quote nguyên văn + số likes làm proof of demand.
+Áp dụng FRAMEWORK v1.0 (docs/psychology/insight-mining-framework.md):
 
-Nhiệm vụ: Generate N content angle hoàn chỉnh — mỗi angle là 1 video idea sẵn sàng quay.
+═══════════════════════════════════════════════════
+PART A — 5 AUDIENCE PERSONA CLUSTERS (backbone)
+═══════════════════════════════════════════════════
 
-Quy tắc:
+1. **entrepreneurial_despair** — làm chủ kiệt sức, muốn bỏ cuộc
+   Trigger: "làm chủ lao đao", "kinh doanh ế", "đống bùn lầy", "thất bại"
+   Tone: empathy first, KHÔNG tip ngay. Validate → đưa lối thoát sau.
 
-1. **Ground vào insight thực** (quan trọng nhất): Mỗi angle PHẢI link rõ tới 1 comment cụ thể từ input. KHÔNG bịa pain/desire/question. `target_insight` = quote nguyên văn comment + `target_likes` = likes của nó.
+2. **procrastination_trap** — đợi đủ điều kiện hoàn hảo mới dám làm
+   Trigger: "đợi giỏi hơn", "X năm vẫn dậm chân", "chần chừ", "chưa đủ"
+   Tone: confront nhẹ — "Bạn không đợi đủ, bạn đang sợ". Đập niềm tin perfect-then-start.
 
-2. **Diverse angle types**: Mix 6 loại:
-   - `pain_solution`: Giải pháp cho pain
-   - `desire_fulfillment`: Cách đạt được desire
-   - `question_answer`: Trả lời câu hỏi cụ thể (nhất là FAQ likes cao)
-   - `myth_busting`: Counter objection bằng evidence/demo
-   - `social_proof`: Testimonial/trước-sau từ user
-   - `how_to`: Tutorial step-by-step
+3. **viral_no_convert** — có view không có đơn, khủng hoảng niềm tin
+   Trigger: "lên xu hướng nhưng k chuyển đổi", "chạy ads xong flop", "view có mà đơn không"
+   Tone: technical + tactical. Audience đã pass content, thiếu conversion. Dùng số liệu, framework.
 
-3. **Hook style TikTok (3s đầu)**: 1-2 câu, max 150 ký tự. Dùng pattern viral:
-   - Question hook: "Bạn có biết...?"
-   - Shocking stat: "1 trong 3 phụ nữ sau sinh bị..."
-   - Contrarian: "Mọi người nghĩ X, nhưng thực ra Y"
-   - Direct address: "Nếu bạn cũng từng thấy..."
-   - Cliffhanger: "Đến phút 0:30 mới bất ngờ..."
+4. **authentic_trend_fatigue** — biết "phải authentic" nhưng không biết kể chuyện gì
+   Trigger: "biết là trend rồi nhưng", "không biết kể chuyện bản thân", "đời mình bình thường"
+   Tone: post-authentic. KHÔNG lặp lại "hãy chân thực" — audience ĐÃ BIẾT. Dạy MECHANICS.
 
-4. **Script outline ngắn**: 3-5 bullet, mỗi bullet 1 dòng beat (vd: "0:00-0:03 Hook", "0:04-0:15 Demo bước 1", ...). KHÔNG viết script đầy đủ — chỉ outline.
+5. **macro_despair** — bất lực xã hội/kinh tế ("nghèo cả nước")
+   Trigger: "Người nghèo còn nước mắt đâu mà khóc", "chế độ", "nhà nước phạt"
+   Tone: emotional positioning. ĐỨNG CÙNG nỗi đau, KHÔNG "fix" nó. Tuyệt đối không bridge sang tip.
 
-5. **CTA actionable cụ thể**: "Comment 'kegel' để DM bài tập" tốt hơn "Like + share".
+6. **cross_cluster** — dùng khi angle khai thác:
+   (a) tension giữa 2 cluster (vd praise "bài học hay" + objection "lý thuyết quá")
+   (b) UGC meta (audience tự tóm tắt "Bài học: ...")
+   (c) pattern frequency (cụm từ lặp ≥5 lần — "khám kênh giúp em")
 
-6. **Vietnamese tone**: peer-level, conversational. KHÔNG "quý khách / kính thưa". Dùng "mình / bạn / các bạn".
+═══════════════════════════════════════════════════
+PART B — 12 MENTAL MODELS CURATED (từ SKILL.md, loại 58 không relevant)
+═══════════════════════════════════════════════════
 
-7. **Confidence**: 0.9+ nếu link 1-1 với insight + likes cao; 0.5-0.7 nếu phải kết hợp nhiều insight; <0.5 nếu suy diễn xa từ data → đừng generate angle này.
+Mỗi angle PHẢI map vào ≥1 model (set `primary_model` = 1 trong 12 dưới):
 
-8. **Ưu tiên insight có likes cao** — proof of demand mạnh hơn.
+1. **jobs_to_be_done** — audience hire video để làm gì? (học/validate/copy/vent)
+2. **pratfall** — creator admit yếu → tăng trust (dùng khi có objection "lý thuyết quá")
+3. **mimetic_desire** — show người-giống-họ đã thành công (dùng cho "xin vía", "mong khám kênh")
+4. **curse_of_knowledge** — break-down siêu cụ thể (dùng cho "biết rồi nhưng k làm được")
+5. **zeigarnik** — hook mở open loop (dùng cho "không biết bắt đầu từ đâu")
+6. **peak_end** — quote >100 likes phải dùng làm peak + end, không bridge tip
+7. **loss_aversion** — frame "cái mất khi không bắt đầu" (gốc procrastination = sợ mất face)
+8. **mere_exposure** — pattern lặp ≥3 lần → format series, không 1 video lẻ
+9. **social_proof** — repost UGC (cluster praise high-likes, audience tự đồng tình)
+10. **confirmation_bias** — build trên niềm tin sẵn có, KHÔNG argue ngược
+11. **bj_fogg** — B = MAP. "Hiểu mà k làm" = thiếu Ability + Prompt, không thiếu Motivation
+12. **goal_gradient** — audience GẦN đích → "Bạn chỉ thiếu 1 bước cuối"
+
+═══════════════════════════════════════════════════
+PART C — 4 VIETNAMESE CULTURAL CONCEPTS (Western SKILL THIẾU 100%)
+═══════════════════════════════════════════════════
+
+Brief PHẢI có ≥1 angle dùng VN cultural concept (set `vn_concept`):
+
+1. **via_culture** — "xin vía", "trộm vía", "vía lên xu hướng"
+   → Validate niềm tin VÍA (KHÔNG bài bác), redirect sang action cụ thể.
+2. **face_the_dien** — "tự ti", "ngại lộ mặt", "sợ người quen thấy"
+   → Face-saving frame: "Tôi cũng từng ngại — đây là cách làm không lộ mặt"
+3. **collectivism_tag** — "@tag bạn", "ai cũng như mình không"
+   → CTA dùng "Tag bạn nào cũng đang..." thay vì cá nhân "Comment if you..."
+4. **hierarchy_anh_chi_em** — "cô chú", "anh", "chị", "em mới bắt đầu"
+   → Đại từ trong hook + CTA PHẢI match age segment chính trong data
+
+═══════════════════════════════════════════════════
+PART D — 7 ANTI-PATTERNS — TUYỆT ĐỐI KHÔNG LÀM
+═══════════════════════════════════════════════════
+
+1. ❌ KHÔNG generate angle commercial/offer/promo
+   (hook chứa "miễn phí", "ưu đãi", "slot", "deadline 48h", "tư vấn 1-1")
+2. ❌ KHÔNG paraphrase hook — PHẢI dùng cụm nguyên văn từ comment gốc
+3. ❌ Cluster despair/macro → KHÔNG bridge sang tip ngay (empathy-first)
+4. ❌ Cluster authentic_trend_fatigue → KHÔNG lặp lại "hãy chân thực" (audience đã biết)
+5. ❌ KHÔNG generate angle nếu target_likes < 5 AND theme không lặp (frequency < 3)
+6. ❌ Đại từ sai segment ("bạn" với cô chú 60+ = mất face)
+7. ❌ Confidence reweight đúng:
+   - cluster macro_despair + likes ≥50 → confidence ≥0.9
+   - tip kỹ thuật rời rạc → confidence ≤0.7
+   - UGC repost (Social Proof + Mere Exposure cluster cross) → confidence ≥0.9
+
+═══════════════════════════════════════════════════
+PART E — 8 ANGLE TYPES MIX
+═══════════════════════════════════════════════════
+
+Phân bổ đa dạng (KHÔNG dồn 1 type):
+- `pain_solution`: giải pháp cho pain (dùng khi pain CÓ solution rõ)
+- `desire_fulfillment`: cách đạt desire
+- `question_answer`: trả lời FAQ likes cao
+- `myth_busting`: counter objection bằng evidence
+- `social_proof`: UGC repost / testimonial (dùng cho cluster praise high-likes)
+- `how_to`: tutorial step-by-step
+- `emotional_positioning`: cho cluster macro_despair — KHÔNG tip, chỉ đứng cùng
+- `series_announcement`: cho pattern frequency (vd "khám kênh ×10" → mở series)
+
+═══════════════════════════════════════════════════
+PART F — QUY TẮC OUTPUT CỨNG
+═══════════════════════════════════════════════════
+
+Mỗi angle PHẢI có:
+
+- `target_insight`: quote NGUYÊN VĂN 1 comment từ input. KHÔNG bịa.
+- `target_likes`: likes của comment đó.
+- `hook`: 1-2 câu, max 150 ký tự. PHẢI chứa ≥1 cụm nguyên văn từ comment gốc HOẶC từ lexicon.
+- `script_outline`: 3-5 beat ngắn (vd "0:00-0:05 Hook", "0:06-0:20 ...").
+- `cta`: cụ thể, KHÔNG commercial. "Comment 'X' + Y để nhận Z" tốt hơn "Like + share".
+- `confidence`: theo rule reweight ở PART D.
+- `cluster`: 1 trong 5 cluster + cross_cluster.
+- `primary_model`: 1 trong 12 mental models.
+- `vn_concept`: optional — nhưng brief PHẢI có ≥1 angle có vn_concept.
+- `psychology_rationale`: 1-2 dòng giải thích combo cluster + model + vn_concept fit insight ra sao.
+
+Vietnamese tone: peer-level, ấm áp, conversational. KHÔNG "quý khách / kính thưa".
 
 Trả về theo schema JSON đã cung cấp."""
 
@@ -68,10 +152,14 @@ Trả về theo schema JSON đã cung cấp."""
 def select_top_insights(
     classified: list[ClassifiedComment],
     top_n_per_bucket: int = 5,
+    include_praise: bool = True,
+    praise_min_likes: int = PRAISE_MIN_LIKES,
 ) -> list[ClassifiedComment]:
-    """Lấy top N comments mỗi bucket actionable, sort theo likes desc.
+    """Lấy top N comments mỗi bucket actionable + top praise (≥min_likes).
 
-    Trả về list flatten đã sort theo (bucket, -likes).
+    v0.3 (framework v1.0):
+    - Mặc định include praise với min_likes filter (top UGC "Bài học: ..." gold)
+    - Trả về list flatten đã sort theo (bucket, -likes)
     """
     buckets: dict[str, list[ClassifiedComment]] = {b: [] for b in ACTIONABLE_BUCKETS}
     for c in classified:
@@ -83,7 +171,85 @@ def select_top_insights(
         items = sorted(buckets[bucket], key=lambda x: x.comment.likes, reverse=True)
         selected.extend(items[:top_n_per_bucket])
 
+    # Framework v1.0: include top praise (UGC pattern "Bài học: ..." cực mạnh)
+    if include_praise:
+        praise_pool = [c for c in classified if c.bucket == "praise" and c.comment.likes >= praise_min_likes]
+        praise_top = sorted(praise_pool, key=lambda x: x.comment.likes, reverse=True)[:top_n_per_bucket]
+        selected.extend(praise_top)
+        if praise_top:
+            logger.info(
+                "Framework: include %d praise ≥%d likes (top: %d likes)",
+                len(praise_top), praise_min_likes, praise_top[0].comment.likes,
+            )
+
     return selected
+
+
+# v0.3: Lexicon mining — extract vocab nguyên văn cho hook grounding
+def extract_lexicon(
+    classified: list[ClassifiedComment],
+    top_n_emotional: int = 15,
+    top_n_phrases: int = 10,
+) -> dict[str, list[str]]:
+    """Extract từ vựng audience đang dùng — input cho vocab grounding rule.
+
+    Trả dict:
+      - emotional_words: từ cảm xúc đơn (hoang mang, nản, bế tắc, ...)
+      - pain_phrases: cụm than thở nguyên văn từ pain bucket
+      - praise_phrases: cụm khen UGC từ praise high-likes
+      - identity_markers: cách audience tự gọi mình (em/tôi/mình + nghề)
+    """
+    import re
+
+    EMOTIONAL_VOCAB = [
+        "hoang mang", "nản", "bế tắc", "lao đao", "tự ti", "ngại",
+        "bùn lầy", "dậm chân", "chần chừ", "khổ", "ế", "flop",
+        "lẹt đẹt", "đợi", "không biết bắt đầu", "không biết kể",
+        "xin vía", "trộm vía", "vía", "khám kênh", "check kênh",
+        "tâm đắc", "key point", "bài học",
+    ]
+
+    pain_phrases: list[str] = []
+    praise_phrases: list[str] = []
+    emotional_hits: dict[str, int] = {}
+
+    for c in classified:
+        text_lower = c.comment.text.lower()
+        # Count emotional vocab hits
+        for word in EMOTIONAL_VOCAB:
+            if word in text_lower:
+                emotional_hits[word] = emotional_hits.get(word, 0) + 1
+
+        # Pain phrases — short snippet (under 100 chars)
+        if c.bucket == "pain" and 10 <= len(c.comment.text.strip()) <= 100:
+            pain_phrases.append(c.comment.text.strip())
+
+        # Praise phrases — UGC pattern "Bài học: ..." high likes
+        if c.bucket == "praise" and c.comment.likes >= 30 and "bài học" in text_lower:
+            # Lấy 150 char đầu của phrase
+            snippet = c.comment.text.strip()[:150]
+            praise_phrases.append(f'"{snippet}" ({c.comment.likes} likes)')
+
+    # Top emotional sorted by frequency
+    emotional_sorted = sorted(emotional_hits.items(), key=lambda x: -x[1])[:top_n_emotional]
+    emotional_words = [f"{word} (×{count})" for word, count in emotional_sorted]
+
+    # Top pain phrases (chỉ lấy unique theo ký tự đầu)
+    seen: set[str] = set()
+    pain_unique: list[str] = []
+    for p in pain_phrases:
+        key = p[:30].lower()
+        if key not in seen:
+            seen.add(key)
+            pain_unique.append(p)
+        if len(pain_unique) >= top_n_phrases:
+            break
+
+    return {
+        "emotional_words": emotional_words,
+        "pain_phrases": pain_unique[:top_n_phrases],
+        "praise_phrases": praise_phrases[:5],
+    }
 
 
 def _format_insights_input(top_insights: list[ClassifiedComment]) -> str:
@@ -100,6 +266,23 @@ def _format_insights_input(top_insights: list[ClassifiedComment]) -> str:
     return "\n\n".join(lines)
 
 
+def _format_lexicon(lex: dict[str, list[str]]) -> str:
+    """Format lexicon dict → text block cho user prompt."""
+    parts: list[str] = []
+    if lex.get("emotional_words"):
+        parts.append("**Emotional vocabulary** (PHẢI dùng nguyên văn ≥1/angle):")
+        parts.append(", ".join(lex["emotional_words"]))
+    if lex.get("pain_phrases"):
+        parts.append("\n**Top pain phrases** (dùng làm hook):")
+        for p in lex["pain_phrases"]:
+            parts.append(f'  - "{p}"')
+    if lex.get("praise_phrases"):
+        parts.append("\n**Top UGC praise** (cho social_proof angle):")
+        for p in lex["praise_phrases"]:
+            parts.append(f"  - {p}")
+    return "\n".join(parts)
+
+
 def generate_angles(
     classified: list[ClassifiedComment],
     num_angles: int = 10,
@@ -113,30 +296,45 @@ def generate_angles(
         classified: Output từ classify stage
         num_angles: Số angle muốn generate (default 10)
         top_n_per_bucket: Top N comments mỗi bucket dùng làm input (default 5)
-        model: Override model (default Opus 4.7)
+        model: Override model. Priority: arg > SUGGESTER_MODEL env > default Opus 4.7.
+               KHÔNG fallback ANTHROPIC_MODEL (cho phép classifier dùng Haiku, suggester dùng Opus)
         api_key: Override ANTHROPIC_API_KEY
     """
-    model = model or os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7")
+    # v0.3: Suggester cần reasoning depth — default Opus 4.7.
+    # Cho phép override riêng qua SUGGESTER_MODEL (vd test Haiku cho cost).
+    model = model or os.environ.get("SUGGESTER_MODEL") or "claude-opus-4-7"
 
     top_insights = select_top_insights(classified, top_n_per_bucket=top_n_per_bucket)
     if not top_insights:
         logger.warning(
-            "Không có comment nào trong actionable buckets (pain/desire/question/objection). "
+            "Không có comment nào trong actionable buckets (pain/desire/question/objection/praise). "
             "Không thể generate angle."
         )
         return []
 
+    # v0.3: Extract lexicon cho vocab grounding
+    lexicon = extract_lexicon(classified)
+
     logger.info(
-        "Generating %d angles từ %d top insights, model=%s",
+        "Generating %d angles từ %d top insights, model=%s, lexicon=%d words + %d phrases",
         num_angles, len(top_insights), model,
+        len(lexicon.get("emotional_words", [])), len(lexicon.get("pain_phrases", [])),
     )
 
     insights_text = _format_insights_input(top_insights)
+    lexicon_text = _format_lexicon(lexicon)
+
     user_prompt = (
         f"Generate ĐÚNG {num_angles} content angle dựa trên các insight sau.\n\n"
-        f"{insights_text}\n\n"
-        f"Lưu ý: Mỗi angle PHẢI có target_insight là quote nguyên văn từ 1 comment ở trên, "
-        f"target_likes là số likes tương ứng. Không bịa."
+        f"═══ TOP INSIGHTS ═══\n{insights_text}\n\n"
+        f"═══ LEXICON (vocab grounding) ═══\n{lexicon_text}\n\n"
+        f"═══ YÊU CẦU ═══\n"
+        f"- Mỗi angle có target_insight = quote nguyên văn 1 comment ở trên, target_likes = likes tương ứng.\n"
+        f"- Hook PHẢI chứa ≥1 cụm nguyên văn từ comment gốc HOẶC lexicon.\n"
+        f"- Phân bổ qua 5 cluster (không dồn 1 cluster). ≥1 angle có vn_concept.\n"
+        f"- KHÔNG bịa. KHÔNG commercial CTA. KHÔNG lặp 'hãy chân thực' cho cluster authentic_trend_fatigue.\n"
+        f"- Cluster macro_despair + likes ≥50 → confidence ≥0.9 + angle_type=emotional_positioning.\n"
+        f"- Theme lặp ≥3 lần → cân nhắc angle_type=series_announcement."
     )
 
     client = anthropic.Anthropic(api_key=api_key) if api_key else anthropic.Anthropic()
@@ -211,6 +409,9 @@ def render_brief_markdown(
 
     lines.append("---\n")
 
+    # v0.3: import labels nếu cần render new fields
+    from tiktok_insight_miner.models import CLUSTER_LABELS, VN_CONCEPT_LABELS
+
     for i, angle in enumerate(sorted_angles, 1):
         type_label = ANGLE_TYPE_LABELS.get(angle.angle_type, angle.angle_type)
         lines.append(f"## {i}. {angle.title}\n")
@@ -219,6 +420,20 @@ def render_brief_markdown(
             f"·  **Confidence**: {angle.confidence:.2f}  "
             f"·  **Demand**: {angle.target_likes} likes\n"
         )
+
+        # v0.3: Psychology layer (graceful — chỉ show nếu có)
+        psych_parts: list[str] = []
+        if angle.cluster:
+            psych_parts.append(f"Cluster: **{CLUSTER_LABELS.get(angle.cluster, angle.cluster)}**")
+        if angle.primary_model:
+            psych_parts.append(f"Model: `{angle.primary_model}`")
+        if angle.vn_concept:
+            psych_parts.append(f"VN: **{VN_CONCEPT_LABELS.get(angle.vn_concept, angle.vn_concept)}**")
+        if psych_parts:
+            lines.append(f"**🧠 Psychology**: " + " · ".join(psych_parts) + "\n")
+        if angle.psychology_rationale:
+            lines.append(f"_{angle.psychology_rationale.strip()}_\n")
+
         lines.append(f"**Target insight**:")
         lines.append(f"> \"{angle.target_insight.strip()}\"\n")
         lines.append(f"**🎣 Hook (3s đầu):**")
