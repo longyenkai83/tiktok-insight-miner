@@ -736,7 +736,7 @@ def get_user_runs_24h(user: str) -> int:
         return 0
     cutoff = datetime.now() - timedelta(hours=24)
     count = 0
-    with open(LOG_PATH, "r", encoding="utf-8") as f:
+    with open(LOG_PATH, "r", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
             if row.get("user") != user:
                 continue
@@ -913,7 +913,7 @@ def render_sidebar() -> tuple[str, int, bool, int]:
         st.divider()
         st.header("📚 10 runs gần nhất")
         if LOG_PATH.exists():
-            with open(LOG_PATH, "r", encoding="utf-8") as f:
+            with open(LOG_PATH, "r", encoding="utf-8-sig") as f:
                 rows = list(csv.DictReader(f))[-10:][::-1]
             for r in rows:
                 ts = r["timestamp"][:16].replace("T", " ")
