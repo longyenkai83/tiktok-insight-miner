@@ -1,6 +1,11 @@
 """Content angle suggester — biến classified comments thành content brief actionable.
 
 Workflow: classified.json → select top insights → Claude generate angles → brief.md
+
+v0.4 (Framework v1.1 — Persona-Aware):
+- Load niche persona từ niche_configs/<slug>.json (nếu có) → inject vào prompt
+- Load meta_pains từ niche_configs/<slug>_meta_pains.md (nếu có) → inject
+- Output thêm field fb_caption_opening cho audience trưởng thành (Fanpage 27-45)
 """
 
 from __future__ import annotations
@@ -10,6 +15,7 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import anthropic
 
@@ -21,6 +27,9 @@ from tiktok_insight_miner.models import (
 )
 
 logger = logging.getLogger(__name__)
+
+# v0.4: project root để tìm niche_configs/
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 # Buckets có actionable insight cho content angle.
@@ -266,6 +275,99 @@ def _format_insights_input(top_insights: list[ClassifiedComment]) -> str:
     return "\n\n".join(lines)
 
 
+# --- v0.4: Persona-aware helpers ---
+
+def load_niche_persona(niche_slug: str) -> dict[str, Any] | None:
+    """Load niche config JSON nếu có file `niche_configs/<slug>.json`.
+
+    Trả về dict full config (caller tự extract field cần). None nếu không tồn tại
+    hoặc parse fail → suggester chạy KHÔNG có persona layer (backward compat).
+    """
+    config_path = _PROJECT_ROOT / "niche_configs" / f"{niche_slug}.json"
+    if not config_path.exists():
+        logger.debug("Niche persona not found: %s — skip persona layer", config_path)
+        return None
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        logger.warning("Failed to load niche persona %s: %s — skip", config_path, e)
+        return None
+
+
+def load_meta_pains(niche_slug: str) -> str | None:
+    """Load file meta_pains markdown nếu có. Trả raw content (inject as-is)."""
+    path = _PROJECT_ROOT / "niche_configs" / f"{niche_slug}_meta_pains.md"
+    if not path.exists():
+        return None
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError as e:
+        logger.warning("Failed to load meta_pains %s: %s — skip", path, e)
+        return None
+
+
+def _format_persona_block(config: dict[str, Any]) -> str:
+    """Extract persona + positioning từ niche config → text block cho prompt."""
+    persona = config.get("persona", {})
+    positioning = config.get("positioning", {})
+
+    parts: list[str] = []
+    parts.append(f"**Niche**: {config.get('niche_name', config.get('niche_slug', '?'))}")
+
+    if persona.get("summary"):
+        parts.append(f"\n**Audience summary**: {persona['summary']}")
+
+    age_range = persona.get("age_range")
+    if age_range:
+        parts.append(f"\n**Age range**: {age_range[0]}-{age_range[1]} tuổi")
+
+    if persona.get("life_stage"):
+        parts.append(f"\n**Life stage**:")
+        for s in persona["life_stage"]:
+            parts.append(f"  - {s}")
+
+    if persona.get("business_stage"):
+        parts.append(f"\n**Business stage**:")
+        for s in persona["business_stage"]:
+            parts.append(f"  - {s}")
+
+    if persona.get("media_behavior"):
+        parts.append(f"\n**Media behavior**:")
+        for s in persona["media_behavior"]:
+            parts.append(f"  - {s}")
+
+    if persona.get("core_tensions"):
+        parts.append(f"\n**Core tensions** (mâu thuẫn nội tại — angle vàng):")
+        for s in persona["core_tensions"]:
+            parts.append(f"  - {s}")
+
+    if positioning.get("for_whom"):
+        parts.append(f"\n**For whom**: {positioning['for_whom']}")
+    if positioning.get("promise"):
+        parts.append(f"**Promise**: {positioning['promise']}")
+    if positioning.get("tone"):
+        parts.append(f"**Tone REQUIRED**: {positioning['tone']}")
+
+    if positioning.get("anti_pattern"):
+        parts.append(f"\n**Niche anti-patterns** (KHÔNG VI PHẠM):")
+        for s in positioning["anti_pattern"]:
+            parts.append(f"  - {s}")
+
+    return "\n".join(parts)
+
+
+def _is_mature_persona(config: dict[str, Any]) -> bool:
+    """Heuristic: niche cho audience trưởng thành (27+)?
+
+    Dùng để force fb_caption_opening + 6 anti-patterns mature.
+    """
+    age_range = config.get("persona", {}).get("age_range", [])
+    if isinstance(age_range, list) and len(age_range) >= 1:
+        return age_range[0] >= 25  # 25+ coi là mature
+    return False
+
+
 def _format_lexicon(lex: dict[str, list[str]]) -> str:
     """Format lexicon dict → text block cho user prompt."""
     parts: list[str] = []
@@ -289,6 +391,7 @@ def generate_angles(
     top_n_per_bucket: int = 5,
     model: str | None = None,
     api_key: str | None = None,
+    niche_slug: str | None = None,
 ) -> list[ContentAngle]:
     """Generate content angles từ classified comments.
 
@@ -299,9 +402,10 @@ def generate_angles(
         model: Override model. Priority: arg > SUGGESTER_MODEL env > default Opus 4.7.
                KHÔNG fallback ANTHROPIC_MODEL (cho phép classifier dùng Haiku, suggester dùng Opus)
         api_key: Override ANTHROPIC_API_KEY
+        niche_slug: v0.4 — niche slug để load persona + meta_pains từ niche_configs/.
+                    Nếu None → suggester chạy framework v1.0 (no persona layer)
     """
     # v0.3: Suggester cần reasoning depth — default Opus 4.7.
-    # Cho phép override riêng qua SUGGESTER_MODEL (vd test Haiku cho cost).
     model = model or os.environ.get("SUGGESTER_MODEL") or "claude-opus-4-7"
 
     top_insights = select_top_insights(classified, top_n_per_bucket=top_n_per_bucket)
@@ -315,26 +419,106 @@ def generate_angles(
     # v0.3: Extract lexicon cho vocab grounding
     lexicon = extract_lexicon(classified)
 
+    # v0.4: Load niche persona + meta_pains (nếu có)
+    persona_config: dict[str, Any] | None = None
+    persona_block_text = ""
+    meta_pains_text = ""
+    is_mature = False
+    if niche_slug:
+        persona_config = load_niche_persona(niche_slug)
+        if persona_config:
+            persona_block_text = _format_persona_block(persona_config)
+            is_mature = _is_mature_persona(persona_config)
+            logger.info(
+                "Persona-Aware: niche=%s, mature=%s (age %s)",
+                niche_slug, is_mature,
+                persona_config.get("persona", {}).get("age_range"),
+            )
+        meta_pains_raw = load_meta_pains(niche_slug)
+        if meta_pains_raw:
+            meta_pains_text = meta_pains_raw
+
     logger.info(
-        "Generating %d angles từ %d top insights, model=%s, lexicon=%d words + %d phrases",
+        "Generating %d angles từ %d top insights, model=%s, lexicon=%d words + %d phrases, persona=%s",
         num_angles, len(top_insights), model,
         len(lexicon.get("emotional_words", [])), len(lexicon.get("pain_phrases", [])),
+        "loaded" if persona_block_text else "none",
     )
+
+    # Build system prompt — v0.4 inject persona + meta_pains nếu có
+    system_text = SYSTEM_PROMPT
+    if persona_block_text:
+        system_text += (
+            "\n\n═══════════════════════════════════════════════════\n"
+            "PART G — NICHE-SPECIFIC PERSONA (v0.4 Persona-Aware)\n"
+            "═══════════════════════════════════════════════════\n\n"
+            "Áp dụng persona dưới đây cho TẤT CẢ angle. Persona OVERRIDE generic 5 cluster\n"
+            "nếu có xung đột — vì persona đặc trưng niche cụ thể.\n\n"
+            f"{persona_block_text}"
+        )
+    if is_mature:
+        system_text += (
+            "\n\n═══════════════════════════════════════════════════\n"
+            "PART H — MATURE AUDIENCE OVERRIDE (27+ tuổi, Fanpage-style)\n"
+            "═══════════════════════════════════════════════════\n\n"
+            "Niche này là audience TRƯỞNG THÀNH (≥27 tuổi). 6 ANTI-PATTERN BẮT BUỘC:\n"
+            "1. ❌ KHÔNG emoji clickbait trong hook (😂😅🥰...)\n"
+            "2. ❌ KHÔNG slang Gen Z (bug não, vibe, flex, slay, 1 TAKE)\n"
+            "3. ❌ KHÔNG infantile tone (\"không phải bạn dở đâu\", \"chúc mừng bạn\", \"bạn xứng đáng\")\n"
+            "4. ❌ KHÔNG comment-keyword CTA (\"Comment 'TASTE' để DM\") — peer dialogue instead\n"
+            "5. ❌ KHÔNG hyperbole (\"đổi đời\", \"thay đổi tất cả\", \"7 ngày kiếm X\")\n"
+            "6. ❌ KHÔNG cliché quote (\"done is better than perfect\")\n\n"
+            "REQUIRED cho MỖI angle:\n"
+            "- `fb_caption_opening`: 3-5 dòng câu mồi cho Fanpage caption (quan trọng hơn hook 3s)\n"
+            "- Hook 10s (KHÔNG 3s — Fanpage audience đọc caption trước)\n"
+            "- ÍT NHẤT 1 proof element: số liệu cụ thể, case tên thật, hoặc cite source\n"
+            "- CTA invite peer dialogue (vd \"Chia sẻ trải nghiệm của bạn dưới comment, mình đọc và phản hồi trong 24h\")\n\n"
+            "5 MENTAL MODELS BỔ SUNG (chỉ dùng cho mature audience):\n"
+            "- `sunk_cost_fallacy`: \"Tôi đã đầu tư 10 năm cho sự nghiệp X → pivot = lãng phí\"\n"
+            "- `status_quo_bias`: ngại thay đổi vì đã có status\n"
+            "- `endowment_effect`: đã sở hữu identity 10+ năm → ngại đổi/thêm identity mới\n"
+            "- `mental_accounting`: 30 phút làm content lấy từ ngủ/con → perceived cost cao\n"
+            "- `regret_aversion`: \"sợ thử rồi fail công khai sau 35\""
+        )
+    if meta_pains_text:
+        system_text += (
+            "\n\n═══════════════════════════════════════════════════\n"
+            "PART I — META-PAINS (pain ẨN audience KHÔNG nói công khai)\n"
+            "═══════════════════════════════════════════════════\n\n"
+            "Audience trưởng thành thường KHÔNG comment công khai về pain sâu (face culture).\n"
+            "Brief PHẢI có ÍT NHẤT 2 angle ground vào meta-pains dưới đây (không chỉ raw comments).\n"
+            "Meta-angle mark trong psychology_rationale: \"Ground vào META-pain (niche persona)\".\n"
+            "`target_insight` = mô tả ngắn meta-pattern, `target_likes` = 0, confidence ≥0.85.\n\n"
+            f"{meta_pains_text}"
+        )
 
     insights_text = _format_insights_input(top_insights)
     lexicon_text = _format_lexicon(lexicon)
 
-    user_prompt = (
-        f"Generate ĐÚNG {num_angles} content angle dựa trên các insight sau.\n\n"
-        f"═══ TOP INSIGHTS ═══\n{insights_text}\n\n"
-        f"═══ LEXICON (vocab grounding) ═══\n{lexicon_text}\n\n"
-        f"═══ YÊU CẦU ═══\n"
-        f"- Mỗi angle có target_insight = quote nguyên văn 1 comment ở trên, target_likes = likes tương ứng.\n"
+    # User prompt — yêu cầu khác nhau tuỳ persona maturity
+    base_requirements = (
+        f"- Mỗi angle có target_insight = quote nguyên văn 1 comment HOẶC meta-pattern niche.\n"
         f"- Hook PHẢI chứa ≥1 cụm nguyên văn từ comment gốc HOẶC lexicon.\n"
         f"- Phân bổ qua 5 cluster (không dồn 1 cluster). ≥1 angle có vn_concept.\n"
         f"- KHÔNG bịa. KHÔNG commercial CTA. KHÔNG lặp 'hãy chân thực' cho cluster authentic_trend_fatigue.\n"
         f"- Cluster macro_despair + likes ≥50 → confidence ≥0.9 + angle_type=emotional_positioning.\n"
         f"- Theme lặp ≥3 lần → cân nhắc angle_type=series_announcement."
+    )
+    if is_mature:
+        base_requirements += (
+            f"\n\n**MATURE AUDIENCE REQUIREMENTS (PART H)**:\n"
+            f"- MỖI angle PHẢI có `fb_caption_opening` (3-5 dòng).\n"
+            f"- Tuân thủ 6 anti-patterns ở PART H.\n"
+            f"- ÍT NHẤT 2 angle ground vào META-pains (PART I), không chỉ raw comments.\n"
+            f"- Hook 10s thay vì 3s.\n"
+            f"- Mỗi angle có ÍT NHẤT 1 proof element (số liệu/case tên/source)."
+        )
+
+    user_prompt = (
+        f"Generate ĐÚNG {num_angles} content angle dựa trên các insight sau.\n\n"
+        f"═══ TOP INSIGHTS ═══\n{insights_text}\n\n"
+        f"═══ LEXICON (vocab grounding) ═══\n{lexicon_text}\n\n"
+        f"═══ YÊU CẦU ═══\n{base_requirements}"
     )
 
     client = anthropic.Anthropic(api_key=api_key) if api_key else anthropic.Anthropic()
@@ -343,7 +527,7 @@ def generate_angles(
     request_kwargs: dict = {
         "model": model,
         "max_tokens": 16000,
-        "system": SYSTEM_PROMPT,
+        "system": system_text,  # v0.4: dynamic — bao gồm persona + meta_pains nếu có
         "messages": [{"role": "user", "content": user_prompt}],
         "output_format": ContentAngleBrief,
     }
@@ -436,6 +620,14 @@ def render_brief_markdown(
 
         lines.append(f"**Target insight**:")
         lines.append(f"> \"{angle.target_insight.strip()}\"\n")
+
+        # v0.4: Fanpage caption opening (mature audience) — show TRƯỚC hook video
+        if angle.fb_caption_opening:
+            lines.append(f"**🪶 FB Caption Opening (3-5 dòng câu mồi cho Fanpage):**")
+            for ln in angle.fb_caption_opening.strip().split("\n"):
+                lines.append(f"> {ln}")
+            lines.append("")
+
         lines.append(f"**🎣 Hook (3s đầu):**")
         lines.append(f"> {angle.hook.strip()}\n")
         lines.append(f"**📝 Script outline:**")
@@ -472,13 +664,29 @@ def generate_brief(
     top_n_per_bucket: int = 5,
     model: str | None = None,
     source_videos: list[str] | None = None,
+    niche_slug: str | None = None,
 ) -> list[ContentAngle]:
-    """All-in-one: generate angles + render + save brief markdown."""
+    """All-in-one: generate angles + render + save brief markdown.
+
+    v0.4: auto-detect niche_slug từ output_path nếu không pass explicit.
+    Convention: output/<niche_slug>/<date>/brief.md → parent.parent.name = niche
+    """
+    # v0.4: Auto-detect niche từ output path nếu caller không pass
+    if niche_slug is None:
+        try:
+            candidate = output_path.parent.parent.name
+            if candidate and candidate not in ("output", ".", "..", ""):
+                niche_slug = candidate
+                logger.debug("Auto-detected niche_slug from path: %s", niche_slug)
+        except (AttributeError, IndexError):
+            pass
+
     angles = generate_angles(
         classified,
         num_angles=num_angles,
         top_n_per_bucket=top_n_per_bucket,
         model=model,
+        niche_slug=niche_slug,
     )
 
     if not angles:

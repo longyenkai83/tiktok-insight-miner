@@ -206,6 +206,15 @@ class ContentAngle(BaseModel):
         default=None,
         description="1-2 dòng giải thích combo cluster + model + vn_concept fit insight ra sao",
     )
+    # --- v0.4 (Framework v1.1 — Persona-Aware) ---
+    fb_caption_opening: str | None = Field(
+        default=None,
+        description=(
+            "3-5 dòng câu mồi cho Fanpage caption — quan trọng hơn hook 3s với "
+            "audience trưởng thành (27-45) đọc post trước khi xem video. "
+            "Optional: chỉ generate khi niche persona có platform=fanpage hoặc maturity=high."
+        ),
+    )
 
 
 class ContentAngleBrief(BaseModel):
