@@ -1337,86 +1337,97 @@ def main() -> None:
                 submit = True
                 source_mode = "paste"
 
-        # Nếu chưa submit → return ngay, finally block sẽ render landing sections
-        if not submit:
-            return
-
-        # Validate niche slug (common)
-        if not NICHE_SLUG_RE.match(niche):
-            st.error(
-                f"❌ Niche slug không hợp lệ: '{niche}'. "
-                "Dùng kebab-case (a-z, 0-9, dấu -). Ví dụ: `skincare-acne`."
-            )
-            return
-
-        # Run pipeline
-        st.subheader("2️⃣ Đang chạy")
-        if source_mode == "scrape":
-            st.caption("⏰ Pipeline mất 2-5 phút (scrape TikTok). **Đừng đóng tab hoặc bấm refresh.**")
-        else:
-            st.caption(f"⏰ Pipeline mất 1-3 phút ({len(valid_lines)} comment paste). **Đừng đóng tab.**")
-
-        start_time = time.time()
-        with st.status("Đang khởi động...", expanded=True) as status:
-            try:
-                if source_mode == "paste":
-                    result = run_pipeline(
-                        urls=[], niche=niche, user=user,
-                        max_comments=max_comments, with_brief=with_brief,
-                        num_angles=num_angles, status=status,
-                        comments_paste=comments_paste, platform=platform,
-                    )
-                else:
-                    result = run_pipeline(
-                        urls=urls_list, niche=niche, user=user,
-                        max_comments=max_comments, with_brief=with_brief,
-                        num_angles=num_angles, status=status,
-                    )
-                duration = time.time() - start_time
-                cost = estimate_cost(result["num_comments"], with_brief, mode=source_mode)
-                log_run(
-                    user=user, niche=niche,
-                    num_urls=len(urls_list) if source_mode == "scrape" else 0,
-                    num_comments=result["num_comments"],
-                    with_brief=with_brief, duration_s=duration,
-                    status="success", cost_est=cost,
+        # Submit click → chạy pipeline mới, save vào session_state
+        if submit:
+            # Validate niche slug
+            if not NICHE_SLUG_RE.match(niche):
+                st.error(
+                    f"❌ Niche slug không hợp lệ: '{niche}'. "
+                    "Dùng kebab-case (a-z, 0-9, dấu -). Ví dụ: `skincare-acne`."
                 )
-                # Post-run hooks: update _index.md + LATEST.md (best-effort, không crash UI)
+                return
+
+            # Clear pipeline result cũ trước khi chạy mới
+            if "pipeline_result" in st.session_state:
+                del st.session_state["pipeline_result"]
+
+            # Run pipeline
+            st.subheader("2️⃣ Đang chạy")
+            if source_mode == "scrape":
+                st.caption("⏰ Pipeline mất 2-5 phút (scrape TikTok). **Đừng đóng tab hoặc bấm refresh.**")
+            else:
+                st.caption(f"⏰ Pipeline mất 1-3 phút ({len(valid_lines)} comment paste). **Đừng đóng tab.**")
+
+            start_time = time.time()
+            with st.status("Đang khởi động...", expanded=True) as status:
                 try:
-                    post_run_hook(
-                        project_root=PROJECT_ROOT,
-                        output_root=OUTPUT_ROOT,
-                        output_dir=result["output_dir"],
-                        classified_path=result["classified_path"],
-                        niche=niche,
-                        user=user,
-                        num_videos=len(urls_list),
-                        with_brief=with_brief,
-                        duration_s=duration,
-                        cost_est_usd=cost,
-                        brief_path=result.get("brief_path"),
+                    if source_mode == "paste":
+                        result = run_pipeline(
+                            urls=[], niche=niche, user=user,
+                            max_comments=max_comments, with_brief=with_brief,
+                            num_angles=num_angles, status=status,
+                            comments_paste=comments_paste, platform=platform,
+                        )
+                    else:
+                        result = run_pipeline(
+                            urls=urls_list, niche=niche, user=user,
+                            max_comments=max_comments, with_brief=with_brief,
+                            num_angles=num_angles, status=status,
+                        )
+                    duration = time.time() - start_time
+                    cost = estimate_cost(result["num_comments"], with_brief, mode=source_mode)
+                    log_run(
+                        user=user, niche=niche,
+                        num_urls=len(urls_list) if source_mode == "scrape" else 0,
+                        num_comments=result["num_comments"],
+                        with_brief=with_brief, duration_s=duration,
+                        status="success", cost_est=cost,
                     )
-                except Exception as hook_err:
-                    st.warning(f"Index/LATEST update lỗi (không ảnh hưởng kết quả): {hook_err}")
+                    # Post-run hooks (best-effort)
+                    try:
+                        post_run_hook(
+                            project_root=PROJECT_ROOT,
+                            output_root=OUTPUT_ROOT,
+                            output_dir=result["output_dir"],
+                            classified_path=result["classified_path"],
+                            niche=niche,
+                            user=user,
+                            num_videos=len(urls_list),
+                            with_brief=with_brief,
+                            duration_s=duration,
+                            cost_est_usd=cost,
+                            brief_path=result.get("brief_path"),
+                        )
+                    except Exception as hook_err:
+                        st.warning(f"Index/LATEST update lỗi (không ảnh hưởng kết quả): {hook_err}")
 
-                st.subheader("3️⃣ Kết quả")
-                render_results(result, with_brief, duration)
+                    # 💾 SAVE vào session_state để persist qua re-run (click checkbox, etc.)
+                    st.session_state["pipeline_result"] = {
+                        "result": result,
+                        "with_brief": with_brief,
+                        "duration": duration,
+                        "niche": niche,
+                        "user": user,
+                    }
+                except Exception as e:
+                    duration = time.time() - start_time
+                    log_run(
+                        user=user, niche=niche,
+                        num_urls=len(urls_list) if source_mode == "scrape" else 0,
+                        num_comments=0,
+                        with_brief=with_brief, duration_s=duration,
+                        status="error", cost_est=0.0,
+                    )
+                    status.update(label=f"❌ Lỗi: {type(e).__name__}", state="error")
+                    st.error(f"Pipeline lỗi: {e}")
+                    st.exception(e)
 
-                # Bước 2-4: Sắp xếp + chọn insight + upload Drive
-                render_handoff_section(result, niche, user)
-
-            except Exception as e:
-                duration = time.time() - start_time
-                log_run(
-                    user=user, niche=niche,
-                    num_urls=len(urls_list) if source_mode == "scrape" else 0,
-                    num_comments=0,
-                    with_brief=with_brief, duration_s=duration,
-                    status="error", cost_est=0.0,
-                )
-                status.update(label=f"❌ Lỗi: {type(e).__name__}", state="error")
-                st.error(f"Pipeline lỗi: {e}")
-                st.exception(e)
+        # ALWAYS render Section 3 + 4 từ session_state nếu có (persist qua re-run)
+        if "pipeline_result" in st.session_state:
+            saved = st.session_state["pipeline_result"]
+            st.subheader("3️⃣ Kết quả")
+            render_results(saved["result"], saved["with_brief"], saved["duration"])
+            render_handoff_section(saved["result"], saved["niche"], saved["user"])
 
     finally:
         # Always render landing sections — chạy DÙ return ở đâu trong try block
