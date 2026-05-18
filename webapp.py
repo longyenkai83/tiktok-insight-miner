@@ -721,12 +721,81 @@ LOG_HEADER = [
 ]
 
 
+def _infer_output_dir_from_log(row: dict) -> str:
+    """v0.6 fix: cho rows cũ KHÔNG có output_dir, infer path từ niche + date.
+
+    Convention thử (theo postrun.resolve_output_dir + paste mode):
+    - output/<niche>/<date>/
+    - output/<niche>/<date>__<safe_user>/
+    - output/<niche>/<date>__manual-import/  (paste mode)
+
+    Trả path đầu tiên tồn tại + có ≥1 file. Trả "" nếu không tìm thấy.
+    """
+    niche = (row.get("niche") or "").strip()
+    user = (row.get("user") or "").strip()
+    ts = (row.get("timestamp") or "").strip()
+    if not niche or not ts:
+        return ""
+    try:
+        run_date = ts[:10]  # YYYY-MM-DD
+    except Exception:
+        return ""
+
+    safe_user = re.sub(r"[^a-z0-9_-]", "-", user.lower()) or "anon"
+    candidates = [
+        OUTPUT_ROOT / niche / run_date,
+        OUTPUT_ROOT / niche / f"{run_date}__{safe_user}",
+        OUTPUT_ROOT / niche / f"{run_date}__manual-import",
+    ]
+    for path in candidates:
+        if path.exists() and any(path.iterdir()):
+            return str(path)
+    return ""
+
+
+def _migrate_log_header_if_needed() -> None:
+    """v0.6 fix: nếu CSV cũ có header thiếu column output_dir → migrate.
+
+    Re-write file với header mới + pad rows cũ với output_dir="" để
+    csv.DictReader đọc đúng. Idempotent — chỉ chạy 1 lần.
+    """
+    if not LOG_PATH.exists():
+        return
+    try:
+        with open(LOG_PATH, "r", encoding="utf-8-sig") as f:
+            reader = csv.reader(f)
+            existing_header = next(reader, None)
+            if not existing_header or "output_dir" in existing_header:
+                return  # OK, không cần migrate
+            data_rows = list(reader)
+
+        # Migrate: write new header + pad rows
+        with open(LOG_PATH, "w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.writer(f)
+            writer.writerow(LOG_HEADER)
+            target_len = len(LOG_HEADER)
+            for row in data_rows:
+                # Pad missing columns với chuỗi rỗng (output_dir của row cũ = "")
+                if len(row) < target_len:
+                    row = row + [""] * (target_len - len(row))
+                elif len(row) > target_len:
+                    row = row[:target_len]
+                writer.writerow(row)
+    except Exception as e:
+        # Migration fail không fail pipeline — log warning thôi
+        import logging
+        logging.getLogger(__name__).warning("CSV log migrate failed: %s", e)
+
+
 def log_run(
     user: str, niche: str, num_urls: int, num_comments: int,
     with_brief: bool, duration_s: float, status: str, cost_est: float,
     output_dir: str | None = None,
 ) -> None:
     # utf-8-sig (BOM) để Excel mở đúng tiếng Việt; tránh mojibake (TuÃ¢Ìn → Tuấn)
+    # v0.6: auto-migrate header nếu file cũ thiếu column output_dir
+    _migrate_log_header_if_needed()
+
     is_new = not LOG_PATH.exists()
     with open(LOG_PATH, "a", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
@@ -1017,6 +1086,8 @@ def render_sidebar() -> tuple[str, int, bool, int, bool]:
         st.header("📚 10 runs gần nhất")
         st.caption("👆 Click vào run để xem lại + tải file")
         if LOG_PATH.exists():
+            # v0.6 fix: auto-migrate header trước khi đọc (rows cũ thiếu output_dir)
+            _migrate_log_header_if_needed()
             with open(LOG_PATH, "r", encoding="utf-8-sig") as f:
                 rows = list(csv.DictReader(f))[-10:][::-1]
             for idx, r in enumerate(rows):
@@ -1026,8 +1097,10 @@ def render_sidebar() -> tuple[str, int, bool, int, bool]:
                     f"{icon} {ts} · {r.get('user', '?')} · {r.get('niche', '?')[:20]}\n"
                     f"{r.get('num_comments', '0')}cmt · ${r.get('cost_est_usd', '0')}"
                 )
-                # Chỉ run success + có output_dir mới clickable
-                out_dir = r.get("output_dir", "").strip()
+                # v0.6: nếu output_dir empty (run cũ trước commit bd0e2bf), infer path
+                out_dir = (r.get("output_dir") or "").strip()
+                if not out_dir and r.get("status") == "success":
+                    out_dir = _infer_output_dir_from_log(r)
                 if r.get("status") == "success" and out_dir:
                     if st.button(label, key=f"hist_{idx}_{ts}", use_container_width=True):
                         st.session_state["selected_history_run"] = {
