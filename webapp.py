@@ -28,6 +28,11 @@ from tiktok_insight_miner.cowork_exporter import (
     upload_run_files_to_drive_api,
     upload_run_files_to_drive_local,
 )
+from tiktok_insight_miner.cowork_pack import (
+    generate_cowork_pack,
+    parse_brief_angles,
+    save_cowork_pack,
+)
 from tiktok_insight_miner.insight_bank import build_insight_bank
 from tiktok_insight_miner.models import Comment
 from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
@@ -1577,6 +1582,175 @@ def render_results(result: dict, with_brief: bool, duration: float) -> None:
     if has_strategy:
         with tabs[tab_idx]:
             st.markdown(result["strategy_path"].read_text(encoding="utf-8"))
+
+    # v0.7 — Stage C: CoWork Brief Pack section
+    if with_brief and result.get("brief_path"):
+        render_cowork_pack_section(result)
+
+
+def render_cowork_pack_section(result: dict) -> None:
+    """v0.7 — Stage C Refinement: cherry-pick 3-5 angle từ brief → CoWork Pack.
+
+    User tick chọn angles + chọn platform → generate file `cowork-brief-pack_*.md`
+    để Hiền paste vào CoWork. KHÔNG đụng file cũ (chỉ read brief.md + create new).
+    """
+    st.markdown("---")
+    st.subheader("📦 Build CoWork Pack (Stage C — Tinh lọc)")
+    st.caption(
+        "Cherry-pick 3-5 angle TỐT NHẤT từ brief 10 angles → 1 file 'data tinh' để Hiền "
+        "paste vào CoWork viết bài. KHÔNG đụng file cũ."
+    )
+
+    brief_path = result["brief_path"]
+    try:
+        angles = parse_brief_angles(brief_path)
+    except Exception as e:
+        st.error(f"❌ Parse brief.md fail: {e}")
+        return
+
+    if not angles:
+        st.warning("⚠️ Không parse được angle nào từ brief.md. Brief format có đúng chuẩn không?")
+        return
+
+    output_dir = result["output_dir"]
+    niche_slug = output_dir.parent.parent.name if output_dir.parent.parent.name != "output" else "unknown"
+
+    # Try load niche persona để show niche_name đẹp
+    try:
+        from tiktok_insight_miner.suggester import load_niche_persona
+        cfg = load_niche_persona(niche_slug)
+        niche_name = cfg.get("niche_name", niche_slug) if cfg else niche_slug
+    except Exception:
+        niche_name = niche_slug
+
+    # UI: cherry-pick + settings
+    col_left, col_right = st.columns([2, 1])
+
+    with col_left:
+        st.markdown(f"**📋 Chọn 3-5 angle muốn dùng** (từ {len(angles)} angles trong brief):")
+        selected_indices: list[int] = []
+        for a in angles:
+            label = (
+                f"**#{a['idx']}** — {a['title'][:60]} "
+                f"`[{a['demand_likes']} likes · {a['confidence']:.2f}]`"
+            )
+            if st.checkbox(label, key=f"angle_pick_{a['idx']}", help=a.get("hook", "")[:200]):
+                selected_indices.append(a["idx"])
+
+    with col_right:
+        st.markdown("**⚙️ Settings**")
+        platform = st.selectbox(
+            "Target platform",
+            ["Fanpage", "TikTok", "Fanpage + TikTok"],
+            index=0,
+            key="cowork_platform",
+        )
+        voice_slug = st.selectbox(
+            "Voice profile",
+            ["chi-hien", "(none)"],
+            index=0,
+            key="cowork_voice",
+            help="Persona viết — chi-hien = chị Hiền (default)",
+        )
+
+    n_selected = len(selected_indices)
+    if n_selected == 0:
+        st.info("👆 Tick chọn 3-5 angle ở trên để generate Pack")
+        return
+    if n_selected < 3:
+        st.warning(f"⚠️ Mới chọn {n_selected} — recommend ≥3 angle cho 1 pack")
+    elif n_selected > 5:
+        st.warning(f"⚠️ Chọn {n_selected} — recommend ≤5 (quá nhiều = Hiền khó focus)")
+
+    if st.button(
+        f"📦 Generate CoWork Pack ({n_selected} angles)",
+        type="primary",
+        key="cowork_gen_btn",
+        use_container_width=True,
+    ):
+        with st.spinner("Đang generate CoWork Pack..."):
+            try:
+                selected_angles = [a for a in angles if a["idx"] in selected_indices]
+                run_id = output_dir.name  # vd "2026-05-17" hoặc "2026-05-17__tuan"
+
+                # Get drive folder URL nếu có
+                drive_url = ""
+                drive_info = result.get("drive_run_info")
+                if drive_info:
+                    drive_url = drive_info.get("folder_web_link", "")
+
+                pack_content = generate_cowork_pack(
+                    selected_angles=selected_angles,
+                    niche_name=niche_name,
+                    niche_slug=niche_slug,
+                    run_id=run_id,
+                    drive_folder_url=drive_url,
+                    platform=platform,
+                    voice_profile_slug=voice_slug if voice_slug != "(none)" else "",
+                    total_comments=result.get("num_comments", 0),
+                )
+
+                pack_filename = f"cowork-brief-pack_{datetime.now().strftime('%H%M')}.md"
+                pack_path = output_dir / pack_filename
+                save_cowork_pack(pack_content, pack_path)
+
+                # Save vào session_state để persist qua re-run
+                st.session_state["cowork_pack_content"] = pack_content
+                st.session_state["cowork_pack_path"] = str(pack_path)
+                st.session_state["cowork_pack_filename"] = pack_filename
+
+                # Best-effort upload Drive
+                drive_folder_id = os.environ.get("INSIGHTS_PACK_DRIVE_FOLDER_ID", "").strip()
+                gdrive_json = os.environ.get("GDRIVE_SERVICE_ACCOUNT_JSON", "").strip()
+                if drive_folder_id and gdrive_json:
+                    try:
+                        drive_pack_info = upload_run_files_to_drive_api(
+                            files={"cowork_pack": pack_path},
+                            niche_slug=niche_slug,
+                            user=result.get("user", "anon"),
+                            root_folder_id=drive_folder_id,
+                            service_account_json=gdrive_json,
+                        )
+                        if drive_pack_info:
+                            st.session_state["cowork_pack_drive"] = drive_pack_info
+                    except Exception as e:
+                        st.warning(f"⚠️ Upload Drive fail (pack vẫn save local): {e}")
+
+                st.success(f"✅ CoWork Pack generated — {len(pack_content)} chars")
+            except Exception as e:
+                st.error(f"❌ Generate fail: {e}")
+                st.exception(e)
+
+    # ALWAYS render kết quả từ session_state (persist qua re-run)
+    if "cowork_pack_content" in st.session_state:
+        st.markdown("---")
+        st.markdown("### 🎁 CoWork Pack ready")
+
+        col_dl, col_drive = st.columns(2)
+        with col_dl:
+            st.download_button(
+                f"⬇️ Tải {st.session_state.get('cowork_pack_filename', 'cowork-pack.md')}",
+                data=st.session_state["cowork_pack_content"],
+                file_name=st.session_state.get("cowork_pack_filename", "cowork-pack.md"),
+                mime="text/markdown",
+                type="primary",
+                use_container_width=True,
+                key="cowork_dl_btn",
+            )
+        with col_drive:
+            drive_pack = st.session_state.get("cowork_pack_drive")
+            if drive_pack and drive_pack.get("uploaded_files"):
+                first = drive_pack["uploaded_files"][0]
+                link = first.get("web_link", "")
+                if link:
+                    st.link_button(
+                        "🔗 Mở trên Google Drive",
+                        url=link,
+                        use_container_width=True,
+                    )
+
+        with st.expander("👁 Preview CoWork Pack content", expanded=False):
+            st.markdown(st.session_state["cowork_pack_content"])
 
 
 def _render_landing_sections() -> None:
