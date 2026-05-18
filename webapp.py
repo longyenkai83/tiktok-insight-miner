@@ -1082,6 +1082,31 @@ def render_sidebar() -> tuple[str, int, bool, int, bool]:
             ),
         )
 
+        # v0.7: Backup section — safety net trước khi push code mới
+        st.divider()
+        st.header("🔒 Backup")
+        st.caption("Tải về file log + folder list trước khi anh push code mới")
+        if LOG_PATH.exists():
+            log_bytes = LOG_PATH.read_bytes()
+            st.download_button(
+                "📥 Backup usage_log.csv",
+                data=log_bytes,
+                file_name=f"usage_log_backup_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                help="Tải về snapshot log Railway Volume hiện tại. Cất an toàn ở local.",
+                key="backup_log_btn",
+            )
+            # Show size + row count
+            try:
+                with open(LOG_PATH, "r", encoding="utf-8-sig") as _f:
+                    _row_count = sum(1 for _ in _f) - 1  # trừ header
+                st.caption(f"📊 {_row_count} rows · {len(log_bytes) / 1024:.1f} KB")
+            except Exception:
+                pass
+        else:
+            st.caption("_Chưa có log file._")
+
         st.divider()
         st.header("📚 10 runs gần nhất")
         st.caption("👆 Click vào run để xem lại + tải file")
