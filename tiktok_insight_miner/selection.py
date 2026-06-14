@@ -177,15 +177,39 @@ DEFAULT_NEXT_STEP = "generate_production_brief"
 
 
 def _truncate_for_table(s: str, n: int = 100) -> str:
-    """Truncate quote cho cell table — escape `|` để không phá format."""
+    """Truncate quote cho cell table — escape `|` để không phá format.
+
+    CHỈ dùng cho VISUAL trong md cell, KHÔNG phải key dedup. Key dedup dùng
+    _dedup_key() để tránh data drift giữa md (truncated) vs json (full).
+    """
     s = re.sub(r"\s+", " ", s).strip().replace("|", "\\|")
     return s if len(s) <= n else s[: n - 1].rstrip() + "…"
 
 
-def parse_existing_pipeline(pipeline_path: Path) -> dict[str, dict[str, str]]:
-    """Parse content-pipeline.md cũ (nếu có) → dict {full_quote: row_dict}.
+def _dedup_key(quote: str) -> str:
+    """Bug 2 fix: 1 key dedup duy nhất cho cả md + json.
 
-    Chỉ parse phần table, bỏ qua header/stats. Dùng quote (đã unescape) làm key dedup.
+    Normalize whitespace, lowercase đầu/cuối, KHÔNG truncate. Đảm bảo:
+    - 2 quote khác nhau nhưng cùng prefix 100 ký tự → KHÔNG bị collide trong md
+    - md và json luôn cùng kết quả dedup (không drift)
+
+    Trước fix:
+    - merge_pipeline: dedup theo _truncate_for_table (100 char, có "…")
+    - write_selected_angles_json: dedup theo full quote
+    → 2 quote dài chia sẻ prefix → md gộp 1 row, json giữ 2 entries → MISMATCH.
+    """
+    return re.sub(r"\s+", " ", quote or "").strip()
+
+
+def parse_existing_pipeline(pipeline_path: Path) -> dict[str, dict[str, str]]:
+    """Parse content-pipeline.md cũ (nếu có) → dict {dedup_key: row_dict}.
+
+    Bug 2 fix: key dedup = _dedup_key(cell_quote). Cell quote là TRUNCATED
+    (md cell only stores truncated text + "…" suffix), nên md-level key sẽ
+    là truncated normalized form. Mismatch với new full quote vẫn có thể
+    xảy ra với legacy md. → Source of truth nên là selected_angles.json.
+
+    Chỉ parse phần table, bỏ qua header/stats.
     """
     if not pipeline_path.exists():
         return {}
@@ -222,7 +246,8 @@ def parse_existing_pipeline(pipeline_path: Path) -> dict[str, dict[str, str]]:
             "source_run": cells[6],
             "next_step": cells[7],
         }
-        rows_by_quote[row["quote"]] = row
+        # Bug 2 fix: use _dedup_key (consistent with merge_pipeline + json)
+        rows_by_quote[_dedup_key(row["quote"])] = row
 
     return rows_by_quote
 
@@ -246,18 +271,21 @@ def merge_pipeline(
 
     for item in new_items:
         full_quote = item["quote"]
-        quote_truncated = _truncate_for_table(full_quote)
+        # Bug 2 fix: dedup theo FULL quote normalized (cùng key với json),
+        # KHÔNG dùng truncated (gây drift giữa md vs json).
+        key = _dedup_key(full_quote)
+        quote_cell = _truncate_for_table(full_quote)  # display in cell
 
-        if quote_truncated in merged:
+        if key in merged:
             # Đã có → giữ row cũ (status có thể đã đổi tay)
             continue
 
-        merged[quote_truncated] = {
+        merged[key] = {
             "id": item["id"],
             "status": DEFAULT_STATUS,
             "score": str(item["score"]),
             "problem": item["problem_code"],
-            "quote": quote_truncated,
+            "quote": quote_cell,  # cell display (truncated for table format)
             "author": f"@{item['author']}",
             "source_run": source_run,
             "next_step": DEFAULT_NEXT_STEP,
@@ -329,14 +357,37 @@ def write_selected_angles_json(
     if json_path.exists():
         try:
             existing = json.loads(json_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            logger.warning("selected_angles.json corrupted — overwrite")
+        except json.JSONDecodeError as e:
+            # Bug 3 fix: BACKUP file corrupt thay vì nuốt error + ghi đè sạch.
+            # Backup file name có timestamp để không overwrite backup cũ.
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_path = json_path.with_name(
+                f"{json_path.stem}.corrupted_{ts}.bak{json_path.suffix}"
+            )
+            try:
+                import shutil
+                shutil.copy2(json_path, backup_path)
+                logger.error(
+                    "selected_angles.json corrupted (%s) — backup saved → %s. "
+                    "TIẾP TỤC với existing=[] (giữ data mới, data cũ còn ở backup).",
+                    e, backup_path,
+                )
+            except Exception as backup_err:
+                logger.error(
+                    "selected_angles.json corrupted (%s) AND backup FAILED (%s) — "
+                    "STOPPING để tránh mất data. Anh check file %s thủ công.",
+                    e, backup_err, json_path,
+                )
+                raise RuntimeError(
+                    f"selected_angles.json corrupted, backup failed: {backup_err}"
+                ) from e
 
-    existing_quotes = {item.get("quote") for item in existing}
+    # Bug 2 fix: dedup key = _dedup_key (cùng với merge_pipeline + md)
+    existing_quotes = {_dedup_key(item.get("quote", "")) for item in existing}
 
     selected_at = datetime.now().isoformat(timespec="seconds")
     for item in new_items:
-        if item["quote"] in existing_quotes:
+        if _dedup_key(item["quote"]) in existing_quotes:
             continue
         # Strip _md duplicate fields, keep clean output
         clean = {
