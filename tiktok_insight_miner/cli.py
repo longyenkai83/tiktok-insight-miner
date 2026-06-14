@@ -519,11 +519,14 @@ def cmd_run(args: argparse.Namespace) -> None:
     if args.with_angles:
         print(f"\n[4/{total_stages}] Generating content angle brief...")
         suggester_model = args.suggester_model or args.model
+        # Bug 5 fix: truyền niche_slug tường minh thay vì để generate_brief
+        # auto-detect (trượt khi output_dir là ./output → persona tắt ngầm).
         angles = generate_brief(
             classified,
             brief_path,
             num_angles=args.num_angles,
             model=suggester_model,
+            niche_slug=args.niche,
         )
         if angles:
             print(f"✓ {len(angles)} angles → {brief_path}")
@@ -823,6 +826,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument(
         "--suggester-model", type=str, default=None,
         help="Override model riêng cho suggester (default = --model hoặc Opus 4.7)",
+    )
+    p_run.add_argument(
+        "--niche", type=str, default=None,
+        help=(
+            "Niche slug để load persona + meta_pains (Persona-Aware Layer). "
+            "Nếu KHÔNG truyền, suggester sẽ thử auto-detect từ output path — "
+            "với --output-dir mặc định ./output, auto-detect sẽ TRƯỢT và persona TẮT NGẦM. "
+            "Truyền tường minh (vd --niche kinh-doanh-27-45) để chắc chắn persona load."
+        ),
     )
     p_run.set_defaults(func=cmd_run)
 

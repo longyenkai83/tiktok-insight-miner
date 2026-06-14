@@ -81,7 +81,12 @@ def parse_brief_angles(brief_md_path: Path) -> list[dict]:
         insight_m = re.search(r'\*\*Target insight\*\*:\s*\n>\s*"([^"]+)"', block, re.DOTALL)
         # Hook có thể trên nhiều dòng
         hook_m = re.search(r"\*\*🎣 Hook[^*]*\*\*:?\s*\n>\s*(.+?)(?=\n\n|\*\*)", block, re.DOTALL)
-        cta_m = re.search(r"\*\*🔔 CTA[^*]*:?\*\*\s*(.+?)(?=\n\n|\n---|\Z)", block, re.DOTALL)
+        # Bug 6 fix: dấu ":" có thể nằm SAU `**` close (vd "**🔔 CTA (peer)**:"),
+        # không phải bên trong. Cho phép optional ":" + optional "> " (blockquote) sau **.
+        cta_m = re.search(
+            r"\*\*🔔 CTA[^*]*\*\*:?\s*(?:>\s*)?(.+?)(?=\n\n|\n---|\Z)",
+            block, re.DOTALL,
+        )
 
         angles.append({
             "idx": idx,

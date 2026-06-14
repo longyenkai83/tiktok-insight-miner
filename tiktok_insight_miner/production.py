@@ -269,10 +269,11 @@ def _generate_with_claude(
         "messages": [{"role": "user", "content": user}],
         "output_format": ProductionBrief,
     }
-    # Adaptive thinking cho Opus (creative quality)
-    if model.startswith("claude-opus-4-7") or model.startswith("claude-opus-4-6"):
+    # Bug 1 fix: match cả 4-6, 4-7, 4-8, 4-9...
+    # Bug 4 fix: BỎ output_config={"effort": "high"} — effort default = "high"
+    # (per claude-api skill); kèm output_format trên messages.parse() conflict → fallback
+    if model.startswith("claude-opus-4"):
         request_kwargs["thinking"] = {"type": "adaptive"}
-        request_kwargs["output_config"] = {"effort": "high"}
 
     response = client.messages.parse(**request_kwargs)
 

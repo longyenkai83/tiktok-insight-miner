@@ -268,8 +268,10 @@ def generate_strategy_analysis(
         "system": system_text,
         "messages": [{"role": "user", "content": user_prompt}],
     }
-    # Opus 4.7 supports adaptive thinking + effort cho task strategy
-    if model.startswith("claude-opus-4-7") or model.startswith("claude-opus-4-6"):
+    # Bug 1 fix: match cả 4-6, 4-7, 4-8, 4-9...
+    # messages.create() KHÔNG output_format → có thể thêm output_config={"effort":...}
+    # an toàn nếu cần. Tạm giữ chỉ thinking adaptive (effort default high).
+    if model.startswith("claude-opus-4"):
         request_kwargs["thinking"] = {"type": "adaptive"}
 
     response = client.messages.create(**request_kwargs)

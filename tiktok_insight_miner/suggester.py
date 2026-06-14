@@ -531,9 +531,12 @@ def generate_angles(
         "messages": [{"role": "user", "content": user_prompt}],
         "output_format": ContentAngleBrief,
     }
-    if model.startswith("claude-opus-4-7") or model.startswith("claude-opus-4-6"):
+    # Bug 1 fix: match cả 4-6, 4-7, 4-8, 4-9... thay vì hard-code 2 phiên bản
+    # Bug 4 fix: BỎ output_config={"effort": "high"} vì effort default = "high"
+    # (per claude-api skill); kèm output_format trên messages.parse() có thể conflict
+    # → fallback. Giữ thinking adaptive (an toàn, không xung đột với output_format).
+    if model.startswith("claude-opus-4"):
         request_kwargs["thinking"] = {"type": "adaptive"}
-        request_kwargs["output_config"] = {"effort": "high"}
 
     response = client.messages.parse(**request_kwargs)
 
