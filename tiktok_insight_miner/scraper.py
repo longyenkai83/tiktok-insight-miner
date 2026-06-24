@@ -6,12 +6,47 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Any
 
 from apify_client import ApifyClient
 
 from tiktok_insight_miner.models import Comment
 
 logger = logging.getLogger(__name__)
+
+
+def _extract_dataset_id(run: Any) -> str | None:
+    """Extract defaultDatasetId từ Apify run response — support cả dict (SDK cũ)
+    và Run Pydantic object (apify-client v2+).
+
+    SDK update breaking change:
+    - v1.x: client.actor().call() trả dict → run.get("defaultDatasetId")
+    - v2.x: trả Run Pydantic → run.default_dataset_id (snake_case attribute)
+    """
+    # Try Pydantic attribute (SDK mới)
+    dataset_id = getattr(run, "default_dataset_id", None)
+    if dataset_id:
+        return str(dataset_id)
+    # Try camelCase attribute (variant)
+    dataset_id = getattr(run, "defaultDatasetId", None)
+    if dataset_id:
+        return str(dataset_id)
+    # Try dict access (SDK cũ)
+    if hasattr(run, "get"):
+        try:
+            dataset_id = run.get("defaultDatasetId")
+            if dataset_id:
+                return str(dataset_id)
+        except (AttributeError, TypeError):
+            pass
+    # Last resort: cast Pydantic → dict
+    if hasattr(run, "model_dump"):
+        try:
+            d = run.model_dump()
+            return d.get("defaultDatasetId") or d.get("default_dataset_id")
+        except Exception:
+            pass
+    return None
 
 
 def scrape_tiktok_comments(
@@ -54,9 +89,12 @@ def scrape_tiktok_comments(
     if not run:
         raise RuntimeError("Apify run trả về None")
 
-    dataset_id = run.get("defaultDatasetId")
+    dataset_id = _extract_dataset_id(run)
     if not dataset_id:
-        raise RuntimeError(f"Apify run không có defaultDatasetId: {run}")
+        raise RuntimeError(
+            f"Apify run không có defaultDatasetId. Run type: {type(run).__name__}, "
+            f"attrs: {[a for a in dir(run) if not a.startswith('_')][:10]}"
+        )
 
     comments: list[Comment] = []
     for item in client.dataset(dataset_id).iterate_items():
@@ -128,9 +166,11 @@ def scrape_facebook_comments(
     if not run:
         raise RuntimeError("Apify FB run trả về None")
 
-    dataset_id = run.get("defaultDatasetId")
+    dataset_id = _extract_dataset_id(run)
     if not dataset_id:
-        raise RuntimeError(f"Apify FB run không có defaultDatasetId: {run}")
+        raise RuntimeError(
+            f"Apify FB run không có defaultDatasetId. Run type: {type(run).__name__}"
+        )
 
     comments: list[Comment] = []
     for item in client.dataset(dataset_id).iterate_items():
