@@ -54,6 +54,43 @@ class Comment(BaseModel):
             raw=item,
         )
 
+    @classmethod
+    def from_apify_facebook_item(cls, item: dict[str, Any]) -> Comment:
+        """Map item từ apify/facebook-comments-scraper sang Comment.
+
+        FB output schema khác TikTok:
+        - commentId / id / feedbackId → id
+        - text → text
+        - profileName → author
+        - likesCount → likes
+        - date (ISO) → created_at
+        - facebookUrl (link post gốc) → video_url (giữ trace gốc về post)
+        - threadingDepth (0 = top-level, >0 = nested reply) → ghi vào raw
+
+        Note: FB scraper KHÔNG cung cấp reply count cho mỗi comment (chỉ
+        cho biết comment này nested ở depth nào). reply_count = 0 default.
+        """
+        return cls(
+            id=str(
+                item.get("commentId")
+                or item.get("id")
+                or item.get("feedbackId")
+                or item.get("facebookId")
+                or ""
+            ),
+            text=item.get("text", "") or "",
+            author=item.get("profileName", "") or "",
+            likes=int(item.get("likesCount", 0) or 0),
+            reply_count=0,  # FB actor không trả reply_count per comment
+            created_at=str(item.get("date") or ""),
+            video_url=item.get("facebookUrl") or item.get("postUrl") or "",
+            raw={
+                **item,
+                "_platform": "facebook",  # đánh dấu nguồn để trace
+                "_thread_depth": item.get("threadingDepth", 0),
+            },
+        )
+
 
 class ClassificationResult(BaseModel):
     """Kết quả classify cho 1 comment — schema cho Claude trả về."""

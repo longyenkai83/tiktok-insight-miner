@@ -37,7 +37,11 @@ from tiktok_insight_miner.insight_bank import build_insight_bank
 from tiktok_insight_miner.models import Comment
 from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
 from tiktok_insight_miner.reporter import generate_report
-from tiktok_insight_miner.scraper import save_comments_json, scrape_tiktok_comments
+from tiktok_insight_miner.scraper import (
+    save_comments_json,
+    scrape_facebook_comments,
+    scrape_tiktok_comments,
+)
 from tiktok_insight_miner.selection import run_selection
 from tiktok_insight_miner.strategy_analyst import generate_strategy_analysis
 from tiktok_insight_miner.suggester import generate_brief
@@ -839,12 +843,20 @@ def estimate_cost(
     mode: str = "scrape",
     with_strategy: bool = False,
 ) -> float:
-    """Rough estimate (USD): Apify $0.001/cmt + Haiku classify $0.0003/cmt +
+    """Rough estimate (USD): Apify cost + Haiku classify $0.0003/cmt +
     brief $0.02 + strategy $0.07.
 
-    Mode 'paste' → không có Apify cost (chỉ classify + brief + strategy).
+    Apify cost theo mode:
+    - "scrape" (TikTok): $0.001/cmt
+    - "scrape_fb" (Facebook): $0.0014/cmt
+    - "paste" (manual): $0 (no Apify)
     """
-    apify = num_comments * 0.001 if mode == "scrape" else 0.0
+    if mode == "scrape":
+        apify = num_comments * 0.001
+    elif mode == "scrape_fb":
+        apify = num_comments * 0.0014
+    else:  # paste
+        apify = 0.0
     brief = 0.02 if with_brief else 0.0
     strategy = 0.07 if (with_brief and with_strategy) else 0.0
     return apify + num_comments * 0.0003 + brief + strategy
@@ -890,6 +902,7 @@ def run_pipeline(
     comments_paste: str | None = None,
     platform: str = "manual",
     with_strategy: bool = True,
+    source_mode: str = "scrape",  # "scrape" (TikTok) / "scrape_fb" (Facebook) / "paste"
 ) -> dict:
     """Chạy pipeline, update progress qua status block. Trả về dict paths + counts.
 
@@ -900,11 +913,23 @@ def run_pipeline(
     v0.5 (Stage 5): with_strategy → generate phan-tich-toan-dien.md (Canvas + Chấm brief + Synthesis)
     """
     today = date.today().isoformat()
-    mode = "paste" if comments_paste else "scrape"
+    # source_mode override: nếu paste mode trùng thì giữ "paste".
+    # Nếu caller pass source_mode="scrape_fb" → dùng FB, else default "scrape" (TikTok).
+    if comments_paste:
+        mode = "paste"
+    else:
+        mode = source_mode if source_mode in ("scrape", "scrape_fb") else "scrape"
 
     if mode == "paste":
         # Convention giống tim import-comments: thêm suffix __manual-import
         output_dir = OUTPUT_ROOT / niche / f"{today}__manual-import"
+    elif mode == "scrape_fb":
+        # FB scrape: phân biệt với TikTok bằng suffix __fb
+        output_dir = OUTPUT_ROOT / niche / f"{today}__fb"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        # Nếu folder đã tồn tại với user khác, dùng resolve để tránh conflict
+        from tiktok_insight_miner.postrun import resolve_output_dir as _resolve
+        output_dir = _resolve(OUTPUT_ROOT / niche, f"{today}__fb", "", user) if False else output_dir
     else:
         output_dir = resolve_output_dir(OUTPUT_ROOT, niche, today, user)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -927,6 +952,21 @@ def run_pipeline(
         if not comments:
             raise RuntimeError(
                 "Không parse được comment nào — kiểm tra paste có nội dung không + mỗi dòng tối thiểu 5 ký tự."
+            )
+    elif mode == "scrape_fb":
+        status.update(
+            label=f"📘 [1/{total_stages}] Đang scrape Facebook comments (Apify)...",
+            state="running",
+        )
+        comments = scrape_facebook_comments(
+            urls, max_comments_per_post=max_comments,
+        )
+        save_comments_json(comments, raw_path)
+        status.write(f"✓ Scraped **{len(comments)}** FB comments từ {len(urls)} posts")
+        if not comments:
+            raise RuntimeError(
+                "Không scrape được FB comment nào — URLs có phải public post không? "
+                "Comment đã bị disable? Post bị xoá?"
             )
     else:
         status.update(label=f"🔍 [1/{total_stages}] Đang scrape TikTok comments (Apify)...", state="running")
@@ -1797,14 +1837,16 @@ def main() -> None:
             help="kebab-case, không khoảng trắng. Output → output/<niche>/<today>[__manual-import]/",
         ).strip().lower()
 
-        # 2 tab: scrape URL HOẶC paste comment
-        tab_url, tab_paste = st.tabs([
+        # 3 tab: scrape TikTok / scrape Facebook / paste comment
+        tab_url, tab_fb, tab_paste = st.tabs([
             "🎬 Scrape TikTok URL (auto Apify)",
+            "📘 Scrape Facebook URL (auto Apify, $0.0014/cmt)",
             "✍️ Paste comment thủ công (FB / YT / nguồn khác)",
         ])
 
         submit = False
         urls_list: list[str] = []
+        fb_urls_list: list[str] = []
         comments_paste = ""
         platform = "manual"
         source_mode = "scrape"
@@ -1845,6 +1887,55 @@ def main() -> None:
             if submit_url:
                 submit = True
                 source_mode = "scrape"
+
+        with tab_fb:
+            st.caption(
+                "📘 Scrape comment từ post Facebook PUBLIC (Fanpage / user public). "
+                "Dùng actor `apify/facebook-comments-scraper` — không cần FB login. "
+                "**Cost ~$0.0014/cmt** (đắt hơn TikTok 40%, nhưng không cần copy tay)."
+            )
+            fb_urls_text = st.text_area(
+                "Facebook post URLs (mỗi dòng 1 cái, # = comment)",
+                placeholder=(
+                    "https://www.facebook.com/PageName/posts/123\n"
+                    "https://www.facebook.com/permalink.php?story_fbid=...\n"
+                    "# Có thể paste link post / reel / video Facebook public"
+                ),
+                height=140,
+                key="fb_urls_input",
+            )
+            fb_urls_list = [
+                u.strip() for u in fb_urls_text.splitlines()
+                if u.strip() and not u.strip().startswith("#")
+            ]
+
+            if fb_urls_list:
+                est_total_fb = len(fb_urls_list) * max_comments
+                est_cost_fb = estimate_cost(
+                    est_total_fb, with_brief, mode="scrape_fb", with_strategy=with_strategy
+                )
+                st.info(
+                    f"📊 **Preview**: {len(fb_urls_list)} posts × {max_comments} = "
+                    f"~{est_total_fb} comments. "
+                    f"**Cost estimate ~${est_cost_fb:.2f}** (Apify FB $0.0014/cmt + Claude). "
+                    f"Pipeline mất ~{1 + len(fb_urls_list) * 0.5 + (1 if with_brief else 0):.0f}-"
+                    f"{2 + len(fb_urls_list) * 1 + (1 if with_brief else 0):.0f} phút."
+                )
+                st.caption(
+                    "⚠️ Lưu ý: chỉ scrape được post PUBLIC. Post của group/page hạn chế comment "
+                    "công khai sẽ trả ít hoặc 0 cmt."
+                )
+
+            submit_fb = st.button(
+                "🚀 Chạy pipeline (Scrape Facebook)",
+                type="primary",
+                disabled=not (niche and fb_urls_list),
+                use_container_width=True,
+                key="submit_fb",
+            )
+            if submit_fb:
+                submit = True
+                source_mode = "scrape_fb"
 
         with tab_paste:
             col_a, col_b = st.columns([2, 1])
@@ -1918,6 +2009,8 @@ def main() -> None:
             st.subheader("2️⃣ Đang chạy")
             if source_mode == "scrape":
                 st.caption("⏰ Pipeline mất 2-5 phút (scrape TikTok). **Đừng đóng tab hoặc bấm refresh.**")
+            elif source_mode == "scrape_fb":
+                st.caption(f"⏰ Pipeline mất 3-7 phút (scrape Facebook {len(fb_urls_list)} posts). **Đừng đóng tab.**")
             else:
                 st.caption(f"⏰ Pipeline mất 1-3 phút ({len(valid_lines)} comment paste). **Đừng đóng tab.**")
 
@@ -1931,6 +2024,15 @@ def main() -> None:
                             num_angles=num_angles, status=status,
                             comments_paste=comments_paste, platform=platform,
                             with_strategy=with_strategy,
+                            source_mode="paste",
+                        )
+                    elif source_mode == "scrape_fb":
+                        result = run_pipeline(
+                            urls=fb_urls_list, niche=niche, user=user,
+                            max_comments=max_comments, with_brief=with_brief,
+                            num_angles=num_angles, status=status,
+                            with_strategy=with_strategy,
+                            source_mode="scrape_fb",
                         )
                     else:
                         result = run_pipeline(
@@ -1938,12 +2040,17 @@ def main() -> None:
                             max_comments=max_comments, with_brief=with_brief,
                             num_angles=num_angles, status=status,
                             with_strategy=with_strategy,
+                            source_mode="scrape",
                         )
                     duration = time.time() - start_time
                     cost = estimate_cost(result["num_comments"], with_brief, mode=source_mode, with_strategy=with_strategy)
                     log_run(
                         user=user, niche=niche,
-                        num_urls=len(urls_list) if source_mode == "scrape" else 0,
+                        num_urls=(
+                            len(urls_list) if source_mode == "scrape"
+                            else len(fb_urls_list) if source_mode == "scrape_fb"
+                            else 0
+                        ),
                         num_comments=result["num_comments"],
                         with_brief=with_brief, duration_s=duration,
                         status="success", cost_est=cost,
@@ -1979,7 +2086,11 @@ def main() -> None:
                     duration = time.time() - start_time
                     log_run(
                         user=user, niche=niche,
-                        num_urls=len(urls_list) if source_mode == "scrape" else 0,
+                        num_urls=(
+                            len(urls_list) if source_mode == "scrape"
+                            else len(fb_urls_list) if source_mode == "scrape_fb"
+                            else 0
+                        ),
                         num_comments=0,
                         with_brief=with_brief, duration_s=duration,
                         status="error", cost_est=0.0,
