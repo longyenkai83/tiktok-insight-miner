@@ -55,6 +55,48 @@ class Comment(BaseModel):
         )
 
     @classmethod
+    def from_apify_facebook_group_comment(
+        cls, comment: dict[str, Any], post: dict[str, Any] | None = None,
+    ) -> Comment:
+        """Map 1 topComment trong post của apify/facebook-groups-scraper.
+
+        Output schema khác facebook-comments-scraper:
+        - Group scraper trả về posts, mỗi post có topComments array (limited)
+        - Mỗi comment trong topComments có: commentUrl, id, feedbackId, date,
+          text, profileUrl, profilePicture, profileId, profileName, likesCount,
+          threadingDepth
+
+        post (optional): pass thêm để giữ trace gốc về post (URL, postId, ...)
+        """
+        post = post or {}
+        return cls(
+            id=str(
+                comment.get("id")
+                or comment.get("feedbackId")
+                or comment.get("commentUrl", "").split("/")[-1]
+                or ""
+            ),
+            text=comment.get("text", "") or "",
+            author=comment.get("profileName", "") or "",
+            likes=int(comment.get("likesCount", 0) or 0),
+            reply_count=0,  # group scraper không trả per-comment reply count
+            created_at=str(comment.get("date") or ""),
+            video_url=(
+                comment.get("commentUrl")
+                or post.get("url")
+                or post.get("postUrl")
+                or ""
+            ),
+            raw={
+                **comment,
+                "_platform": "facebook_group",
+                "_thread_depth": comment.get("threadingDepth", 0),
+                "_post_url": post.get("url") or post.get("postUrl") or "",
+                "_post_id": post.get("postId") or post.get("id") or "",
+            },
+        )
+
+    @classmethod
     def from_apify_facebook_item(cls, item: dict[str, Any]) -> Comment:
         """Map item từ apify/facebook-comments-scraper sang Comment.
 

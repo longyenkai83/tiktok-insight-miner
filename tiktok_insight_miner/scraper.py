@@ -183,6 +183,85 @@ def scrape_facebook_comments(
     return comments
 
 
+def scrape_facebook_group_comments(
+    group_urls: list[str],
+    max_posts_per_group: int = 30,
+    apify_token: str | None = None,
+    actor_id: str | None = None,
+) -> list[Comment]:
+    """Scrape top comments từ posts của Facebook PUBLIC group.
+
+    Dùng actor `apify/facebook-groups-scraper`:
+    - **CHỈ public group** (private group cần FB login, vi phạm TOS — em không build)
+    - Không cần FB cookie / session
+    - Output: mỗi post có `topComments` array — flatten ra list Comment
+    - Cost: $0.005/post (không phải per comment) — 30 posts = $0.15
+
+    LIMITATION quan trọng:
+    - Actor trả về TOP comments mỗi post (không phải FULL comments)
+    - Không control được max_comments_per_post — trả theo limit Facebook
+    - Engagement metrics có thể không đầy đủ
+
+    Args:
+        group_urls: List FB group URLs (vd https://facebook.com/groups/<name>)
+        max_posts_per_group: Số posts tối đa quét mỗi group (default 30)
+        apify_token: Override APIFY_TOKEN env var
+        actor_id: Override actor (default apify/facebook-groups-scraper)
+
+    Returns:
+        List Comment đã flatten + chuẩn hoá (compat với pipeline downstream).
+    """
+    token = apify_token or os.environ.get("APIFY_TOKEN")
+    if not token:
+        raise ValueError("Cần APIFY_TOKEN trong env hoặc truyền apify_token")
+
+    actor = actor_id or os.environ.get(
+        "APIFY_FB_GROUP_ACTOR_ID", "apify/facebook-groups-scraper"
+    )
+
+    client = ApifyClient(token)
+
+    actor_input: dict = {
+        "startUrls": [{"url": url} for url in group_urls],
+        "resultsLimit": max_posts_per_group * len(group_urls),
+    }
+
+    logger.info(
+        "Apify FB Group run: actor=%s, groups=%d, max_posts_per_group=%d",
+        actor, len(group_urls), max_posts_per_group,
+    )
+
+    run = client.actor(actor).call(run_input=actor_input)
+    if not run:
+        raise RuntimeError("Apify FB Group run trả về None")
+
+    dataset_id = _extract_dataset_id(run)
+    if not dataset_id:
+        raise RuntimeError(
+            f"Apify FB Group run không có defaultDatasetId. "
+            f"Run type: {type(run).__name__}"
+        )
+
+    comments: list[Comment] = []
+    post_count = 0
+    for post in client.dataset(dataset_id).iterate_items():
+        post_count += 1
+        top_comments = post.get("topComments") or []
+        for cmt in top_comments:
+            try:
+                comments.append(
+                    Comment.from_apify_facebook_group_comment(cmt, post=post)
+                )
+            except Exception as e:
+                logger.warning("Skip FB Group cmt lỗi mapping: %s | cmt=%s", e, cmt)
+
+    logger.info(
+        "Scraped %d top comments từ %d posts (%d groups)",
+        len(comments), post_count, len(group_urls),
+    )
+    return comments
+
+
 def save_comments_json(comments: list[Comment], output_path: Path) -> None:
     """Save list comments thành JSON file (UTF-8, indent đẹp)."""
     output_path.parent.mkdir(parents=True, exist_ok=True)

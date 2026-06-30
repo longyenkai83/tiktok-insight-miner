@@ -40,6 +40,7 @@ from tiktok_insight_miner.reporter import generate_report
 from tiktok_insight_miner.scraper import (
     save_comments_json,
     scrape_facebook_comments,
+    scrape_facebook_group_comments,
     scrape_tiktok_comments,
 )
 from tiktok_insight_miner.selection import run_selection
@@ -855,6 +856,11 @@ def estimate_cost(
         apify = num_comments * 0.001
     elif mode == "scrape_fb":
         apify = num_comments * 0.0014
+    elif mode == "scrape_fb_group":
+        # FB Group: actor charge per POST ($0.005/post), không per comment.
+        # Average ~5-10 top comments/post → estimate ~$0.0005-$0.001/cmt
+        # nhưng cost ceiling = num_posts × $0.005. Approximate:
+        apify = num_comments * 0.001  # rough — actual depends on posts/comments ratio
     else:  # paste
         apify = 0.0
     brief = 0.02 if with_brief else 0.0
@@ -918,7 +924,7 @@ def run_pipeline(
     if comments_paste:
         mode = "paste"
     else:
-        mode = source_mode if source_mode in ("scrape", "scrape_fb") else "scrape"
+        mode = source_mode if source_mode in ("scrape", "scrape_fb", "scrape_fb_group") else "scrape"
 
     if mode == "paste":
         # Convention giống tim import-comments: thêm suffix __manual-import
@@ -927,9 +933,10 @@ def run_pipeline(
         # FB scrape: phân biệt với TikTok bằng suffix __fb
         output_dir = OUTPUT_ROOT / niche / f"{today}__fb"
         output_dir.mkdir(parents=True, exist_ok=True)
-        # Nếu folder đã tồn tại với user khác, dùng resolve để tránh conflict
-        from tiktok_insight_miner.postrun import resolve_output_dir as _resolve
-        output_dir = _resolve(OUTPUT_ROOT / niche, f"{today}__fb", "", user) if False else output_dir
+    elif mode == "scrape_fb_group":
+        # FB Group scrape: suffix __fb_group
+        output_dir = OUTPUT_ROOT / niche / f"{today}__fb_group"
+        output_dir.mkdir(parents=True, exist_ok=True)
     else:
         output_dir = resolve_output_dir(OUTPUT_ROOT, niche, today, user)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -967,6 +974,27 @@ def run_pipeline(
             raise RuntimeError(
                 "Không scrape được FB comment nào — URLs có phải public post không? "
                 "Comment đã bị disable? Post bị xoá?"
+            )
+    elif mode == "scrape_fb_group":
+        status.update(
+            label=f"👥 [1/{total_stages}] Đang scrape Facebook Group comments (Apify)...",
+            state="running",
+        )
+        # FB Group actor input là URL group, max_comments thực ra là max_posts
+        # (mỗi post có topComments — flatten lại). max_posts hợp lý: 30-50.
+        max_posts = max(10, min(max_comments // 5, 100))  # heuristic: ~5 cmt/post
+        comments = scrape_facebook_group_comments(
+            urls, max_posts_per_group=max_posts,
+        )
+        save_comments_json(comments, raw_path)
+        status.write(
+            f"✓ Scraped **{len(comments)}** top comments từ {len(urls)} groups "
+            f"(max {max_posts} posts/group)"
+        )
+        if not comments:
+            raise RuntimeError(
+                "Không scrape được comment nào từ FB Group — group có phải PUBLIC không? "
+                "Group private/closed KHÔNG scrape được (vi phạm TOS)."
             )
     else:
         status.update(label=f"🔍 [1/{total_stages}] Đang scrape TikTok comments (Apify)...", state="running")
@@ -1837,16 +1865,18 @@ def main() -> None:
             help="kebab-case, không khoảng trắng. Output → output/<niche>/<today>[__manual-import]/",
         ).strip().lower()
 
-        # 3 tab: scrape TikTok / scrape Facebook / paste comment
-        tab_url, tab_fb, tab_paste = st.tabs([
+        # 4 tab: TikTok / Facebook page / Facebook group / paste manual
+        tab_url, tab_fb, tab_fb_group, tab_paste = st.tabs([
             "🎬 Scrape TikTok URL (auto Apify)",
-            "📘 Scrape Facebook URL (auto Apify, $0.0014/cmt)",
-            "✍️ Paste comment thủ công (FB / YT / nguồn khác)",
+            "📘 Scrape Facebook post (Fanpage / user public)",
+            "👥 Scrape Facebook Group (public group, $0.005/post)",
+            "✍️ Paste comment thủ công (YT / group private / nguồn khác)",
         ])
 
         submit = False
         urls_list: list[str] = []
         fb_urls_list: list[str] = []
+        fb_group_urls_list: list[str] = []
         comments_paste = ""
         platform = "manual"
         source_mode = "scrape"
@@ -1937,6 +1967,65 @@ def main() -> None:
                 submit = True
                 source_mode = "scrape_fb"
 
+        with tab_fb_group:
+            st.caption(
+                "👥 Scrape top comments từ posts của Facebook PUBLIC group. "
+                "Dùng actor `apify/facebook-groups-scraper` — **CHỈ public group**, "
+                "private/closed group KHÔNG scrape được (vi phạm Facebook TOS). "
+                "**Cost ~$0.005/post** (≈$0.50 cho 100 posts)."
+            )
+            st.warning(
+                "⚠️ **LIMITATIONS quan trọng**:\n"
+                "- Actor trả về **top comments mỗi post** (không phải FULL comments)\n"
+                "- Không control được max comments/post — phụ thuộc Facebook\n"
+                "- Cost tính theo POSTS (không theo comments)\n"
+                "- Chỉ PUBLIC group — nhập URL group private/closed sẽ ra 0 comment"
+            )
+            fb_group_urls_text = st.text_area(
+                "Facebook Group URLs (mỗi dòng 1 cái, # = comment)",
+                placeholder=(
+                    "https://www.facebook.com/groups/groupname1\n"
+                    "https://www.facebook.com/groups/123456789\n"
+                    "# Format URL: facebook.com/groups/<tên> hoặc facebook.com/groups/<id>"
+                ),
+                height=140,
+                key="fb_group_urls_input",
+            )
+            fb_group_urls_list = [
+                u.strip() for u in fb_group_urls_text.splitlines()
+                if u.strip() and not u.strip().startswith("#")
+            ]
+
+            if fb_group_urls_list:
+                est_max_posts = max(10, min(max_comments // 5, 100))
+                est_comments = est_max_posts * len(fb_group_urls_list) * 5  # heuristic ~5 cmt/post
+                # Cost: $0.005/post × est_max_posts × num_groups
+                apify_cost = 0.005 * est_max_posts * len(fb_group_urls_list)
+                est_cost_total = (
+                    apify_cost
+                    + est_comments * 0.0003  # Haiku classify
+                    + (0.02 if with_brief else 0.0)
+                    + (0.07 if (with_brief and with_strategy) else 0.0)
+                )
+                st.info(
+                    f"📊 **Preview**: {len(fb_group_urls_list)} groups × ~{est_max_posts} posts "
+                    f"= ~{est_max_posts * len(fb_group_urls_list)} posts → "
+                    f"~{est_comments} top comments. "
+                    f"**Cost ~${est_cost_total:.2f}** "
+                    f"(Apify ${apify_cost:.2f} + Claude classify/brief/strategy)."
+                )
+
+            submit_fb_group = st.button(
+                "🚀 Chạy pipeline (Scrape FB Group)",
+                type="primary",
+                disabled=not (niche and fb_group_urls_list),
+                use_container_width=True,
+                key="submit_fb_group",
+            )
+            if submit_fb_group:
+                submit = True
+                source_mode = "scrape_fb_group"
+
         with tab_paste:
             col_a, col_b = st.columns([2, 1])
             with col_a:
@@ -2011,6 +2100,8 @@ def main() -> None:
                 st.caption("⏰ Pipeline mất 2-5 phút (scrape TikTok). **Đừng đóng tab hoặc bấm refresh.**")
             elif source_mode == "scrape_fb":
                 st.caption(f"⏰ Pipeline mất 3-7 phút (scrape Facebook {len(fb_urls_list)} posts). **Đừng đóng tab.**")
+            elif source_mode == "scrape_fb_group":
+                st.caption(f"⏰ Pipeline mất 5-10 phút (scrape {len(fb_group_urls_list)} FB groups). **Đừng đóng tab.**")
             else:
                 st.caption(f"⏰ Pipeline mất 1-3 phút ({len(valid_lines)} comment paste). **Đừng đóng tab.**")
 
@@ -2034,6 +2125,14 @@ def main() -> None:
                             with_strategy=with_strategy,
                             source_mode="scrape_fb",
                         )
+                    elif source_mode == "scrape_fb_group":
+                        result = run_pipeline(
+                            urls=fb_group_urls_list, niche=niche, user=user,
+                            max_comments=max_comments, with_brief=with_brief,
+                            num_angles=num_angles, status=status,
+                            with_strategy=with_strategy,
+                            source_mode="scrape_fb_group",
+                        )
                     else:
                         result = run_pipeline(
                             urls=urls_list, niche=niche, user=user,
@@ -2049,6 +2148,7 @@ def main() -> None:
                         num_urls=(
                             len(urls_list) if source_mode == "scrape"
                             else len(fb_urls_list) if source_mode == "scrape_fb"
+                            else len(fb_group_urls_list) if source_mode == "scrape_fb_group"
                             else 0
                         ),
                         num_comments=result["num_comments"],
@@ -2089,6 +2189,7 @@ def main() -> None:
                         num_urls=(
                             len(urls_list) if source_mode == "scrape"
                             else len(fb_urls_list) if source_mode == "scrape_fb"
+                            else len(fb_group_urls_list) if source_mode == "scrape_fb_group"
                             else 0
                         ),
                         num_comments=0,
