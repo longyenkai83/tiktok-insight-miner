@@ -36,6 +36,7 @@ from tiktok_insight_miner.cowork_pack import (
 from tiktok_insight_miner.insight_bank import build_insight_bank
 from tiktok_insight_miner.models import Comment
 from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
+from tiktok_insight_miner.pricing import estimate_cost
 from tiktok_insight_miner.reporter import generate_report
 from tiktok_insight_miner.scraper import (
     save_comments_json,
@@ -836,36 +837,6 @@ def get_user_runs_24h(user: str) -> int:
             if ts >= cutoff and row.get("status") == "success":
                 count += 1
     return count
-
-
-def estimate_cost(
-    num_comments: int,
-    with_brief: bool,
-    mode: str = "scrape",
-    with_strategy: bool = False,
-) -> float:
-    """Rough estimate (USD): Apify cost + Haiku classify $0.0003/cmt +
-    brief $0.02 + strategy $0.07.
-
-    Apify cost theo mode:
-    - "scrape" (TikTok): $0.001/cmt
-    - "scrape_fb" (Facebook): $0.0014/cmt
-    - "paste" (manual): $0 (no Apify)
-    """
-    if mode == "scrape":
-        apify = num_comments * 0.001
-    elif mode == "scrape_fb":
-        apify = num_comments * 0.0014
-    elif mode == "scrape_fb_group":
-        # FB Group: actor charge per POST ($0.005/post), không per comment.
-        # Average ~5-10 top comments/post → estimate ~$0.0005-$0.001/cmt
-        # nhưng cost ceiling = num_posts × $0.005. Approximate:
-        apify = num_comments * 0.001  # rough — actual depends on posts/comments ratio
-    else:  # paste
-        apify = 0.0
-    brief = 0.02 if with_brief else 0.0
-    strategy = 0.07 if (with_brief and with_strategy) else 0.0
-    return apify + num_comments * 0.0003 + brief + strategy
 
 
 def parse_text_to_comments(text: str, platform: str = "manual") -> list[Comment]:

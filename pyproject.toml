@@ -24,6 +24,16 @@ dependencies = [
 [project.optional-dependencies]
 # Backward compat — webapp deps đã move sang main vì server cần streamlit luôn
 webapp = []
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
 
 [project.scripts]
 tim = "tiktok_insight_miner.cli:main"
