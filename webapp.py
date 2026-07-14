@@ -1018,25 +1018,46 @@ def run_pipeline(
     generate_report(classified, report_path)
     status.write(f"✓ Report saved")
 
+    # v0.6 T6: helper build streaming callback với st.empty() placeholder.
+    # Hiển thị 800 char cuối của text đang generate để user thấy Opus đang chạy.
+    def _make_stream_callback(placeholder, header: str):
+        buf: list[str] = []
+
+        def _cb(delta: str) -> None:
+            buf.append(delta)
+            tail = "".join(buf)[-800:]
+            placeholder.markdown(f"**{header}**\n\n```\n{tail}\n```")
+
+        return _cb
+
     # Stage 4: brief (optional)
     angles_count = 0
     if with_brief:
-        status.update(label=f"🎬 [4/{total_stages}] Đang generate content angle brief (Claude Opus, 30-60s)...")
-        angles = generate_brief(classified, brief_path, num_angles=num_angles)
+        status.update(label=f"🎬 [4/{total_stages}] Đang generate content angle brief (Claude Opus, streaming)...")
+        stream_placeholder = st.empty()
+        cb = _make_stream_callback(stream_placeholder, "🎬 Brief đang generate:")
+        angles = generate_brief(
+            classified, brief_path, num_angles=num_angles, on_delta=cb,
+        )
+        stream_placeholder.empty()  # clear placeholder khi xong
         angles_count = len(angles)
         status.write(f"✓ Generated **{angles_count}** content angles")
 
     # Stage 5: strategy analysis (chỉ chạy nếu with_brief=True vì cần brief làm input)
     strategy_generated = False
     if with_brief and with_strategy:
-        status.update(label=f"🧠 [5/{total_stages}] Đang phân tích strategy (Canvas + Chấm brief + Synthesis, Opus, 30-60s)...")
+        status.update(label=f"🧠 [5/{total_stages}] Đang phân tích strategy (Canvas + Chấm brief + Synthesis, Opus, streaming)...")
         try:
+            stream_placeholder = st.empty()
+            cb = _make_stream_callback(stream_placeholder, "🧠 Strategy đang generate:")
             generate_strategy_analysis(
                 classified=classified,
                 angles=angles,
                 output_path=strategy_path,
                 niche_slug=niche,
+                on_delta=cb,
             )
+            stream_placeholder.empty()
             strategy_generated = True
             status.write(f"✓ Strategy analysis saved (Canvas + Chấm brief + Synthesis)")
         except Exception as e:

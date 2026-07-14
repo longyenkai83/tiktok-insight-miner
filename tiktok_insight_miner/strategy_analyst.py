@@ -19,6 +19,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+from typing import Callable
 
 import anthropic
 
@@ -165,11 +166,16 @@ def generate_strategy_analysis(
     niche_slug: str | None = None,
     model: str | None = None,
     api_key: str | None = None,
+    on_delta: Callable[[str], None] | None = None,
 ) -> str:
     """Stage 5: generate Customer Profile Canvas + Chấm brief + Synthesis.
 
     v0.5 (T8 in-memory refactor): nhận trực tiếp `angles` từ Stage 4 thay vì
     đọc `brief.md` từ disk. Loại disk I/O dependency, dễ test hơn.
+
+    v0.6 (T6 streaming): optional `on_delta` callback nhận text delta real-time
+    khi Opus generate. Nếu None → fallback path cũ (blocking messages.create).
+    Backward compat: caller không truyền on_delta thì behavior không đổi.
 
     Args:
         classified: list ClassifiedComment từ stage 2
@@ -178,6 +184,7 @@ def generate_strategy_analysis(
         niche_slug: để load persona + meta_pains
         model: override (default Opus 4.7 — task strategy cần reasoning sâu)
         api_key: override key
+        on_delta: optional callback nhận từng text chunk. Nếu None → blocking.
 
     Returns:
         Markdown content của phân tích.
@@ -275,27 +282,39 @@ def generate_strategy_analysis(
     if model.startswith("claude-opus-4"):
         request_kwargs["thinking"] = {"type": "adaptive"}
 
-    response = client.messages.create(**request_kwargs)
+    # v0.6 T6: nếu có on_delta → dùng streaming, else fallback blocking (backward compat)
+    if on_delta is not None:
+        md_parts: list[str] = []
+        with client.messages.stream(**request_kwargs) as stream:
+            for text_delta in stream.text_stream:
+                md_parts.append(text_delta)
+                try:
+                    on_delta(text_delta)
+                except Exception as cb_err:
+                    # Callback lỗi không được fail generation
+                    logger.warning("on_delta callback error: %s", cb_err)
+            final_message = stream.get_final_message()
+        usage = final_message.usage
+        md_content = "".join(md_parts).strip()
+    else:
+        response = client.messages.create(**request_kwargs)
+        usage = response.usage
+        md_parts_blocking: list[str] = []
+        for block in response.content:
+            if hasattr(block, "text"):
+                md_parts_blocking.append(block.text)
+        md_content = "\n".join(md_parts_blocking).strip()
 
-    usage = response.usage
     logger.info(
-        "Stage 5 usage: input=%d, output=%d (cache_read=%d)",
+        "Stage 5 usage: input=%d, output=%d (cache_read=%d), stream=%s",
         usage.input_tokens,
         usage.output_tokens,
         getattr(usage, "cache_read_input_tokens", 0) or 0,
+        on_delta is not None,
     )
 
-    # Extract markdown text từ response
-    md_parts: list[str] = []
-    for block in response.content:
-        if hasattr(block, "text"):
-            md_parts.append(block.text)
-    md_content = "\n".join(md_parts).strip()
-
     if not md_content:
-        raise RuntimeError(
-            f"Strategy Analyst trả về empty content. stop_reason={response.stop_reason}"
-        )
+        raise RuntimeError("Strategy Analyst trả về empty content.")
 
     # Save
     output_path.parent.mkdir(parents=True, exist_ok=True)

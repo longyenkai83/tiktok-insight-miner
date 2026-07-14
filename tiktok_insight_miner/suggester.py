@@ -15,7 +15,7 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import anthropic
 
@@ -392,6 +392,7 @@ def generate_angles(
     model: str | None = None,
     api_key: str | None = None,
     niche_slug: str | None = None,
+    on_delta: Callable[[str], None] | None = None,
 ) -> list[ContentAngle]:
     """Generate content angles từ classified comments.
 
@@ -538,22 +539,53 @@ def generate_angles(
     if model.startswith("claude-opus-4"):
         request_kwargs["thinking"] = {"type": "adaptive"}
 
-    response = client.messages.parse(**request_kwargs)
+    # v0.6 T6: nếu on_delta có → dùng streaming, else fallback path cũ.
+    # Stream vẫn giữ output_format=ContentAngleBrief để parse structured output.
+    # NOTE: SDK streaming với output_format chỉ yield JSON partial (not markdown text),
+    # nhưng vẫn giúp user thấy generation đang chạy thay vì spinner đơ.
+    if on_delta is not None:
+        try:
+            with client.messages.stream(**request_kwargs) as stream:
+                for text_delta in stream.text_stream:
+                    try:
+                        on_delta(text_delta)
+                    except Exception as cb_err:
+                        logger.warning("Suggester on_delta callback error: %s", cb_err)
+                final_message = stream.get_final_message()
+            usage = final_message.usage
+            parsed_output = getattr(final_message, "parsed", None) or getattr(
+                final_message, "parsed_output", None
+            )
+            stop_reason = getattr(final_message, "stop_reason", "unknown")
+        except (TypeError, AttributeError, anthropic.BadRequestError) as stream_err:
+            # SDK không support stream + output_format combo → fallback blocking
+            logger.warning(
+                "Stream + output_format không support, fallback blocking: %s", stream_err
+            )
+            response = client.messages.parse(**request_kwargs)
+            usage = response.usage
+            parsed_output = response.parsed_output
+            stop_reason = response.stop_reason
+    else:
+        response = client.messages.parse(**request_kwargs)
+        usage = response.usage
+        parsed_output = response.parsed_output
+        stop_reason = response.stop_reason
 
-    usage = response.usage
     logger.info(
-        "Suggester usage: input=%d, output=%d (cache_read=%d)",
+        "Suggester usage: input=%d, output=%d (cache_read=%d), stream=%s",
         usage.input_tokens,
         usage.output_tokens,
         getattr(usage, "cache_read_input_tokens", 0) or 0,
+        on_delta is not None,
     )
 
-    if response.parsed_output is None:
+    if parsed_output is None:
         raise RuntimeError(
-            f"Claude refused or failed to parse. stop_reason={response.stop_reason}"
+            f"Claude refused or failed to parse. stop_reason={stop_reason}"
         )
 
-    angles = response.parsed_output.angles
+    angles = parsed_output.angles
     logger.info("Generated %d angles", len(angles))
     return angles
 
@@ -668,6 +700,7 @@ def generate_brief(
     model: str | None = None,
     source_videos: list[str] | None = None,
     niche_slug: str | None = None,
+    on_delta: Callable[[str], None] | None = None,
 ) -> list[ContentAngle]:
     """All-in-one: generate angles + render + save brief markdown.
 
@@ -690,6 +723,7 @@ def generate_brief(
         top_n_per_bucket=top_n_per_bucket,
         model=model,
         niche_slug=niche_slug,
+        on_delta=on_delta,
     )
 
     if not angles:
