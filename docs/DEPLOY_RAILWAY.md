@@ -1,8 +1,9 @@
 # Deploy lên Railway — Playbook
 
-> **Phiên bản**: v1 (2026-05-16)
-> **Mục đích**: deploy Insight Miner lên Railway cloud 24/7 — anh không cần bật PC nữa
-> **Estimated time**: 1-2 giờ setup, $5-7/tháng hosting
+> **Phiên bản**: v2 (2026-05-17) — đã verify real deploy + add lessons learned + Volume persist + UI Bước 2-4
+> **Mục đích**: deploy Insight Miner lên Railway cloud 24/7 — không cần bật PC
+> **Estimated time**: 2-4 giờ first time, ~1 giờ nếu đã quen
+> **Cost**: $5-15/tháng Railway + $5-15 API (Apify + Anthropic) = ~$10-30/tháng (~250-750k VNĐ)
 
 ---
 
@@ -247,5 +248,119 @@ Nếu Railway có vấn đề lớn (down, lỗi không fix được), em có th
 
 ---
 
-**Updated**: 2026-05-16 · v1
-**Tinh thần**: Deploy 1 lần, chạy mãi. Anh đi du lịch không cần bật PC.
+## 9. ⚠️ Lessons Learned từ deploy thực tế (16-17/05/2026)
+
+Đây là gotchas em đã trải qua khi deploy lần đầu — anh đọc trước để né.
+
+### 9.1 Railway Builder PHẢI set Dockerfile (không Nixpacks/Railpack)
+
+**Vấn đề**: Railway default builder là Railpack/Nixpacks. Sẽ chạy `pip install .` → fail với error `'src' does not exist or is not a directory` (vì pyproject.toml có src-layout).
+
+**Fix**:
+1. Tạo `Dockerfile` ở root (đã có sẵn trong repo)
+2. `railway.toml`: `[build] builder = "DOCKERFILE"`
+3. Trong Railway Dashboard → Settings → Build → đổi Builder thành **Dockerfile**
+4. Nếu vẫn không work → delete service + create lại từ đầu (Railway tự detect Dockerfile)
+
+### 9.2 Convert sang flat layout (move src/tiktok_insight_miner → root)
+
+**Vấn đề**: src-layout (`src/tiktok_insight_miner/`) fail khi build wheel trong sandbox Railway.
+
+**Fix**: 
+- Move folder → `tiktok_insight_miner/` ở root
+- `pyproject.toml`: `[tool.setuptools] packages = ["tiktok_insight_miner"]`
+- KHÔNG cần `where = ["src"]` nữa
+
+### 9.3 Docker CMD phải dùng exec form với sh -c wrapper
+
+**Vấn đề**: `CMD streamlit run ... --server.port ${PORT:-8501}` (shell form) hoặc `CMD ["streamlit", ...]` (exec form) đều fail vì `$PORT` không expand → Streamlit báo `'$PORT' is not a valid integer`.
+
+**Fix**: 
+```dockerfile
+CMD ["/bin/sh", "-c", "streamlit run webapp.py --server.address 0.0.0.0 --server.port ${PORT:-8501} --server.headless true"]
+```
+
+Exec form gọi shell explicit → `${PORT:-8501}` expand đúng.
+
+### 9.4 KHÔNG dùng startCommand trong railway.toml
+
+**Vấn đề**: `startCommand` trong railway.toml chạy exec form, KHÔNG shell expand → `$PORT` literal.
+
+**Fix**: Bỏ `startCommand` ra khỏi `[deploy]` section trong railway.toml. Để Dockerfile CMD run.
+
+### 9.5 Procfile cũng phải sh -c wrapper (nếu có)
+
+**Fix**:
+```
+web: /bin/sh -c "streamlit run webapp.py --server.address 0.0.0.0 --server.port ${PORT:-8501} ..."
+```
+
+### 9.6 CSV encoding utf-8-sig (BOM) match
+
+**Vấn đề**: `log_run` ghi utf-8-sig (BOM cho Excel), nhưng `render_sidebar` + `get_user_runs_24h` đọc utf-8 (không BOM) → BOM bytes ghép vào key đầu → `KeyError: 'timestamp'`.
+
+**Fix**: Đọc cũng dùng `encoding="utf-8-sig"`.
+
+### 9.7 Streamlit session_state để persist result
+
+**Vấn đề**: Click checkbox = Streamlit re-run từ đầu. Nếu `result` chỉ là local var → mất → Section 3+4 biến mất.
+
+**Fix**: Save `result` vào `st.session_state["pipeline_result"]` sau pipeline xong. Render Section 3+4 từ session_state.
+
+### 9.8 Cloudflare proxy phải TẮT cho Railway custom domain
+
+**Vấn đề**: Bật Cloudflare proxy (orange cloud) → Railway không verify SSL được → "Too many redirects" hoặc handshake failed.
+
+**Fix**: Trong Cloudflare DNS, CNAME `insight` đổi proxy status sang **DNS only** (cloud xám). Bỏ qua cảnh báo "Proxying is required" — đó chỉ là suggestion.
+
+### 9.9 GitHub Repo not found → install Railway GitHub App
+
+**Vấn đề**: Railway authenticated qua OAuth nhưng KHÔNG install GitHub App → không pull được private repo.
+
+**Fix**: Vào `https://github.com/settings/installations` → Configure Railway App → chọn repo `tiktok-insight-miner`. Hoặc tạm thời make repo Public.
+
+### 9.10 PowerShell + git workflow gotchas
+
+- **cd vào đúng folder**: Mỗi PowerShell mới mở ở `C:\Users\...` → phải `cd D:\Projects\tiktok-insight-miner`
+- **KHÔNG paste token vào PowerShell prompt thường** — chỉ paste khi git prompt password
+- **GitHub Personal Access Token** dễ leak qua screenshot → revoke ngay nếu lộ
+
+### 9.11 Railway Volume cho persistent storage
+
+**Vấn đề**: Container restart → mất tất cả file trong `/app/output/` (ephemeral storage).
+
+**Fix**: 
+1. Project canvas → + Create → Volume → attach service `web` → mount `/app/output`
+2. Move `usage_log.csv` vào `OUTPUT_ROOT` (sửa code) — để cùng volume cover
+3. Insight pack lên Drive là backup tin cậy thứ 2 (Drive cloud không phụ thuộc Railway)
+
+---
+
+## 10. Section 4: Upload Drive UI (Bước 2-4)
+
+Sau deploy ban đầu, em add tính năng web cho phép user tick + upload Drive trực tiếp.
+
+**Trước**: Web chỉ làm Bước 1 (scrape + classify + report). Bước 2-4 phải chạy CLI local.
+
+**Sau** (commit `d573b16`): Web tự động:
+- Sau pipeline xong → tự chạy `tim bank` (sắp xếp)
+- Hiển thị candidates grouped theo nhóm vấn đề (collapsible expander)
+- User tick các insight muốn handoff
+- Bấm "📤 Upload sang Google Drive" → tự chạy `tim select` + `tim export-for-cowork` → upload Drive API
+
+→ Full automation. KHÔNG cần PC anh chạy CLI.
+
+**Yêu cầu**:
+- Niche có sẵn config (`niche_configs/<slug>.json`) — chỉ niche `kinh-doanh-27-45` có sẵn
+- Env vars `INSIGHTS_PACK_DRIVE_FOLDER_ID` + `GDRIVE_SERVICE_ACCOUNT_JSON` set trên Railway
+
+---
+
+## 11. Tài liệu liên quan thêm
+
+- [OPERATION_MANUAL.md](OPERATION_MANUAL.md) — Vận hành hằng ngày sau deploy
+
+---
+
+**Updated**: 2026-05-17 · v2 (đã verify deploy thực tế + 11 gotchas + UI Bước 2-4 + Volume)
+**Tinh thần**: Deploy 1 lần, chạy mãi. Anh đi du lịch không cần bật PC. Đã trải qua → đóng gói lại cho lần sau né.
