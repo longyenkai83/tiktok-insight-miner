@@ -22,7 +22,7 @@ from pathlib import Path
 
 import anthropic
 
-from tiktok_insight_miner.models import ClassifiedComment
+from tiktok_insight_miner.models import ClassifiedComment, ContentAngle
 from tiktok_insight_miner.suggester import (
     PRAISE_MIN_LIKES,
     _format_insights_input,
@@ -32,6 +32,7 @@ from tiktok_insight_miner.suggester import (
     extract_lexicon,
     load_meta_pains,
     load_niche_persona,
+    render_brief_markdown,
     select_top_insights,
 )
 
@@ -157,16 +158,9 @@ Nếu KHÔNG có persona (Gen Z hoặc niche unknown):
 """
 
 
-def _format_brief_for_analysis(brief_md_path: Path) -> str:
-    """Read brief.md → trả raw text để inject vào prompt."""
-    if not brief_md_path.exists():
-        return "_(Brief file không tồn tại — chấm điểm phần C có thể skip)_"
-    return brief_md_path.read_text(encoding="utf-8")
-
-
 def generate_strategy_analysis(
     classified: list[ClassifiedComment],
-    brief_md_path: Path,
+    angles: list[ContentAngle],
     output_path: Path,
     niche_slug: str | None = None,
     model: str | None = None,
@@ -174,9 +168,12 @@ def generate_strategy_analysis(
 ) -> str:
     """Stage 5: generate Customer Profile Canvas + Chấm brief + Synthesis.
 
+    v0.5 (T8 in-memory refactor): nhận trực tiếp `angles` từ Stage 4 thay vì
+    đọc `brief.md` từ disk. Loại disk I/O dependency, dễ test hơn.
+
     Args:
         classified: list ClassifiedComment từ stage 2
-        brief_md_path: path tới brief.md vừa generate ở stage 4
+        angles: list ContentAngle từ stage 4 (in-memory, không đọc file)
         output_path: nơi lưu phan-tich-toan-dien.md
         niche_slug: để load persona + meta_pains
         model: override (default Opus 4.7 — task strategy cần reasoning sâu)
@@ -216,15 +213,19 @@ def generate_strategy_analysis(
         if meta_pains_raw:
             meta_pains_text = meta_pains_raw
 
-    # Read brief vừa generate
-    brief_text = _format_brief_for_analysis(brief_md_path)
+    # v0.5 T8: render brief in-memory từ angles thay vì đọc từ disk.
+    # Cùng renderer với Stage 4 → format prompt Stage 5 không đổi → output không drift.
+    if angles:
+        brief_text = render_brief_markdown(angles, source_info=None)
+    else:
+        brief_text = "_(Không có angle nào từ Stage 4 — chấm điểm phần C có thể skip)_"
 
     # Extract lexicon cho context
     lexicon = extract_lexicon(classified)
 
     logger.info(
-        "Stage 5 Strategy Analysis: niche=%s, mature=%s, model=%s, brief=%d chars",
-        niche_slug, is_mature, model, len(brief_text),
+        "Stage 5 Strategy Analysis: niche=%s, mature=%s, model=%s, angles=%d, brief=%d chars",
+        niche_slug, is_mature, model, len(angles), len(brief_text),
     )
 
     insights_text = _format_insights_input(top_insights)

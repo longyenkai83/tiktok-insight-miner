@@ -1033,7 +1033,7 @@ def run_pipeline(
         try:
             generate_strategy_analysis(
                 classified=classified,
-                brief_md_path=brief_path,
+                angles=angles,
                 output_path=strategy_path,
                 niche_slug=niche,
             )
