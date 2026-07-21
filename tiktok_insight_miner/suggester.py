@@ -407,6 +407,7 @@ def generate_angles(
     model: str | None = None,
     api_key: str | None = None,
     niche_slug: str | None = None,
+    strict_grounding: bool = True,
     on_delta: Callable[[str], None] | None = None,
 ) -> list[ContentAngle]:
     """Generate content angles từ classified comments.
@@ -450,9 +451,15 @@ def generate_angles(
                 niche_slug, is_mature,
                 persona_config.get("persona", {}).get("age_range"),
             )
-        meta_pains_raw = load_meta_pains(niche_slug)
-        if meta_pains_raw:
-            meta_pains_text = meta_pains_raw
+        # strict_grounding: TẮT meta-pains. Meta-pains ép angle suy diễn từ file
+        # cố định (target_likes=0) → không bám comment thật + lặp lại mỗi lần chạy.
+        # Chỉ nạp khi user chủ động tắt strict_grounding.
+        if not strict_grounding:
+            meta_pains_raw = load_meta_pains(niche_slug)
+            if meta_pains_raw:
+                meta_pains_text = meta_pains_raw
+        else:
+            logger.info("strict_grounding=True → BỎ meta-pains, mọi angle bám comment thật")
 
     logger.info(
         "Generating %d angles từ %d top insights, model=%s, lexicon=%d words + %d phrases, persona=%s",
@@ -524,19 +531,35 @@ def generate_angles(
         f"- Cluster macro_despair + likes ≥50 → confidence ≥0.9 + angle_type=emotional_positioning.\n"
         f"- Theme lặp ≥3 lần → cân nhắc angle_type=series_announcement."
     )
+    if strict_grounding:
+        base_requirements += (
+            f"\n\n**STRICT GROUNDING — BẮT BUỘC (ưu tiên cao nhất)**:\n"
+            f"- MỖI angle target_insight = quote NGUYÊN VĂN từ 1 comment CÓ THẬT trong TOP INSIGHTS,\n"
+            f"  và target_likes = số likes THẬT của comment đó (PHẢI > 0).\n"
+            f"- TUYỆT ĐỐI KHÔNG tạo angle từ suy diễn / 'pain ẩn' / pattern tưởng tượng /\n"
+            f"  meta-pattern không có comment cụ thể. Không comment → không angle.\n"
+            f"- Mỗi angle phải trỏ về một comment KHÁC nhau — KHÔNG lặp cùng insight nhiều angle.\n"
+            f"- Nếu comment chất lượng không đủ cho {num_angles} angle → tạo ÍT hơn.\n"
+            f"  THÀ RA 4 ANGLE BÁM COMMENT THẬT còn hơn 10 angle có 3 cái chế ra."
+        )
     if is_mature:
         base_requirements += (
             f"\n\n**MATURE AUDIENCE REQUIREMENTS (PART H)**:\n"
             f"- MỖI angle PHẢI có `fb_caption_opening` (3-5 dòng).\n"
             f"- Tuân thủ 6 anti-patterns ở PART H.\n"
-            f"- ÍT NHẤT 2 angle ground vào META-pains (PART I), không chỉ raw comments.\n"
             f"- Hook 10s thay vì 3s.\n"
             f"- Mỗi angle có ÍT NHẤT 1 proof element — CHỈ dùng số/quote CÓ THẬT trong data.\n"
             f"  KHÔNG bịa số liệu/nguồn (PART D luật 8). Không có số thật → dùng `[số liệu cần kiểm chứng]`."
         )
 
+    count_instruction = (
+        f"Generate TỐI ĐA {num_angles} content angle — nhưng CHỈ tạo angle nào bám được\n"
+        f"comment thật (xem STRICT GROUNDING). Thiếu comment chất → ra ít hơn, KHÔNG chế thêm."
+        if strict_grounding
+        else f"Generate ĐÚNG {num_angles} content angle dựa trên các insight sau."
+    )
     user_prompt = (
-        f"Generate ĐÚNG {num_angles} content angle dựa trên các insight sau.\n\n"
+        f"{count_instruction}\n\n"
         f"═══ TOP INSIGHTS ═══\n{insights_text}\n\n"
         f"═══ LEXICON (vocab grounding) ═══\n{lexicon_text}\n\n"
         f"═══ YÊU CẦU ═══\n{base_requirements}"
@@ -720,6 +743,7 @@ def generate_brief(
     model: str | None = None,
     source_videos: list[str] | None = None,
     niche_slug: str | None = None,
+    strict_grounding: bool = True,
     on_delta: Callable[[str], None] | None = None,
 ) -> list[ContentAngle]:
     """All-in-one: generate angles + render + save brief markdown.
@@ -743,6 +767,7 @@ def generate_brief(
         top_n_per_bucket=top_n_per_bucket,
         model=model,
         niche_slug=niche_slug,
+        strict_grounding=strict_grounding,
         on_delta=on_delta,
     )
 

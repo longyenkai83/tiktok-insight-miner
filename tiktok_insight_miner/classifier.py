@@ -57,7 +57,11 @@ Quy tắc phân loại:
 Cho mỗi comment, trả về:
 - `comment_id`: id của comment (giữ nguyên từ input)
 - `bucket`: 1 trong 7 giá trị trên
-- `summary`: 1 câu tiếng Việt, max 15 từ, tóm tắt insight cốt lõi (KHÔNG copy nguyên văn comment)
+- `summary`: 1 câu tiếng Việt, max 15 từ, tóm tắt ĐÚNG điều comment NÓI (KHÔNG copy nguyên văn).
+  TUYỆT ĐỐI KHÔNG suy diễn thêm nguyên nhân/hệ quả/động cơ mà comment KHÔNG nói rõ.
+  Vd comment "2 tạ bún mà làm máy thì đói" → summary "Làm 200kg bún/ngày vẫn không đủ sống"
+  (ĐÚNG), KHÔNG viết "...vì lương thấp" (comment không nói lý do). Comment mơ hồ →
+  summary mơ hồ theo, KHÔNG tự chế cho rõ nghĩa.
 - `confidence`: float 0.0-1.0, mức độ tự tin về phân loại
 
 Trả về theo schema JSON đã cung cấp."""
