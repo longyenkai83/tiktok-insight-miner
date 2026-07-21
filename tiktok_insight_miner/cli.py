@@ -25,6 +25,7 @@ from tiktok_insight_miner.production import run_production
 from tiktok_insight_miner.reporter import generate_report
 from tiktok_insight_miner.selection import run_selection
 from tiktok_insight_miner.scraper import (
+    discover_tiktok_videos,
     load_comments_json,
     save_comments_json,
     scrape_tiktok_comments,
@@ -48,6 +49,45 @@ def _read_urls(args: argparse.Namespace) -> list[str]:
     if not urls:
         sys.exit("Cần --urls hoặc --urls-file")
     return urls
+
+
+def _run_discover(args: argparse.Namespace) -> list[dict]:
+    """Gọi discover với args chung — dùng bởi cmd_discover và cmd_run --discover."""
+    return discover_tiktok_videos(
+        keywords=args.keyword or None,
+        profiles=args.profile or None,
+        hashtags=args.hashtag or None,
+        limit_per_query=args.limit,
+        min_views=args.min_views,
+        min_comments=args.min_comments,
+        newest_days=args.newest_days,
+    )
+
+
+def cmd_discover(args: argparse.Namespace) -> None:
+    """Tìm video TikTok theo keyword/hashtag/kênh → ghi urls.txt (bỏ tìm tay)."""
+    videos = _run_discover(args)
+    if not videos:
+        sys.exit("Không tìm được video nào khớp bộ lọc (thử hạ --min-views / --min-comments).")
+
+    # In bảng preview
+    print(f"\n🔎 Tìm được {len(videos)} video (đã lọc + sort theo view):\n")
+    print(f"{'#':>2}  {'views':>9}  {'cmts':>5}  {'date':<10}  author / text")
+    print("-" * 80)
+    for i, v in enumerate(videos, 1):
+        text = (v["text"] or "").replace("\n", " ")[:45]
+        print(f"{i:>2}  {v['views']:>9,}  {v['comments']:>5}  {v['date']:<10}  @{v['author']}: {text}")
+
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        f"# Discover — keyword={args.keyword} profile={args.profile} hashtag={args.hashtag}",
+        f"# {len(videos)} video, min_views={args.min_views}, min_comments={args.min_comments}",
+    ]
+    lines += [v["url"] for v in videos]
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"\n✓ Ghi {len(videos)} URL → {out}")
+    print(f"\n👉 Bước tiếp: tim run --urls-file \"{out}\" --max-comments 100 --with-angles -o output/<niche>/")
 
 
 def cmd_scrape(args: argparse.Namespace) -> None:
@@ -476,10 +516,25 @@ def cmd_export_for_cowork(args: argparse.Namespace) -> None:
 
 
 def cmd_run(args: argparse.Namespace) -> None:
-    """All-in-one: scrape → classify → report."""
-    urls = _read_urls(args)
+    """All-in-one: [discover →] scrape → classify → report."""
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Stage 0 (optional): discover video từ keyword/profile/hashtag
+    if args.keyword or args.profile or args.hashtag:
+        print(f"\n[0] Discovering videos...")
+        videos = _run_discover(args)
+        if not videos:
+            sys.exit("Discover không tìm được video nào (thử hạ --min-views / --min-comments).")
+        urls = [v["url"] for v in videos]
+        # lưu list discover để trace lại
+        (output_dir / "discovered.txt").write_text(
+            "\n".join(f"{v['url']}\t{v['views']}\t{v['comments']}\t@{v['author']}" for v in videos),
+            encoding="utf-8",
+        )
+        print(f"✓ {len(urls)} videos (lưu {output_dir / 'discovered.txt'})")
+    else:
+        urls = _read_urls(args)
 
     raw_path = output_dir / "raw_comments.json"
     classified_path = output_dir / "classified.json"
@@ -592,6 +647,48 @@ def build_parser() -> argparse.ArgumentParser:
             "--batch-size", type=int, default=None,
             help="Comments per API call (default 20)",
         )
+
+    def add_discover_args(p: argparse.ArgumentParser) -> None:
+        p.add_argument(
+            "--keyword", action="append", default=[],
+            help="Từ khóa search TikTok (lặp nhiều lần được, vd --keyword 'kinh doanh 2026')",
+        )
+        p.add_argument(
+            "--profile", action="append", default=[],
+            help="Username kênh đối thủ (không cần @, lặp được, vd --profile cafef_official)",
+        )
+        p.add_argument(
+            "--hashtag", action="append", default=[],
+            help="Hashtag (không cần #, lặp được, vd --hashtag khoinghiep)",
+        )
+        p.add_argument(
+            "--limit", type=int, default=30,
+            help="Số video tối đa mỗi query (default 30)",
+        )
+        p.add_argument(
+            "--min-views", type=int, default=0,
+            help="Bỏ video dưới ngưỡng view này (default 0)",
+        )
+        p.add_argument(
+            "--min-comments", type=int, default=1,
+            help="Bỏ video dưới ngưỡng comment (default 1 — video 0 cmt mine vô ích)",
+        )
+        p.add_argument(
+            "--newest-days", type=int, default=None,
+            help="Chỉ giữ video đăng trong N ngày gần đây (default: không lọc)",
+        )
+
+    # --- discover (tìm video tự động → urls.txt) ---
+    p_discover = sub.add_parser(
+        "discover",
+        help="Tìm video TikTok theo keyword/hashtag/kênh → ghi urls.txt (bỏ khâu tìm tay)",
+    )
+    add_discover_args(p_discover)
+    p_discover.add_argument(
+        "-o", "--output", type=str, default="urls.txt",
+        help="File output list URL (default urls.txt)",
+    )
+    p_discover.set_defaults(func=cmd_discover)
 
     # --- scrape ---
     p_scrape = sub.add_parser("scrape", help="Scrape comments từ TikTok videos")
@@ -805,6 +902,7 @@ def build_parser() -> argparse.ArgumentParser:
     # --- run (all-in-one) ---
     p_run = sub.add_parser("run", help="Scrape + classify + report [+ brief] (all-in-one)")
     add_url_args(p_run)
+    add_discover_args(p_run)
     add_classify_args(p_run)
     p_run.add_argument(
         "-o", "--output-dir", type=str,

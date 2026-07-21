@@ -39,6 +39,7 @@ from tiktok_insight_miner.postrun import post_run_hook, resolve_output_dir
 from tiktok_insight_miner.pricing import estimate_cost
 from tiktok_insight_miner.reporter import generate_report
 from tiktok_insight_miner.scraper import (
+    discover_tiktok_videos,
     save_comments_json,
     scrape_facebook_comments,
     scrape_facebook_group_comments,
@@ -1857,13 +1858,100 @@ def main() -> None:
             help="kebab-case, không khoảng trắng. Output → output/<niche>/<today>[__manual-import]/",
         ).strip().lower()
 
-        # 4 tab: TikTok / Facebook page / Facebook group / paste manual
-        tab_url, tab_fb, tab_fb_group, tab_paste = st.tabs([
+        # 5 tab: Discover / TikTok / Facebook page / Facebook group / paste manual
+        tab_discover, tab_url, tab_fb, tab_fb_group, tab_paste = st.tabs([
+            "🔎 Tìm video (theo từ khóa / kênh)",
             "🎬 Scrape TikTok URL (auto Apify)",
             "📘 Scrape Facebook post (Fanpage / user public)",
             "👥 Scrape Facebook Group (public group, $0.005/post)",
             "✍️ Paste comment thủ công (YT / group private / nguồn khác)",
         ])
+
+        with tab_discover:
+            st.caption(
+                "🔎 Khỏi phải lên TikTok tìm bài thủ công. Nhập từ khóa hoặc tên kênh đối thủ "
+                "→ hệ thống tự tìm video liên quan, lọc bỏ bài ít comment, rồi đổ URL sang tab "
+                "**🎬 Scrape TikTok** để chạy. Actor `clockworks/tiktok-scraper` (~vài cent/lần)."
+            )
+            dc1, dc2 = st.columns(2)
+            with dc1:
+                disc_keywords = st.text_input(
+                    "Từ khóa (cách nhau bởi dấu phẩy)",
+                    placeholder="kinh doanh 2026, khởi nghiệp vốn nhỏ",
+                    key="disc_keywords",
+                )
+                disc_profiles = st.text_input(
+                    "Kênh đối thủ (@username, cách nhau bởi dấu phẩy)",
+                    placeholder="cafef_official, thuethucchien",
+                    key="disc_profiles",
+                )
+            with dc2:
+                disc_min_views = st.number_input(
+                    "View tối thiểu", min_value=0, value=0, step=5000, key="disc_min_views",
+                )
+                disc_min_comments = st.number_input(
+                    "Comment tối thiểu", min_value=0, value=5, step=1, key="disc_min_comments",
+                    help="Bỏ video ít/không có comment — mine vô ích.",
+                )
+                disc_limit = st.number_input(
+                    "Số video tối đa / query", min_value=5, max_value=100, value=30, step=5,
+                    key="disc_limit",
+                )
+
+            disc_kw_list = [k.strip() for k in disc_keywords.split(",") if k.strip()]
+            disc_pf_list = [p.strip().lstrip("@") for p in disc_profiles.split(",") if p.strip()]
+
+            if st.button(
+                "🔎 Tìm video",
+                type="secondary",
+                disabled=not (disc_kw_list or disc_pf_list),
+                use_container_width=True,
+                key="btn_discover",
+            ):
+                with st.spinner("Đang tìm video trên TikTok..."):
+                    try:
+                        found = discover_tiktok_videos(
+                            keywords=disc_kw_list or None,
+                            profiles=disc_pf_list or None,
+                            limit_per_query=int(disc_limit),
+                            min_views=int(disc_min_views),
+                            min_comments=int(disc_min_comments),
+                        )
+                        st.session_state["discover_results"] = found
+                    except Exception as e:
+                        st.session_state["discover_results"] = []
+                        st.error(f"❌ Lỗi discover: {e}")
+
+            found = st.session_state.get("discover_results")
+            if found:
+                st.success(f"✓ Tìm được {len(found)} video (đã lọc + sort theo view).")
+                st.dataframe(
+                    [
+                        {
+                            "views": v["views"],
+                            "comments": v["comments"],
+                            "date": v["date"],
+                            "author": v["author"],
+                            "text": v["text"][:70],
+                            "url": v["url"],
+                        }
+                        for v in found
+                    ],
+                    use_container_width=True,
+                    hide_index=True,
+                )
+                if st.button(
+                    "➡️ Đưa tất cả URL sang tab Scrape TikTok để chạy",
+                    type="primary",
+                    use_container_width=True,
+                    key="btn_use_discovered",
+                ):
+                    st.session_state["urls_input"] = "\n".join(v["url"] for v in found)
+                    st.session_state.pop("discover_results", None)
+                    st.toast("Đã đổ URL sang tab 🎬 Scrape TikTok — bấm sang tab đó để chạy.")
+                    st.rerun()
+            elif found == []:
+                st.info("Không có video nào khớp bộ lọc. Thử hạ 'View tối thiểu' / 'Comment tối thiểu'.")
 
         submit = False
         urls_list: list[str] = []

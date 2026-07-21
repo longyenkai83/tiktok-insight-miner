@@ -27,10 +27,30 @@ Cần:
 
 ## Usage
 
+### Discover — tự tìm video (bỏ khâu tìm tay)
+
+Không cần tự lên TikTok lướt tìm bài. Nhập từ khóa hoặc kênh đối thủ → tự lấy list video đáng mine (đã lọc bỏ bài ít comment, sort theo view):
+
+```bash
+# Theo từ khóa (chỉ giữ video ≥5 comment, view ≥30k)
+tim discover --keyword "kinh doanh 2026" --min-comments 5 --min-views 30000 -o urls.txt
+
+# Quét kênh đối thủ
+tim discover --profile cafef_official --profile thuethucchien -o urls.txt
+
+# Nhiều từ khóa + hashtag + chỉ bài mới 30 ngày
+tim discover --keyword "khởi nghiệp" --hashtag khoinghiep --newest-days 30 -o urls.txt
+```
+
+Rồi `tim run --urls-file urls.txt ...`. Hoặc gộp 1 phát bằng `--discover` (xem dưới).
+
 ### All-in-one
 
 ```bash
-# Scrape + classify + report
+# Discover → scrape → classify → report → brief (một lệnh)
+tim run --keyword "kinh doanh 2026" --min-comments 10 --with-angles --niche kinh-doanh -o output/kinh-doanh/
+
+# Scrape + classify + report (từ URL có sẵn)
 tim run --urls "https://www.tiktok.com/@username/video/1234567890" --max-comments 200
 
 # All 4 stages (kèm content angle brief từ Opus 4.7)
@@ -60,6 +80,12 @@ tim suggest -i output/classified.json -o output/brief.md --num 10
 
 ```
 tim run [OPTIONS]
+  --keyword TEXT           Từ khóa search (lặp được) → auto-discover video
+  --profile TEXT           Kênh đối thủ @username (lặp được) → auto-discover
+  --hashtag TEXT           Hashtag (lặp được) → auto-discover
+  --min-views INT          Bỏ video dưới ngưỡng view (default 0)
+  --min-comments INT       Bỏ video dưới ngưỡng comment (default 1)
+  --newest-days INT        Chỉ giữ video trong N ngày gần đây
   --urls TEXT              TikTok video URL (có thể lặp nhiều lần)
   --urls-file PATH         File chứa URLs, mỗi dòng 1 URL
   --max-comments INT       Số comment tối đa mỗi video (default 100)

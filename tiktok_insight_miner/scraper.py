@@ -49,6 +49,138 @@ def _extract_dataset_id(run: Any) -> str | None:
     return None
 
 
+def discover_tiktok_videos(
+    keywords: list[str] | None = None,
+    profiles: list[str] | None = None,
+    hashtags: list[str] | None = None,
+    limit_per_query: int = 30,
+    min_views: int = 0,
+    min_comments: int = 1,
+    newest_days: int | None = None,
+    apify_token: str | None = None,
+    actor_id: str | None = None,
+) -> list[dict[str, Any]]:
+    """Tự tìm video TikTok theo từ khóa / hashtag / kênh (@đối thủ) qua Apify.
+
+    Dùng actor `clockworks/tiktok-scraper` (KHÁC comments-scraper). Fields đã
+    verify từ raw response: webVideoUrl, text, playCount, commentCount,
+    diggCount, createTimeISO, authorMeta.name, hashtags.
+
+    Mục tiêu: bỏ khâu tự lên TikTok tìm video thủ công. Kết quả đã lọc rác
+    (bỏ video 0 comment / view thấp) + sort theo view giảm dần → chỉ giữ
+    video đáng mine comment.
+
+    Args:
+        keywords: List từ khóa search (vd ["kinh doanh 2026"])
+        profiles: List username (không cần @, vd ["cafef_official"]) — quét kênh đối thủ
+        hashtags: List hashtag (không cần #, vd ["khoinghiep"])
+        limit_per_query: Số video tối đa lấy mỗi query (default 30)
+        min_views: Bỏ video dưới ngưỡng view này (default 0 = không lọc)
+        min_comments: Bỏ video dưới ngưỡng comment (default 1 — video 0 cmt mine vô ích)
+        newest_days: Chỉ giữ video đăng trong N ngày gần đây (None = không lọc).
+            Lọc client-side dựa trên createTimeISO.
+        apify_token: Override APIFY_TOKEN env var
+        actor_id: Override actor (default clockworks/tiktok-scraper)
+
+    Returns:
+        List dict video, mỗi dict: {url, text, views, comments, likes,
+        date, author, hashtags}. Sort view giảm dần.
+    """
+    token = apify_token or os.environ.get("APIFY_TOKEN")
+    if not token:
+        raise ValueError("Cần APIFY_TOKEN trong env hoặc truyền apify_token")
+
+    if not any([keywords, profiles, hashtags]):
+        raise ValueError("Cần ít nhất 1 trong: keywords / profiles / hashtags")
+
+    actor = actor_id or os.environ.get(
+        "APIFY_DISCOVER_ACTOR_ID", "clockworks/tiktok-scraper"
+    )
+
+    client = ApifyClient(token)
+
+    actor_input: dict[str, Any] = {
+        "resultsPerPage": limit_per_query,
+        "maxItems": limit_per_query * max(
+            len(keywords or []) + len(profiles or []) + len(hashtags or []), 1
+        ),
+        "shouldDownloadVideos": False,
+        "shouldDownloadCovers": False,
+        "shouldDownloadSubtitles": False,
+    }
+    if keywords:
+        actor_input["searchQueries"] = keywords
+    if profiles:
+        # actor nhận profiles không có @
+        actor_input["profiles"] = [p.lstrip("@") for p in profiles]
+    if hashtags:
+        actor_input["hashtags"] = [h.lstrip("#") for h in hashtags]
+
+    logger.info(
+        "Apify discover: actor=%s, keywords=%s, profiles=%s, hashtags=%s, limit=%d",
+        actor, keywords, profiles, hashtags, limit_per_query,
+    )
+
+    run = client.actor(actor).call(run_input=actor_input)
+    if not run:
+        raise RuntimeError("Apify discover run trả về None")
+
+    dataset_id = _extract_dataset_id(run)
+    if not dataset_id:
+        raise RuntimeError(
+            f"Apify discover run không có defaultDatasetId. "
+            f"Run type: {type(run).__name__}"
+        )
+
+    videos: list[dict[str, Any]] = []
+    seen_urls: set[str] = set()
+    total = 0
+    for item in client.dataset(dataset_id).iterate_items():
+        total += 1
+        url = item.get("webVideoUrl")
+        if not url or url in seen_urls:
+            continue
+        views = item.get("playCount") or 0
+        comments = item.get("commentCount") or 0
+        date_iso = (item.get("createTimeISO") or "")[:10]
+
+        if views < min_views:
+            continue
+        if comments < min_comments:
+            continue
+        if newest_days is not None and date_iso:
+            # so sánh chuỗi ISO đơn giản không đủ tin cậy tuyệt đối,
+            # nhưng đủ để lọc bài quá cũ theo ngày.
+            from datetime import date as _date, timedelta as _td
+            try:
+                created = _date.fromisoformat(date_iso)
+                # today lấy từ createTime max để tránh phụ thuộc clock — dùng cutoff đơn giản
+                cutoff = _date.today() - _td(days=newest_days)
+                if created < cutoff:
+                    continue
+            except ValueError:
+                pass
+
+        seen_urls.add(url)
+        videos.append({
+            "url": url,
+            "text": (item.get("text") or "").strip(),
+            "views": views,
+            "comments": comments,
+            "likes": item.get("diggCount") or 0,
+            "date": date_iso,
+            "author": (item.get("authorMeta") or {}).get("name"),
+            "hashtags": [h.get("name") for h in (item.get("hashtags") or []) if h.get("name")],
+        })
+
+    videos.sort(key=lambda v: v["views"], reverse=True)
+    logger.info(
+        "Discover: %d video thô → %d video sau lọc (min_views=%d, min_comments=%d)",
+        total, len(videos), min_views, min_comments,
+    )
+    return videos
+
+
 def scrape_tiktok_comments(
     video_urls: list[str],
     max_comments_per_video: int = 100,
