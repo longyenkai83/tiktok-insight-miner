@@ -61,6 +61,7 @@ def _run_discover(args: argparse.Namespace) -> list[dict]:
         min_views=args.min_views,
         min_comments=args.min_comments,
         newest_days=args.newest_days,
+        only_languages=(args.lang or None),
     )
 
 
@@ -676,6 +677,10 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument(
             "--newest-days", type=int, default=None,
             help="Chỉ giữ video đăng trong N ngày gần đây (default: không lọc)",
+        )
+        p.add_argument(
+            "--lang", action="append", default=[],
+            help="Chỉ giữ video theo ngôn ngữ (lặp được, vd --lang vi). Default: không lọc.",
         )
 
     # --- discover (tìm video tự động → urls.txt) ---

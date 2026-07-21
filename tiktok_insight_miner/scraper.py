@@ -57,6 +57,8 @@ def discover_tiktok_videos(
     min_views: int = 0,
     min_comments: int = 1,
     newest_days: int | None = None,
+    only_languages: list[str] | None = None,
+    sort_by: str = "comments",
     apify_token: str | None = None,
     actor_id: str | None = None,
 ) -> list[dict[str, Any]]:
@@ -79,6 +81,11 @@ def discover_tiktok_videos(
         min_comments: Bỏ video dưới ngưỡng comment (default 1 — video 0 cmt mine vô ích)
         newest_days: Chỉ giữ video đăng trong N ngày gần đây (None = không lọc).
             Lọc client-side dựa trên createTimeISO.
+        only_languages: Chỉ giữ video có textLanguage khớp (vd ["vi"] = chỉ
+            tiếng Việt). None = không lọc ngôn ngữ. Video thiếu textLanguage
+            được GIỮ lại (tránh loại nhầm bài hợp lệ nhưng caption trống).
+        sort_by: "comments" (default — bài nhiều comment lên đầu, ưu tiên bài
+            mine được nhiều insight) hoặc "views".
         apify_token: Override APIFY_TOKEN env var
         actor_id: Override actor (default clockworks/tiktok-scraper)
 
@@ -143,10 +150,15 @@ def discover_tiktok_videos(
         views = item.get("playCount") or 0
         comments = item.get("commentCount") or 0
         date_iso = (item.get("createTimeISO") or "")[:10]
+        lang = (item.get("textLanguage") or "").lower()
 
         if views < min_views:
             continue
         if comments < min_comments:
+            continue
+        # Lọc ngôn ngữ: giữ video khớp, HOẶC video không có textLanguage (tránh
+        # loại nhầm bài caption trống). Video có lang khác rõ ràng thì bỏ.
+        if only_languages and lang and lang not in [l.lower() for l in only_languages]:
             continue
         if newest_days is not None and date_iso:
             # so sánh chuỗi ISO đơn giản không đủ tin cậy tuyệt đối,
@@ -169,11 +181,13 @@ def discover_tiktok_videos(
             "comments": comments,
             "likes": item.get("diggCount") or 0,
             "date": date_iso,
+            "lang": lang,
             "author": (item.get("authorMeta") or {}).get("name"),
             "hashtags": [h.get("name") for h in (item.get("hashtags") or []) if h.get("name")],
         })
 
-    videos.sort(key=lambda v: v["views"], reverse=True)
+    sort_key = "views" if sort_by == "views" else "comments"
+    videos.sort(key=lambda v: v[sort_key], reverse=True)
     logger.info(
         "Discover: %d video thô → %d video sau lọc (min_views=%d, min_comments=%d)",
         total, len(videos), min_views, min_comments,

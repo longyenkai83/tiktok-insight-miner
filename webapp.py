@@ -1890,12 +1890,16 @@ def main() -> None:
                     "View tối thiểu", min_value=0, value=0, step=5000, key="disc_min_views",
                 )
                 disc_min_comments = st.number_input(
-                    "Comment tối thiểu", min_value=0, value=5, step=1, key="disc_min_comments",
-                    help="Bỏ video ít/không có comment — mine vô ích.",
+                    "Comment tối thiểu", min_value=0, value=20, step=5, key="disc_min_comments",
+                    help="Bỏ video ít comment — mine chẳng được bao nhiêu. Kết quả sort theo số comment giảm dần.",
                 )
                 disc_limit = st.number_input(
                     "Số video tối đa / query", min_value=5, max_value=100, value=30, step=5,
                     key="disc_limit",
+                )
+                disc_vi_only = st.checkbox(
+                    "🇻🇳 Chỉ video tiếng Việt", value=True, key="disc_vi_only",
+                    help="Bỏ video nước ngoài (dựa trên ngôn ngữ caption). Bỏ tick nếu muốn cả video nước ngoài.",
                 )
 
             disc_kw_list = [k.strip() for k in disc_keywords.split(",") if k.strip()]
@@ -1916,6 +1920,7 @@ def main() -> None:
                             limit_per_query=int(disc_limit),
                             min_views=int(disc_min_views),
                             min_comments=int(disc_min_comments),
+                            only_languages=(["vi"] if disc_vi_only else None),
                         )
                         st.session_state["discover_results"] = found
                     except Exception as e:
@@ -1930,6 +1935,7 @@ def main() -> None:
                         {
                             "views": v["views"],
                             "comments": v["comments"],
+                            "lang": v.get("lang", ""),
                             "date": v["date"],
                             "author": v["author"],
                             "text": v["text"][:70],

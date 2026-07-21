@@ -31,6 +31,11 @@ logger = logging.getLogger(__name__)
 # v0.4: project root để tìm niche_configs/
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
+# Model mặc định cho suggester — bước sáng tạo cần trí thông minh cao nhất.
+# Opus 4.8 (mới nhất). Override qua arg model= hoặc env SUGGESTER_MODEL.
+# KHÔNG dùng ANTHROPIC_MODEL (đó là model classifier — thường Haiku cho rẻ).
+_DEFAULT_SUGGESTER_MODEL = "claude-opus-4-8"
+
 
 # Buckets có actionable insight cho content angle.
 # v0.3 (framework v1.0): praise được include với min_likes filter — top praise
@@ -121,6 +126,16 @@ PART D — 7 ANTI-PATTERNS — TUYỆT ĐỐI KHÔNG LÀM
    - cluster macro_despair + likes ≥50 → confidence ≥0.9
    - tip kỹ thuật rời rạc → confidence ≤0.7
    - UGC repost (Social Proof + Mere Exposure cluster cross) → confidence ≥0.9
+8. ❌❌ TUYỆT ĐỐI KHÔNG BỊA SỐ LIỆU / NGUỒN / THỐNG KÊ.
+   - KHÔNG tự chế số % ("bán lẻ giảm 4.6%"), KHÔNG gán nguồn ("GSO", "Euromonitor",
+     "McKinsey"), KHÔNG bịa "X% người...", KHÔNG bịa năm/quý cụ thể — ở BẤT KỲ đâu
+     (hook, script_outline, fb_caption_opening, cta).
+   - CHỈ được dùng số CÓ THẬT trong data đầu vào: likes của comment, số comment,
+     hoặc trích NGUYÊN VĂN từ comment. Đó là "proof" an toàn nhất.
+   - Nếu một con số/dẫn chứng sẽ làm angle mạnh hơn NHƯNG không có trong data:
+     KHÔNG bịa. Viết placeholder `[số liệu cần kiểm chứng — vd: nguồn X]` để
+     người dùng tự điền số thật. Thà để trống còn hơn bịa.
+   - Vi phạm luật này = brief bị loại hoàn toàn.
 
 ═══════════════════════════════════════════════════
 PART E — 8 ANGLE TYPES MIX
@@ -400,14 +415,14 @@ def generate_angles(
         classified: Output từ classify stage
         num_angles: Số angle muốn generate (default 10)
         top_n_per_bucket: Top N comments mỗi bucket dùng làm input (default 5)
-        model: Override model. Priority: arg > SUGGESTER_MODEL env > default Opus 4.7.
+        model: Override model. Priority: arg > SUGGESTER_MODEL env > default Opus 4.8.
                KHÔNG fallback ANTHROPIC_MODEL (cho phép classifier dùng Haiku, suggester dùng Opus)
         api_key: Override ANTHROPIC_API_KEY
         niche_slug: v0.4 — niche slug để load persona + meta_pains từ niche_configs/.
                     Nếu None → suggester chạy framework v1.0 (no persona layer)
     """
-    # v0.3: Suggester cần reasoning depth — default Opus 4.7.
-    model = model or os.environ.get("SUGGESTER_MODEL") or "claude-opus-4-7"
+    # Suggester cần reasoning depth — default Opus (mới nhất). KHÔNG hạ xuống Haiku.
+    model = model or os.environ.get("SUGGESTER_MODEL") or _DEFAULT_SUGGESTER_MODEL
 
     top_insights = select_top_insights(classified, top_n_per_bucket=top_n_per_bucket)
     if not top_insights:
@@ -472,7 +487,10 @@ def generate_angles(
             "REQUIRED cho MỖI angle:\n"
             "- `fb_caption_opening`: 3-5 dòng câu mồi cho Fanpage caption (quan trọng hơn hook 3s)\n"
             "- Hook 10s (KHÔNG 3s — Fanpage audience đọc caption trước)\n"
-            "- ÍT NHẤT 1 proof element: số liệu cụ thể, case tên thật, hoặc cite source\n"
+            "- ÍT NHẤT 1 proof element — NHƯNG chỉ dùng cái CÓ THẬT: quote nguyên văn\n"
+            "  comment, số likes thật, số comment thật. TUYỆT ĐỐI KHÔNG bịa số liệu/nguồn\n"
+            "  (xem PART D luật 8). Nếu muốn dẫn số macro mà data không có → viết\n"
+            "  `[số liệu cần kiểm chứng]`, KHÔNG tự chế số + gán nguồn.\n"
             "- CTA invite peer dialogue (vd \"Chia sẻ trải nghiệm của bạn dưới comment, mình đọc và phản hồi trong 24h\")\n\n"
             "5 MENTAL MODELS BỔ SUNG (chỉ dùng cho mature audience):\n"
             "- `sunk_cost_fallacy`: \"Tôi đã đầu tư 10 năm cho sự nghiệp X → pivot = lãng phí\"\n"
@@ -501,7 +519,8 @@ def generate_angles(
         f"- Mỗi angle có target_insight = quote nguyên văn 1 comment HOẶC meta-pattern niche.\n"
         f"- Hook PHẢI chứa ≥1 cụm nguyên văn từ comment gốc HOẶC lexicon.\n"
         f"- Phân bổ qua 5 cluster (không dồn 1 cluster). ≥1 angle có vn_concept.\n"
-        f"- KHÔNG bịa. KHÔNG commercial CTA. KHÔNG lặp 'hãy chân thực' cho cluster authentic_trend_fatigue.\n"
+        f"- KHÔNG BỊA SỐ LIỆU/NGUỒN/THỐNG KÊ ở bất kỳ đâu (PART D luật 8) — chỉ dùng số thật trong data,\n"
+        f"  không có thì viết `[số liệu cần kiểm chứng]`. KHÔNG commercial CTA. KHÔNG lặp 'hãy chân thực'.\n"
         f"- Cluster macro_despair + likes ≥50 → confidence ≥0.9 + angle_type=emotional_positioning.\n"
         f"- Theme lặp ≥3 lần → cân nhắc angle_type=series_announcement."
     )
@@ -512,7 +531,8 @@ def generate_angles(
             f"- Tuân thủ 6 anti-patterns ở PART H.\n"
             f"- ÍT NHẤT 2 angle ground vào META-pains (PART I), không chỉ raw comments.\n"
             f"- Hook 10s thay vì 3s.\n"
-            f"- Mỗi angle có ÍT NHẤT 1 proof element (số liệu/case tên/source)."
+            f"- Mỗi angle có ÍT NHẤT 1 proof element — CHỈ dùng số/quote CÓ THẬT trong data.\n"
+            f"  KHÔNG bịa số liệu/nguồn (PART D luật 8). Không có số thật → dùng `[số liệu cần kiểm chứng]`."
         )
 
     user_prompt = (
@@ -729,9 +749,12 @@ def generate_brief(
     if not angles:
         return []
 
+    # Nhãn model phải khớp model THẬT mà generate_angles dùng: arg > SUGGESTER_MODEL > Opus.
+    # KHÔNG lấy ANTHROPIC_MODEL (đó là model của classifier — thường Haiku → nhãn sai).
+    actual_model = model or os.environ.get("SUGGESTER_MODEL") or _DEFAULT_SUGGESTER_MODEL
     source_info: dict = {
         "total_comments": len(classified),
-        "model": model or os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7"),
+        "model": actual_model,
     }
     if source_videos is None:
         source_videos = sorted({c.comment.video_url for c in classified if c.comment.video_url})
