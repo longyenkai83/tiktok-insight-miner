@@ -20,6 +20,12 @@ from tiktok_insight_miner.classifier import (
 from tiktok_insight_miner.comment_importer import import_comments
 from tiktok_insight_miner.content_calendar import build_calendar
 from tiktok_insight_miner.cowork_exporter import export_for_cowork
+from tiktok_insight_miner.fb_page_source import (
+    GraphAPIError,
+    fetch_page_comments,
+    fetch_page_inbox,
+    probe as fb_probe,
+)
 from tiktok_insight_miner.insight_bank import build_insight_bank
 from tiktok_insight_miner.production import run_production
 from tiktok_insight_miner.reporter import generate_report
@@ -96,6 +102,55 @@ def cmd_scrape(args: argparse.Namespace) -> None:
     comments = scrape_tiktok_comments(urls, max_comments_per_video=args.max_comments)
     save_comments_json(comments, Path(args.output))
     print(f"✓ Scraped {len(comments)} comments → {args.output}")
+
+
+def cmd_fb_fetch(args: argparse.Namespace) -> None:
+    """Lấy comment (+ inbox) từ fanpage của mình qua Graph API → raw_comments.json."""
+    import json as _json
+
+    token = args.token or os.environ.get("FB_PAGE_TOKEN", "")
+    page_id = args.page_id or os.environ.get("FB_PAGE_ID", "")
+    if not token:
+        sys.exit("❌ Thiếu token. Đặt FB_PAGE_TOKEN trong .env hoặc truyền --token.")
+    if not page_id:
+        sys.exit("❌ Thiếu page id. Đặt FB_PAGE_ID trong .env hoặc truyền --page-id.")
+
+    try:
+        if args.probe:
+            print("🔍 Probe — gọi thật 1 bài + 1 comment (+1 hội thoại), in response thô để đối chiếu field:")
+            ket_qua = fb_probe(page_id, token, api_version=args.api_version, with_inbox=args.with_inbox)
+            print(_json.dumps(ket_qua, ensure_ascii=False, indent=2))
+            print()
+            print("👉 Đối chiếu tên field ở trên với COMMENT_FIELDS / MESSAGE_FIELDS trong fb_page_source.py.")
+            return
+
+        print(f"Fanpage {page_id} — lấy {args.since_days} ngày gần nhất...")
+        comments = fetch_page_comments(
+            page_id, token,
+            since_days=args.since_days,
+            api_version=args.api_version,
+            max_posts=args.max_posts,
+        )
+        print(f"✓ {len(comments)} comment của khách (đã ẩn danh, đã che SĐT/email/link)")
+
+        if args.with_inbox:
+            inbox = fetch_page_inbox(
+                page_id, token,
+                since_days=args.since_days,
+                api_version=args.api_version,
+                max_conversations=args.max_conversations,
+            )
+            print(f"✓ {len(inbox)} tin nhắn inbox của khách (đã ẩn danh)")
+            comments.extend(inbox)
+    except GraphAPIError as e:
+        sys.exit(f"❌ {e}")
+
+    if not comments:
+        sys.exit("⚠️  Không lấy được comment/tin nào trong khoảng thời gian này. Không ghi file.")
+
+    save_comments_json(comments, Path(args.output))
+    print(f"✓ Tổng {len(comments)} → {args.output}")
+    print("👉 Bước tiếp: tim classify -i <file này> -o classified.json")
 
 
 def cmd_classify(args: argparse.Namespace) -> None:
@@ -234,6 +289,7 @@ def cmd_suggest(args: argparse.Namespace) -> None:
         num_angles=args.num,
         top_n_per_bucket=args.top_per_bucket,
         model=args.model,
+        niche_slug=getattr(args, "niche", None),
     )
     if angles:
         print(f"✓ {len(angles)} content angles → {args.output}")
@@ -385,6 +441,7 @@ def cmd_select(args: argparse.Namespace) -> None:
         md_path,
         niche_slug=args.niche,
         output_root=Path(args.output_root) if args.output_root else None,
+        auto_top=getattr(args, "auto_top", None),
     )
 
     if result["selected_count"] == 0:
@@ -399,7 +456,11 @@ def cmd_select(args: argparse.Namespace) -> None:
     print()
     print(f"📊 Niche:       {result['niche']}")
     print(f"   Source run:  {result['source_run']}")
-    print(f"   Đã tick:     {result['selected_count']} angle")
+    print(
+        f"   Đã chọn:     {result['selected_count']} angle "
+        f"({result.get('manual_count', 0)} anh tick tay · "
+        f"{result.get('auto_count', 0)} máy tự chọn)"
+    )
     print(f"   Mới thêm:    {result['added']} (đã loại trùng quote)")
     print(f"   Giữ từ pipeline cũ: {result['kept_existing']}")
     print(f"   Tổng pipeline: {result['total']}")
@@ -409,7 +470,6 @@ def cmd_select(args: argparse.Namespace) -> None:
     print(f"   📄 {result['json_path']}")
     print()
     print("👉 Bước tiếp: chạy `tim production` để generate script đầy đủ cho mỗi angle.")
-    print("   (production.py — chưa làm trong MVP)")
 
 
 def cmd_bank(args: argparse.Namespace) -> None:
@@ -705,6 +765,22 @@ def build_parser() -> argparse.ArgumentParser:
     p_scrape.set_defaults(func=cmd_scrape)
 
     # --- classify ---
+    # --- fb-fetch (luồng 2: comment + inbox từ fanpage của mình) ---
+    p_fb = sub.add_parser(
+        "fb-fetch",
+        help="Lấy comment (+ inbox) từ fanpage CỦA MÌNH qua Graph API → raw_comments.json (đã ẩn danh)",
+    )
+    p_fb.add_argument("--page-id", type=str, default=None, help="Page ID (default: env FB_PAGE_ID)")
+    p_fb.add_argument("--token", type=str, default=None, help="Page access token (default: env FB_PAGE_TOKEN)")
+    p_fb.add_argument("--since-days", type=int, default=14, help="Lấy N ngày gần nhất (default 14)")
+    p_fb.add_argument("--with-inbox", action="store_true", help="Lấy cả tin nhắn inbox (cần pages_messaging)")
+    p_fb.add_argument("--max-posts", type=int, default=None, help="Giới hạn số bài (để test)")
+    p_fb.add_argument("--max-conversations", type=int, default=None, help="Giới hạn số hội thoại (để test)")
+    p_fb.add_argument("--api-version", type=str, default="v26.0", help="Phiên bản Graph API (default v26.0)")
+    p_fb.add_argument("--probe", action="store_true", help="Chỉ in response thô mẫu để đối chiếu field, không ghi file")
+    p_fb.add_argument("-o", "--output", type=str, default="output/fb_raw_comments.json", help="File JSON đầu ra")
+    p_fb.set_defaults(func=cmd_fb_fetch)
+
     p_classify = sub.add_parser("classify", help="Classify comments bằng Claude")
     p_classify.add_argument(
         "-i", "--input", type=str, required=True, help="Input JSON từ scrape",
@@ -750,6 +826,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Top N comments mỗi bucket actionable làm input cho Claude (default 5)",
     )
     p_suggest.add_argument(
+        "--niche", type=str, default=None,
+        help="Niche slug để load persona (vd kinh-doanh-27-45). Không truyền thì auto-detect từ output path.",
+    )
+    p_suggest.add_argument(
         "--model", type=str, default=None,
         help="Override model cho suggester (default Opus 4.7 — task creative cần intelligence)",
     )
@@ -790,6 +870,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_select.add_argument(
         "--output-root", type=str, default=None,
         help="Override folder chứa _master/ (default = niche root)",
+    )
+    p_select.add_argument(
+        "--auto-top", type=int, default=None,
+        help=(
+            "Tự chọn cho đủ N angle khi không có người tick tay. "
+            "Angle đã tick `[x]` luôn được giữ; thiếu bao nhiêu thì bù bấy nhiêu "
+            "bằng angle điểm cao nhất. Dùng cho agent chạy định kỳ (vd --auto-top 5)."
+        ),
     )
     p_select.set_defaults(func=cmd_select)
 

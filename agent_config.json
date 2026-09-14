@@ -1,0 +1,78 @@
+{
+  "$schema_version": "1.0",
+  "_doc": "Cấu hình cho agent chạy định kỳ (weekly_agent.py). Anh sửa file này, KHÔNG cần đụng code. Mỗi mục trong 'jobs' là một lần quét độc lập: hỏng một job không làm chết các job còn lại.",
+  "defaults": {
+    "_doc": "Giá trị dùng chung. Từng job có thể ghi đè bằng cách khai cùng tên khoá.",
+    "max_comments": 200,
+    "_max_comments": "Số comment lấy tối đa mỗi video. Càng cao càng tốn tiền.",
+    "limit": 10,
+    "_limit": "Số video lấy tối đa mỗi từ khoá.",
+    "min_views": 10000,
+    "_min_views": "Bỏ qua video ít hơn ngần này lượt xem.",
+    "min_comments": 50,
+    "_min_comments": "Bỏ qua video ít hơn ngần này comment — video vắng comment thì không có gì để đào.",
+    "newest_days": 14,
+    "_newest_days": "Chỉ lấy video đăng trong N ngày gần đây. Chạy hằng tuần thì để 14 là vừa.",
+    "lang": [
+      "vi"
+    ],
+    "_lang": "Chỉ giữ video tiếng Việt. Để [] nếu muốn lấy hết.",
+    "auto_top": 5,
+    "_auto_top": "Máy tự chọn bao nhiêu angle để viết bài khi không có ai tick tay.",
+    "with_angles": true,
+    "_with_angles": "Có sinh brief 10 content angle không (tốn thêm tiền Opus).",
+    "run_production": true,
+    "_run_production": "Có sinh file kịch bản đầy đủ trong 4-thực-thi/ không. Đây là khâu VIẾT BÀI."
+  },
+  "jobs": [
+    {
+      "enabled": false,
+      "_enabled": "ĐANG TẮT. Đổi thành true khi anh đã điền từ khoá bên dưới.",
+      "name": "kinh-doanh-27-45",
+      "_name": "Tên job, cũng là tên thư mục trong output/.",
+      "niche": "kinh-doanh-27-45",
+      "_niche": "Phải khớp tên file trong niche_configs/. Hiện có: kinh-doanh-27-45",
+      "keyword": [],
+      "_keyword": "ĐIỀN VÀO ĐÂY. Ví dụ: [\"kinh doanh online\", \"khởi nghiệp thất bại\"]",
+      "profile": [],
+      "_profile": "Kênh đối thủ muốn bám, không cần @. Ví dụ: [\"cafef_official\"]",
+      "hashtag": [],
+      "_hashtag": "Hashtag, không cần #. Ví dụ: [\"khoinghiep\"]",
+      "keyword_source": {
+        "_doc": "Rút từ khoá từ app keyword-research-dataforseo. Bỏ khối này nếu muốn tự điền keyword ở trên.",
+        "file": "D:/Tuan-CoWork/WORK AREAS/Marketing/keyword-research-dataforseo/_all_keywords_merged_v2.csv",
+        "top": 3,
+        "_top": "Mỗi tuần lấy mấy từ khoá. Càng nhiều càng tốn tiền.",
+        "min_vol": 1000,
+        "_min_vol": "Bỏ từ khoá ít hơn ngần này lượt tìm mỗi tháng.",
+        "max_kd": 40,
+        "_max_kd": "Bỏ từ khoá khó hơn ngưỡng này (0-100). Bỏ dòng này nếu không muốn lọc.",
+        "intent": [
+          "informational"
+        ],
+        "_intent": "Lọc theo ý định tìm kiếm. Để [] nếu lấy hết.",
+        "source_contains": "",
+        "_source_contains": "Lọc theo cột source, vd 'v9-business-planning'. Để rỗng nếu lấy hết.",
+        "rotate": true,
+        "_rotate": "true = tuần sau tự quét từ khoá KHÁC, không lặp lại tuần này."
+      },
+      "source": "tiktok",
+      "_source": "tiktok = quét thị trường rộng theo từ khoá. facebook_page = fanpage của mình."
+    },
+    {
+      "enabled": false,
+      "_enabled": "ĐANG TẮT. Bật khi đã có FB_PAGE_TOKEN + FB_PAGE_ID trong .env.",
+      "name": "fanpage-cua-anh",
+      "_name": "Tên job. Cùng niche với job TikTok ở trên để agent tự sinh bảng so sánh.",
+      "niche": "kinh-doanh-27-45",
+      "source": "facebook_page",
+      "_source": "Luồng 2: comment (+ inbox) từ fanpage của chính mình qua Graph API.",
+      "page_id": "",
+      "_page_id": "Page ID của fanpage. Để rỗng thì lấy FB_PAGE_ID trong .env.",
+      "since_days": 14,
+      "_since_days": "Lấy bài + hội thoại trong N ngày gần nhất.",
+      "with_inbox": false,
+      "_with_inbox": "true = lấy cả tin nhắn inbox (đã ẩn danh, che SĐT/email). Cần thêm quyền pages_messaging."
+    }
+  ]
+}

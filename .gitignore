@@ -52,3 +52,7 @@ start-digest.bat
 # OS
 .DS_Store
 Thumbs.db
+
+# Ban ghi phien lam viec va file coverage — khong bao gio dua len
+*.jsonl
+.coverage

@@ -12,6 +12,11 @@ Workflow:
      - Append vào `_master/content-pipeline.md` (giữ status cũ nếu quote trùng)
      - Ghi `_master/selected_angles.json` cho stage thực thi
 
+Chế độ auto (cho agent chạy định kỳ):
+  `auto_top=N` → nếu số dòng đã tick tay < N, tự bù thêm angle điểm cao nhất
+  trong các dòng CHƯA tick cho đủ N. Lựa chọn tay luôn được giữ, không bị cắt.
+  Mỗi angle mang field `selected_by` = "manual" (anh tick) hoặc "auto" (máy chọn).
+
 KHÔNG gọi Claude. KHÔNG modify file input.
 """
 
@@ -32,7 +37,7 @@ logger = logging.getLogger(__name__)
 # Format dòng checkbox được sinh bởi insight_bank.py:
 #   - [x] `[SCORE 226]` `[Q001 TIEN_BAC_BINH_YEN]` `[FAQ_ANSWER]` "quote..." — @author (209 likes)
 CHECKBOX_RE = re.compile(
-    r"^\s*-\s*\[\s*[xX]\s*\]\s*"           # - [x] / - [X]
+    r"^\s*-\s*\[\s*(?P<tick>[xX]?)\s*\]\s*"  # - [x] / - [X] / - [ ] (chưa tick)
     r"`\[SCORE\s+(?P<score>\d+)\]`\s*"
     r"`\[(?P<id>\S+)\s+(?P<problem>[A-Z_]+)\]`\s*"
     r"`\[(?P<opportunity>[A-Z_]+)\]`\s*"
@@ -51,14 +56,22 @@ INTENT_LINE_RE = re.compile(r"intent:\s*`([A-Z_]+)`")
 
 # --- Parse 3-lựa-chọn.md ---
 
-def parse_selected_md(md_path: Path) -> list[dict[str, Any]]:
-    """Parse file 3-lựa-chọn.md, trả về list các angle đã tick.
+def parse_selected_md(
+    md_path: Path,
+    auto_top: int | None = None,
+) -> list[dict[str, Any]]:
+    """Parse file 3-lựa-chọn.md, trả về list các angle được chọn.
 
     Mỗi item là dict với keys: id, score, problem_code, opportunity, quote_md (truncated),
-    author, likes, summary_md, intent.
+    author, likes, summary_md, intent, selected_by.
 
     `_md` suffix nghĩa là lấy từ markdown file (có thể truncated).
     Sẽ enrich bằng CSV ở bước sau để có quote/summary đầy đủ.
+
+    Args:
+        auto_top: None (mặc định) = chỉ lấy dòng đã tick tay — hành vi cũ, không đổi.
+            N = lấy dòng đã tick, thiếu thì bù bằng angle điểm cao nhất trong các
+            dòng chưa tick cho đủ N. Dùng cho agent chạy định kỳ không có người tick.
     """
     if not md_path.exists():
         raise FileNotFoundError(f"Không tìm thấy file: {md_path}")
@@ -66,7 +79,7 @@ def parse_selected_md(md_path: Path) -> list[dict[str, Any]]:
     text = md_path.read_text(encoding="utf-8")
     lines = text.splitlines()
 
-    selected: list[dict[str, Any]] = []
+    parsed: list[dict[str, Any]] = []
     i = 0
     while i < len(lines):
         line = lines[i]
@@ -75,6 +88,7 @@ def parse_selected_md(md_path: Path) -> list[dict[str, Any]]:
             i += 1
             continue
 
+        is_ticked = bool(m.group("tick"))
         item = {
             "id": m.group("id"),
             "score": int(m.group("score")),
@@ -85,7 +99,9 @@ def parse_selected_md(md_path: Path) -> list[dict[str, Any]]:
             "likes": int(m.group("likes")),
             "summary_md": "",
             "intent": "",
-            "selected_order": len(selected) + 1,
+            "ticked": is_ticked,
+            "selected_by": "manual" if is_ticked else "auto",
+            "selected_order": len(parsed) + 1,
         }
 
         # Đọc tiếp 1-3 dòng continuation để lấy summary + intent
@@ -103,10 +119,52 @@ def parse_selected_md(md_path: Path) -> list[dict[str, Any]]:
                 break
             j += 1
 
-        selected.append(item)
+        parsed.append(item)
         i = j
 
-    return selected
+    return _apply_auto_top(parsed, auto_top)
+
+
+def _apply_auto_top(
+    parsed: list[dict[str, Any]],
+    auto_top: int | None,
+) -> list[dict[str, Any]]:
+    """Quyết định angle nào được chọn từ list đã parse.
+
+    - auto_top=None → chỉ các dòng tick tay (hành vi gốc).
+    - auto_top=N → tick tay TRƯỚC, thiếu thì bù bằng điểm cao nhất trong chưa tick.
+      Đã tick sẵn >= N thì giữ nguyên hết, KHÔNG cắt bớt lựa chọn của người.
+
+    Tie-break khi cùng score: likes cao hơn trước, rồi tới id (để kết quả ổn định,
+    chạy lại 2 lần trên cùng file cho ra cùng thứ tự).
+    """
+    manual = [it for it in parsed if it["ticked"]]
+
+    if auto_top is None:
+        chosen = manual
+    else:
+        chosen = list(manual)
+        thieu = auto_top - len(chosen)
+        if thieu > 0:
+            con_lai = sorted(
+                (it for it in parsed if not it["ticked"]),
+                key=lambda it: (-it["score"], -it["likes"], it["id"]),
+            )
+            bu_them = con_lai[:thieu]
+            chosen.extend(bu_them)
+            logger.info(
+                "auto-top %d: %d tick tay + %d máy chọn thêm (còn %d angle chưa dùng)",
+                auto_top, len(manual), len(bu_them), len(con_lai) - len(bu_them),
+            )
+        elif len(manual) > auto_top:
+            logger.info(
+                "auto-top %d: đã có %d angle tick tay — giữ hết, không cắt bớt",
+                auto_top, len(manual),
+            )
+
+    for n, it in enumerate(chosen, 1):
+        it["selected_order"] = n
+    return chosen
 
 
 # --- Enrich từ 1-liệt-kê.csv ---
@@ -396,6 +454,7 @@ def write_selected_angles_json(
             "selected_at": selected_at,
             "status": DEFAULT_STATUS,
             "next_step": DEFAULT_NEXT_STEP,
+            "selected_by": item.get("selected_by", "manual"),
             "score": item["score"],
             "problem_code": item["problem_code"],
             "opportunity": item["opportunity"],
@@ -424,6 +483,7 @@ def run_selection(
     md_path: Path,
     niche_slug: str | None = None,
     output_root: Path | None = None,
+    auto_top: int | None = None,
 ) -> dict[str, Any]:
     """All-in-one: parse → enrich → merge → write 2 files.
 
@@ -431,15 +491,19 @@ def run_selection(
         md_path: Path tới 3-lựa-chọn.md
         niche_slug: Override niche slug (mặc định = tên folder cha của niche root)
         output_root: Override _master folder (mặc định = niche_root/_master)
+        auto_top: None = chỉ lấy angle tick tay. N = bù cho đủ N bằng điểm cao nhất
+            (cho agent chạy định kỳ, không có người tick).
 
-    Returns dict với keys: selected_count, added, kept_existing, total,
-        pipeline_path, json_path (None nếu không có insight được tick).
+    Returns dict với keys: selected_count, manual_count, auto_count, added,
+        kept_existing, total, pipeline_path, json_path (None nếu không chọn được gì).
     """
-    selected = parse_selected_md(md_path)
+    selected = parse_selected_md(md_path, auto_top=auto_top)
 
     if not selected:
         return {
             "selected_count": 0,
+            "manual_count": 0,
+            "auto_count": 0,
             "added": 0,
             "kept_existing": 0,
             "total": 0,
@@ -480,6 +544,8 @@ def run_selection(
 
     return {
         "selected_count": len(selected),
+        "manual_count": sum(1 for it in selected if it.get("selected_by") == "manual"),
+        "auto_count": sum(1 for it in selected if it.get("selected_by") == "auto"),
         "added": merge_stats["added"],
         "kept_existing": merge_stats["kept_existing"],
         "total": merge_stats["total"],

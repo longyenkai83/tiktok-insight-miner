@@ -1,27 +1,27 @@
 # 🆕 Latest run
 
-> Cập nhật lúc: **2026-05-08 11:38:48**
+> Cập nhật lúc: **2026-07-21 21:18:54**
 
 ## Tóm tắt
 
-- **Nhân viên**: `tuan-test`
-- **Niche**: `test-after-fix`
-- **Quy mô**: 1 video · 100 comments
-- **Thời gian**: 96s · **Cost ước tính**: $0.15
-- **Folder**: [output/test-after-fix/2026-05-04/](output/test-after-fix/2026-05-04/)
+- **Nhân viên**: `tuan`
+- **Niche**: `kinh-doanh-27-45`
+- **Quy mô**: 10 video · 985 comments
+- **Thời gian**: 929s · **Cost ước tính**: $1.37
+- **Folder**: [output/kinh-doanh-27-45/2026-07-21__tuan_210325/](output/kinh-doanh-27-45/2026-07-21__tuan_210325/)
 
 ## Phân bố
 
-`praise 48 · objection 17 · question 12 · other 11 · pain 8`
+`praise 353 · pain 166 · other 144 · question 139 · objection 115`
 
 ## File chính
 
-- 📊 [report.md](output/test-after-fix/2026-05-04/report.md) — insight summary
-- 🎬 [brief.md](output/test-after-fix/2026-05-04/brief.md) — content angles
+- 📊 [report.md](output/kinh-doanh-27-45/2026-07-21__tuan_210325/report.md) — insight summary
+- 🎬 [brief.md](output/kinh-doanh-27-45/2026-07-21__tuan_210325/brief.md) — content angles
 
 ## 🎬 Top angle #1
 
-> 1. May mắn tồn tại, nhưng nó không phải nguyên nhân duy nhất
+> 1. Người nghèo còn nước mắt đâu mà khóc
 
 ---
 
