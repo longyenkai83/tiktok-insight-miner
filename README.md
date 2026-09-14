@@ -1,11 +1,72 @@
 # TikTok Insight Miner
 
-CLI Python quét comment TikTok → phân loại bằng Claude → xuất **báo cáo insight + content angle brief**.
+> Nghe khán giả nói gì trong comment, rồi biết tuần này nên viết bài gì.
 
-Phân loại comment thành 7 bucket: **pain** / **desire** / **question** / **objection** / **praise** / **mention** / **other**. Dùng cho research thị trường, content angle discovery, viral hook mining.
+**Đang chạy tại:** https://insight.lenguyenkhang.com · **Bản hiện tại:** v0.5.0 (2026-09-11) · 90 test tự động
 
-**v0.2** thêm **content angle suggester** (`suggest` command): Claude Opus 4.7 generate 10 video idea hoàn chỉnh (hook + script outline + CTA) ground vào top insight thực, biến tool từ "research" thành "content brief actionable".
+## Vấn đề
 
+Người làm nội dung một mình và chủ doanh nghiệp nhỏ bán qua mạng xã hội phải ra bài mới mỗi tuần, nhưng không biết khán giả trong ngách đang hỏi gì, đau gì, phản đối gì. Cách phổ biến: mở từng video, đọc tay hàng trăm comment, rồi viết theo cảm tính — mất nửa ngày, kết quả tuỳ hôm.
+
+## Nó làm gì
+
+Nhập một từ khoá → máy tự tìm video nhiều comment trong ngách → quét comment về → Claude phân loại từng comment thành 7 nhóm (**pain / desire / question / objection / praise / mention / other**) → viết **10 ý tưởng nội dung** kèm hook và dàn ý, mỗi ý gắn thẳng vào comment gốc.
+
+Luật khoá trong mã: **không bịa**. Ý tưởng nào không trích được comment nguyên văn thì bị loại.
+
+Một lần chạy thật: 31 video, 2.898 comment, vài phút, khoảng 1 USD.
+
+## Dành cho ai
+
+- Người làm nội dung cho chủ doanh nghiệp nhỏ — đang là người dùng chính
+- Đội nội dung 3–5 người dùng chung qua web, mỗi người có mật khẩu và hạn mức riêng
+
+## Ba cách dùng
+
+| Cách | Dành cho | Bắt đầu ở đâu |
+|---|---|---|
+| **Web** — gõ từ khoá, bấm chạy | Người không cần cài gì | https://insight.lenguyenkhang.com (cần mật khẩu) |
+| **Dòng lệnh** — `tim run ...` | Người quen terminal, muốn chạy hàng loạt | Mục "Dùng bằng dòng lệnh" bên dưới |
+| **Agent định kỳ** — không ai bấm | Chạy mỗi tuần, tự rút từ khoá, tự lưu | [docs/AGENT_DINH_KY.md](docs/AGENT_DINH_KY.md) |
+
+## Kiến trúc
+
+- **Sơ đồ mở bằng trình duyệt:** [kien-truc.html](kien-truc.html) — hai cửa vào, 6 tầng, các cổng chặn, và 9 lỗi đã từng xảy ra thật
+- **Đặc tả một trang:** [spec.md](spec.md) — 7 mục: vấn đề, người dùng, làm gì, không làm gì, dữ liệu, xong là gì, dễ hỏng ở đâu
+- **Tài liệu kỹ thuật đầy đủ:** [docs/ARCHITECTURE_FOR_OPTIMIZATION.md](docs/ARCHITECTURE_FOR_OPTIMIZATION.md) — cho kỹ sư nhận bàn giao
+
+```
+Từ khoá ──► Discover (Apify) ──► Scrape (Apify) ──► Classify (Claude Haiku)
+                                                         │
+                                          ┌──────────────┴──────────────┐
+                                          ▼                             ▼
+                                   Report (report.md)          Brief (Claude Opus)
+                                                               10 ý tưởng + comment gốc
+                                          │                             │
+                                          └──────────────┬──────────────┘
+                                                         ▼
+                                    Lưu: ổ đĩa Railway → Google Drive → usage_log.csv
+```
+
+**Hạ tầng:** Streamlit trên Railway, không có cơ sở dữ liệu (cố ý — CSV đủ cho dưới 100 lần/tháng). Khoá Apify và Anthropic nằm trong biến môi trường Railway, `.env` không có trong git.
+
+## Trong mã nguồn có gì
+
+| Đường dẫn | Là gì |
+|---|---|
+| `webapp.py` | Giao diện web Streamlit — cổng mật khẩu, hạn mức, chạy pipeline, xem lịch sử |
+| `tiktok_insight_miner/` | Lõi: `scraper.py` · `classifier.py` · `reporter.py` · `suggester.py` · `selection.py` · `cli.py` |
+| `weekly_agent.py` + `agent_config.json` | Agent định kỳ, chạy liền 5 khâu cho nhiều job |
+| `niche_configs/` | Hồ sơ từng ngách: nhân vật, chỗ đau, giọng viết |
+| `output/` | Kết quả từng lần chạy — gitignore |
+| `tests/` | 90 test, chạy `python -m pytest tests/` |
+| `docs/` | Kiến trúc, vận hành, bàn giao, SOP |
+
+## Lịch sử bản
+
+Xem mục **Changelog** trong [CLAUDE.md](CLAUDE.md). Mốc chính: v0.3 web nội bộ · v0.4 tự tìm video · **v0.5 agent định kỳ**.
+
+---
 ## Cài đặt
 
 ```bash
@@ -25,7 +86,7 @@ Cần:
 - **Apify token**: https://console.apify.com/account/integrations
 - **Anthropic API key**: https://console.anthropic.com/settings/keys
 
-## Usage
+## Dùng bằng dòng lệnh (CLI)
 
 ### Discover — tự tìm video (bỏ khâu tìm tay)
 
