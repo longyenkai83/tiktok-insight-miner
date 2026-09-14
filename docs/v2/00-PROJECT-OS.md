@@ -30,7 +30,7 @@ Snapshot mã nguồn của baseline:
 
 ## Mục tiêu
 
-Chuyển tiếng nói khách hàng thành insight có bằng chứng, rồi thành quyết định nội dung do con người chọn. Writer sáng tạo cách nói, không sáng tạo customer truth. Customer Profile tổ chức theo Jobs / Pains / Gains + Context; B2B có Customer Ecosystem Role. Một comment có thể mang nhiều customer signals hoặc không có signal phù hợp.
+Chuyển tiếng nói khách hàng thành insight có bằng chứng, rồi thành quyết định nội dung do con người chọn. Writer sáng tạo cách nói, không sáng tạo customer truth. V2 là B2C-first. Customer Profile tổ chức theo Jobs / Pains / Gains + Context; Customer Identity tập trung audience_segment, context, situation và life/business stage khi liên quan. Chỉ phân biệt user/buyer khi use case B2C thực sự cần. Một comment có thể mang nhiều customer signals hoặc không có signal phù hợp.
 
 Kiến trúc đích bắt buộc:
 

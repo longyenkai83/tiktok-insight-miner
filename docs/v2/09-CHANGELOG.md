@@ -1,5 +1,13 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Architecture correction: B2C-first
+
+- DEC-019 thay DEC-004: "V2 is B2C-first. Do not introduce B2B complexity unless explicitly approved later."
+- Loại logic hệ sinh thái B2B khỏi target, schema, contract, roadmap và tiêu chí nghiệm thu.
+- Customer Identity V2 tập trung audience_segment, context, situation, life/business stage khi liên quan; user/buyer chỉ khi use case B2C thực sự cần.
+- Giữ lịch sử quyết định cũ dưới trạng thái SUPERSEDED. Mục lịch sử bên dưới không còn xác định phạm vi B2B hiện hành.
+- Chỉ thay tài liệu. Giữ Phase 0, không bắt đầu Phase 1, không đổi runtime.
+
 ## 2026-09-15 — Phase 0: V2 architecture documentation
 
 - Chuẩn hóa bộ mười tài liệu source-of-truth `00`–`09`; tách baseline CURRENT STATE khỏi target architecture V2.

@@ -11,7 +11,7 @@ Contract dữ liệu nằm tại [02-DATA-SCHEMA.md](02-DATA-SCHEMA.md); provena
 | Bên giao → bên nhận | Điều kiện |
 |---|---|
 | Source → Audience / Role / Context | Có snapshot, locator, thời điểm; thuộc tính thiếu không tự điền bằng persona |
-| Audience / Role / Context → Customer Signals | Context có nhãn và provenance; signal giữ span/source, không dùng role giả thuyết như fact |
+| Audience / Role / Context → Customer Signals | Customer Identity B2C có nhãn và provenance; user/buyer chỉ khi cần, không dùng giả thuyết như fact |
 | Customer Signals → Pattern | 0..n signal/comment; grouping truy được nguồn và không đếm signal thành người |
 | Pattern → Evidence | Giữ inclusion/exclusion và scope; xác minh quote/metadata, thu thập cả phản chứng |
 | Evidence → Insight | Claim có support đúng nghĩa, derivation, scope và limitations; giả thuyết tách riêng |
@@ -35,7 +35,7 @@ Human approval gắn với exact Angle và các input versions. Nếu nội dung
 
 Writer được đổi bố cục, nhịp, hook, ví dụ minh họa phi thực chứng được ghi rõ, ẩn dụ và cách giải thích; không bắt buộc copy tối thiểu năm từ hoặc giữ regex V1. Mọi diễn đạt phải giữ nguyên nghĩa, attribution, scope và độ chắc chắn của claim được phép.
 
-Writer không được tạo thêm pain, job, gain, role, động cơ, số liệu, lời khách, case thực tế hoặc kết quả sản phẩm. Không làm câu “một comment phản ánh” thành “khách hàng đều gặp”. Không biến research_hypotheses thành fact bằng cách bỏ nhãn. Giọng thương hiệu và config chỉ điều khiển diễn đạt, không xác thực customer truth.
+Writer không được tạo thêm pain, job, gain, audience segment, user/buyer, động cơ, số liệu, lời khách, case thực tế hoặc kết quả sản phẩm. Không làm câu “một comment phản ánh” thành “khách hàng đều gặp”. Không biến research_hypotheses thành fact bằng cách bỏ nhãn. Giọng thương hiệu và config chỉ điều khiển diễn đạt, không xác thực customer truth.
 
 Brand fact/offer/giá chỉ được dùng nếu có nguồn riêng đã kiểm và được cho phép trong packet; nếu thiếu, trả yêu cầu bổ sung. Không mặc định cấm toàn bộ commercial content theo prompt V1, cũng không tự phát minh offer để điền CTA.
 

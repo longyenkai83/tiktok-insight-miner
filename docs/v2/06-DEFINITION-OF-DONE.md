@@ -7,7 +7,7 @@
 - Chuỗi kiến trúc đủ và đúng thứ tự theo chỉ thị, bao gồm Human Selection và typed Content Intelligence Packet.
 - Truth types dùng đúng OBSERVED / DERIVED / HYPOTHESIS / PROPOSED; áp dụng theo claim, có rule chống nâng nhãn sai.
 - DECISIONS nêu đủ mười quyết định bắt buộc; phân biệt quyết định đã chốt và chi tiết schema/triển khai chưa duyệt.
-- Customer Profile Jobs/Pains/Gains + Context, multi-signal/comment và B2B Ecosystem Role được phản ánh xuyên schema/contract.
+- Customer Profile Jobs/Pains/Gains + Context, multi-signal/comment và Customer Identity B2C-first được phản ánh xuyên schema/contract; không có logic hệ sinh thái B2B.
 - Insight DERIVED truy được về source comment; nguồn thiếu/giả thuyết không được dùng làm observed truth.
 - CLAUDE.md và AGENTS.md bắt buộc mọi coding agent đọc đủ docs/v2 trước sửa code; chỉ dẫn V1 cũ được ghi rõ CURRENT STATE.
 - PROJECT-STATE giữ Phase 0 / ARCHITECTURE DOCUMENTATION / Next Phase 1 Signal Extraction / Do not start Phase 1 without review.
@@ -22,7 +22,7 @@ Hoàn tất bàn giao Phase 0 không tự chuyển phase. Review của chủ d�
 | Phần | Các trường hợp phải chứng minh khi triển khai được duyệt |
 |---|---|
 | Source/Signal | Nhiều signal/comment, zero signals, Unicode quote spans, missing metrics, dedup, lineage qua export, không ép bucket |
-| Context/Profile | Unknown và role có scope; một người nhiều role; persona/meta-pain chỉ là giả định; Jobs/Pains/Gains có refs |
+| Context/Profile | audience_segment/context/situation có nguồn hoặc unknown; life/business stage chỉ khi liên quan; user/buyer chỉ khi use case B2C cần; persona/meta-pain chỉ là giả định; Jobs/Pains/Gains có refs |
 | Pattern | Count nguồn phân biệt, không count signal thành người, scope mẫu và phản chứng, không suy market % từ like |
 | Insight/Evidence | Mỗi DERIVED claim trace nguồn; quote/metric lệch bị chặn; single-case không thành recurring fact; hypothesis giữ riêng |
 | Topic/Angle | Bắt đầu từ insight, không thêm customer fact; wording linh hoạt không cần regex/đếm từ V1 |

@@ -23,7 +23,7 @@ Source → Audience / Role / Context → Customer Signals → Pattern → Eviden
 | Tầng | Trách nhiệm và đầu ra | Ranh giới |
 |---|---|---|
 | Source | Snapshot comment và nguồn gốc ổn định | Không suy ra persona hoặc ý định mua từ danh tính |
-| Audience / Role / Context | Ghi nhận/giả thuyết về bối cảnh, nhóm người và vai trò hệ sinh thái | Chưa biết thì unknown; phân biệt lời tự nhận và suy luận |
+| Audience / Role / Context | Customer Identity B2C: audience_segment, context, situation, life/business stage khi liên quan; user/buyer chỉ khi cần | Chưa biết thì unknown; phân biệt lời tự nhận và suy luận |
 | Customer Signals | Tách nhiều biểu hiện Jobs/Pains/Gains, bối cảnh, hành vi, ngôn ngữ | Không ép một comment vào một bucket duy nhất |
 | Pattern | Nhóm signal có quan hệ và ghi phạm vi mẫu, số nguồn phân biệt | Không coi lượt like hoặc nhiều signal cùng comment là nhiều người đồng ý |
 | Evidence | Đóng gói bằng chứng hỗ trợ/phản bác, quote và nguồn | Không tạo bằng chứng mới để khớp kết luận |
@@ -43,7 +43,9 @@ Source reference phải được gắn ngay khi ghi nhận Audience/Role/Context
 
 Pattern và Signal là các nút giải thích trung gian, cũng phải phân giải tới cùng source snapshot. Một Insight có thể chứa nhiều claim khác truth type; không được dùng nhãn của cả object che sự khác biệt này.
 
-Customer Profile là view tổng hợp Jobs / Pains / Gains + Context từ các claim có nhãn. Với B2B, vai trò có thể khác giữa người dùng, người trả tiền, người quyết định, người ảnh hưởng, người triển khai và người bị ảnh hưởng. Đây là ví dụ vai trò, không phải phân loại đã xác minh cho một audience. Một người có thể có nhiều vai trò theo ngữ cảnh; comment tag tên người khác không tự chứng minh vai trò influencer.
+V2 là B2C-first. Customer Profile là view tổng hợp Jobs / Pains / Gains + Context từ các claim có nhãn. Customer Identity tập trung `audience_segment`, `context`, `situation`, `life_stage?`, `business_stage?` khi liên quan. Business stage chỉ mô tả hoàn cảnh của người tiêu dùng, không mở rộng sang mô hình mua hàng tổ chức. Phân biệt `user/buyer` chỉ khi use case B2C thực sự cần và có nguồn phù hợp; không tạo taxonomy vai trò mặc định.
+
+Trong tên tầng Audience / Role / Context, Role chỉ có nghĩa phân biệt user/buyer tùy chọn như trên. Target không có economic buyer, decision committee, channel partner, recommender, saboteur hoặc customer ecosystem logic dành cho B2B. Chỉ bổ sung độ phức tạp B2B khi chủ dự án phê duyệt rõ ràng sau này (DEC-019).
 
 Phân loại ý nghĩa signal thường là DERIVED; phần text nguyên văn tự nó là OBSERVED. Giả thuyết thiếu bằng chứng được giữ riêng để nghiên cứu, không đi vào customer facts của Writer.
 

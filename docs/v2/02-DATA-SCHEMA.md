@@ -30,12 +30,13 @@ Mọi domain record có RecordEnvelope. Claim DERIVED bắt buộc có Derivatio
 
 Phải có ít nhất external ID hoặc locator nhập liệu đủ phân biệt nguồn. Thiếu nguồn đối chiếu thì không đủ điều kiện đưa vào packet. canonical_text là snapshot dùng để kiểm quote; thay đổi/redact tạo version mới, không âm thầm sửa bản cũ. Không đẩy raw riêng tư/PII vào Git. Số like chứng minh metadata được quan sát tại thời điểm lấy, không chứng minh quan điểm là đúng.
 
-## AudienceContext và CustomerEcosystemRole
+## Customer Identity V2 — B2C-first
 
-- AudienceContext: claims[] về audience, situation, trigger, task, constraints, channel_context; role_assignments[].
-- RoleAssignment: role_label, scope, subject_ref?, claim, evidence_status.
-- Mỗi thuộc tính khẳng định phải có Claim; unknown là thiếu dữ liệu, không phải persona mặc định.
-- B2B cho phép nhiều role assignment trong các buying/use context khác nhau. Enum role cuối cùng và cơ chế chuẩn hóa còn OPEN (DEC-012).
+- CustomerIdentity: `audience_segment`, `context`, `situation`; `life_stage?`, `business_stage?` chỉ khi liên quan tới use case B2C.
+- `user_buyer_distinction?`: chỉ xuất hiện khi cần phân biệt người dùng và người mua trong use case B2C; kèm use_case_reason và Claim có nguồn cho từng nhận định. Không cần thì bỏ trường này, không tự tạo role assignment.
+- Mỗi thuộc tính khẳng định phải có Claim; unknown là thiếu dữ liệu, không phải persona mặc định. Business stage không hàm ý buying committee hay customer ecosystem.
+- AudienceContext là view ngữ cảnh của CustomerIdentity, gồm context, situation và các claim về trigger/task/constraints/channel khi có nguồn; không có role_assignments hoặc ecosystem_roles.
+- Chi tiết field vẫn PROPOSED (DEC-012); phạm vi B2C-first là ACCEPTED (DEC-019).
 
 ## CustomerSignal
 
@@ -70,7 +71,7 @@ Insight:
 
 CustomerProfile:
 
-- jobs[], pains[], gains[] là ClaimRef hoặc InsightRef; context_ref; ecosystem_roles[]; sample_scope; limitations[].
+- jobs[], pains[], gains[] là ClaimRef hoặc InsightRef; identity_ref; context_ref; sample_scope; limitations[].
 - Có thể chứa giả thuyết được gắn nhãn riêng; view xuất cho Writer chỉ giữ claim đủ điều kiện. Không có phép nhập persona/config trực tiếp thành customer facts.
 
 ## Topic, Angle và HumanSelection

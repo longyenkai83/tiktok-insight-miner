@@ -2,7 +2,7 @@
 
 ## Phân biệt điều quan sát và điều kết luận
 
-OBSERVED chỉ có nghĩa hệ thống ghi nhận được lời nói hoặc metadata từ nguồn. Nếu khách nói “sản phẩm X gây Y”, chỉ được trình bày đó là lời khách phản ánh; chưa thể khẳng định X thực sự gây Y. Chuẩn hóa ý nghĩa, gán role hoặc suy nguyên nhân là DERIVED/HYPOTHESIS tùy bằng chứng.
+OBSERVED chỉ có nghĩa hệ thống ghi nhận được lời nói hoặc metadata từ nguồn. Nếu khách nói “sản phẩm X gây Y”, chỉ được trình bày đó là lời khách phản ánh; chưa thể khẳng định X thực sự gây Y. Chuẩn hóa ý nghĩa, phân biệt user/buyer khi cần hoặc suy nguyên nhân là DERIVED/HYPOTHESIS tùy bằng chứng.
 
 DERIVED phải có phương pháp, input refs, scope và giới hạn. HYPOTHESIS phải nêu điều chưa biết, giả định và kế hoạch kiểm chứng. PROPOSED là lựa chọn hành động/biên tập, không là bằng chứng.
 
@@ -50,4 +50,4 @@ Giả sử source giả lập S-demo có câu “Tôi mất nhiều thời gian 
 
 ## Bộ kiểm cần có khi triển khai sau review
 
-Thiếu source, quote lệch, likes bịa, source version đổi, inference không có evidence, đếm trùng signal, vai trò suy từ @mention, giả thuyết trộn vào facts, selected_angles được nhận như packet, hoặc auto-top giả làm human approval đều phải có trường hợp kiểm âm. Đây là tiêu chí thiết kế cho phase sau; chưa có validator/test V2 được triển khai trong Phase 0.
+Thiếu source, quote lệch, likes bịa, source version đổi, inference không có evidence, đếm trùng signal, user/buyer suy từ @mention, giả thuyết trộn vào facts, selected_angles được nhận như packet, hoặc auto-top giả làm human approval đều phải có trường hợp kiểm âm. Đây là tiêu chí thiết kế cho phase sau; chưa có validator/test V2 được triển khai trong Phase 0.

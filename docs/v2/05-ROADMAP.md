@@ -14,7 +14,7 @@ Phase 0 là phạm vi hiện tại. Tên Phase 1 theo chỉ thị chủ dự án
 |---|---|---|---|
 | 0 — Architecture Documentation | Mười tài liệu, chỉ dẫn agent, existing tests, commit/push tài liệu | Đủ nguyên tắc, schema/contract dự kiến, runtime không đổi | CURRENT |
 | 1 — Signal Extraction | Source/provenance tối thiểu, context đầu vào có nhãn, tách nhiều signals/comment | Quote trace, nhiều signal/không signal, unknown context và lỗi có kiểm chứng | NOT STARTED |
-| 2 — Audience / Role / Context | Làm sâu context, Customer Ecosystem Role, view Jobs/Pains/Gains | Phân biệt self-report/suy luận/giả thuyết, không ép persona | PROPOSED — NOT STARTED |
+| 2 — Audience / Role / Context | Customer Identity B2C: audience_segment, context, situation, life/business stage khi liên quan; view Jobs/Pains/Gains | Phân biệt self-report/suy luận/giả thuyết; user/buyer chỉ khi cần, không có ecosystem B2B | PROPOSED — NOT STARTED |
 | 3 — Pattern | Nhóm signals có scope, dedup và support policy đã review | Đếm nguồn phân biệt, giải thích grouping, giữ ngoại lệ | PROPOSED — NOT STARTED |
 | 4 — Evidence / Insight | Tổng hợp evidence, phản chứng và insight có truy vết | Claim-level truth types, không có insight DERIVED mất source | PROPOSED — NOT STARTED |
 | 5 — Topic | Tổ chức insight đủ điều kiện thành chủ đề biên tập | Không tạo customer truth mới, chưa tạo final content | PROPOSED — NOT STARTED |
