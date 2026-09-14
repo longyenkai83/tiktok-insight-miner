@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="google" content="notranslate">
+<title>Kiến trúc — TikTok Insight Miner</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#fff; --ink:#1c1c1a; --muted:#6b6b66; --line:#d9d9d4;
+    --ok:#1f7a4d; --okbg:#e8f5ee; --err:#b3261e; --errbg:#fdeceb;
+    --cond:#8a5a00; --condbg:#fdf3e0; --debt:#6b3fa0; --debtbg:#f2ecfa;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#17171a; --card:#1f1f23; --ink:#ececea; --muted:#9a9a95; --line:#33333a;
+    --ok:#6ecf9b; --okbg:#12291e; --err:#f2938c; --errbg:#2b1513;
+    --cond:#e0b25c; --condbg:#2a2113; --debt:#c0a3e8; --debtbg:#221b2e;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#17171a; --card:#1f1f23; --ink:#ececea; --muted:#9a9a95; --line:#33333a;
+    --ok:#6ecf9b; --okbg:#12291e; --err:#f2938c; --errbg:#2b1513;
+    --cond:#e0b25c; --condbg:#2a2113; --debt:#c0a3e8; --debtbg:#221b2e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 20px 72px}
+  h1{font-size:26px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 28px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}
+  .tag{font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
+  .t-ok{background:var(--okbg);color:var(--ok);border-color:transparent}
+  .t-err{background:var(--errbg);color:var(--err);border-color:transparent}
+  .t-cond{background:var(--condbg);color:var(--cond);border-color:transparent}
+  .t-debt{background:var(--debtbg);color:var(--debt);border-color:transparent}
+  .node{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:13px 16px;margin:0 auto;max-width:680px}
+  .node b{display:block;font-size:15px}
+  .node span{display:block;color:var(--muted);font-size:13.5px}
+  .cond{background:var(--condbg);border-color:transparent}
+  .cond b{color:var(--cond)}
+  .debt{background:var(--debtbg);border-color:transparent}
+  .debt b{color:var(--debt)}
+  .arrow{text-align:center;color:var(--muted);font-size:17px;line-height:1;margin:7px 0}
+  .arrow em{font-style:normal;font-size:12.5px;display:block;margin-top:3px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:680px;margin:0 auto}
+  @media(max-width:640px){.split{grid-template-columns:1fr}}
+  .split .node{max-width:none}
+  .errbox{max-width:680px;margin:10px auto 0;background:var(--errbg);
+    border-left:3px solid var(--err);border-radius:0 8px 8px 0;padding:11px 14px}
+  .errbox b{color:var(--err);font-size:13.5px}
+  .errbox span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+  .stage{margin:34px 0 12px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);text-align:center}
+  .rev{max-width:680px;margin:44px auto 0;padding:18px 20px;background:var(--card);
+    border:1px solid var(--line);border-radius:10px}
+  .rev h2{font-size:16px;margin:0 0 10px}
+  .rev ul{margin:0;padding-left:20px}
+  .rev li{margin-bottom:7px}
+  .rev li b{color:var(--err)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>TikTok Insight Miner — kiến trúc</h1>
+  <p class="sub">Bản vẽ lần 2 · 2026-09-14 · Comment khán giả → 7 nhóm insight → 10 ý tưởng nội dung</p>
+
+  <div class="legend">
+    <span class="tag t-ok">Đã chạy thật</span>
+    <span class="tag t-cond">Điều kiện</span>
+    <span class="tag t-err">Nhánh lỗi — đã xảy ra thật</span>
+    <span class="tag t-debt">Nợ kỹ thuật, cố ý để sau</span>
+  </div>
+
+  <div class="stage">0 · Hai cửa vào</div>
+
+  <div class="split">
+    <div class="node"><b>Cửa 1 — Người dùng, qua web</b>
+      <span>insight.lenguyenkhang.com — Streamlit trên Railway</span>
+      <span>Gõ từ khoá / dán link / dán CSV → bấm chạy</span></div>
+    <div class="node"><b>Cửa 2 — Agent định kỳ, không ai bấm</b>
+      <span>Windows Task Scheduler → weekly_agent.py</span>
+      <span>Tự rút từ khoá từ kho 3.529 từ, xoay vòng qua keyword-state.json</span></div>
+  </div>
+
+  <div class="arrow">↓<em>cửa 1 phải qua hai cổng</em></div>
+  <div class="node cond"><b>Đúng mật khẩu chưa? Còn hạn mức chưa?</b>
+    <span>WEBAPP_PASSWORD · mỗi người tối đa 20 lần chạy / 24 giờ · mọi lần đều ghi usage_log.csv</span></div>
+  <div class="errbox"><b>Lỗi: Chrome tự dịch trang → giao diện không tải</b>
+    <span>Chrome Translate sửa DOM, React insertBefore vỡ. Đã vá bằng thẻ notranslate</span></div>
+
+  <div class="stage">1 · Tìm video</div>
+
+  <div class="node"><b>Discover — Apify tiktok-scraper</b>
+    <span>Từ khoá / hashtag / @kênh → danh sách video, lọc min_views, min_comments, newest_days, sắp theo comment</span></div>
+  <div class="node cond"><b>Có video nào đạt ngưỡng không?</b>
+    <span>Không → dừng, báo "0 video", không tốn tiền cào</span></div>
+  <div class="arrow">↓<em>urls.txt</em></div>
+
+  <div class="stage">2 · Quét comment</div>
+
+  <div class="node"><b>Scrape — Apify tiktok-comments-scraper</b>
+    <span>Mỗi video tối đa N comment → raw_comments.json</span></div>
+  <div class="errbox"><b>Lỗi: Apify đổi kiểu trả về giữa hai phiên bản SDK</b>
+    <span>run.get("defaultDatasetId") hỏng vì bản mới trả object. Đã vá: đọc được cả 3 dạng, ghim phiên bản</span></div>
+  <div class="errbox"><b>Lỗi: vượt hạn mức Apify trả trước</b>
+    <span>06/09/2026 vượt $29, phải nâng trần lên $40. Chỉ biết qua email cảnh báo</span></div>
+  <div class="arrow">↓</div>
+
+  <div class="stage">3 · Phân loại</div>
+
+  <div class="node"><b>Classify — Claude Haiku, theo mẻ, đầu ra có cấu trúc</b>
+    <span>Mỗi comment → 1 trong 7 nhóm: pain · desire · question · objection · praise · mention · other</span>
+    <span>strict_grounding: chỉ được gắn nhãn, cấm suy diễn thêm</span></div>
+  <div class="node cond"><b>Khoá có hợp lệ không? Mẻ có trả kết quả không?</b>
+    <span>401 → dừng ngay · 3 mẻ liên tiếp trống → dừng. Không cho chạy tiếp với 0 comment</span></div>
+  <div class="errbox"><b>Lỗi: thất bại im lặng</b>
+    <span>Trước đây khoá sai vẫn log "thành công" với 0 comment. Đã vá bằng cổng chặn ở trên</span></div>
+  <div class="arrow">↓<em>classified.json</em></div>
+
+  <div class="stage">4 · Báo cáo và ý tưởng — chạy song song</div>
+
+  <div class="split">
+    <div class="node"><b>Report — thuần định dạng, không gọi AI</b>
+      <span>Đếm phân bố 7 nhóm, xếp câu trích theo tần suất → report.md</span></div>
+    <div class="node"><b>Brief — Claude Opus, chế độ suy nghĩ</b>
+      <span>10 ý tưởng: hook + dàn ý + CTA, mỗi ý gắn comment gốc → brief.md + brief.json</span></div>
+  </div>
+  <div class="node cond" style="margin-top:14px"><b>Mỗi ý tưởng có trích được comment nguyên văn không?</b>
+    <span>Không → loại. Đây là luật "không bịa" khoá trong mã, có phép thử trong spec mục 6</span></div>
+  <div class="errbox"><b>Lỗi: điều kiện tên model lỗi thời</b>
+    <span>Kiểm "opus-4-7 hoặc 4-6" → nâng lên 4-8 là tắt ngầm chế độ suy nghĩ. Đã vá: kiểm tiền tố "opus-4"</span></div>
+  <div class="errbox"><b>Lỗi: regex đọc brief bắt nhầm trường CTA</b>
+    <span>Dấu ":" đặt sai vị trí trong mẫu. Đã vá, và thêm test cho 2 định dạng thật</span></div>
+  <div class="arrow">↓</div>
+
+  <div class="stage">5 · Chọn ý tưởng</div>
+
+  <div class="node cond"><b>Có ai tick [x] chưa?</b>
+    <span>Có → giữ nguyên ý được tick, nhãn selected_by = manual</span>
+    <span>Không → máy tự chọn N ý điểm cao nhất, nhãn selected_by = auto — đây là chỗ đứt duy nhất của dây chuyền tự động, vá ở v0.5.0</span></div>
+  <div class="arrow">↓</div>
+
+  <div class="stage">6 · Lưu ba tầng</div>
+
+  <div class="node"><b>Tầng 1 — Ổ đĩa Railway</b>
+    <span>output/&lt;ngách&gt;/&lt;ngày&gt;__&lt;người&gt;/ — report, brief, classified, raw</span></div>
+  <div class="arrow">↓</div>
+  <div class="node"><b>Tầng 2 — Google Drive</b>
+    <span>Sao lưu tự động từng thư mục lần chạy</span></div>
+  <div class="arrow">↓</div>
+  <div class="node"><b>Tầng 3 — usage_log.csv</b>
+    <span>timestamp · user · niche · số video · số comment · thời gian · chi phí ước tính · trạng thái</span></div>
+  <div class="errbox"><b>Lỗi: nhật ký CSV lệch mã hoá</b>
+    <span>Ghi có BOM, đọc không BOM → KeyError 'timestamp'. Đã vá: cùng utf-8-sig hai chiều</span></div>
+  <div class="errbox"><b>Lỗi: file JSON hỏng → ghi đè mất sạch</b>
+    <span>Bắt lỗi rồi gán rỗng, ghi đè file cũ. Đã vá: sao lưu kèm mốc giờ trước khi ghi</span></div>
+
+  <div class="stage">Nợ kỹ thuật — biết, cố ý chưa sửa</div>
+
+  <div class="node debt"><b>Nợ 1 — Giao diện khoá khi chạy</b>
+    <span>Pipeline chạy đồng bộ trong phiên Streamlit, 4–8 phút. Đóng tab là mất tiến trình. Sửa khi trên 20 người dùng đồng thời</span></div>
+  <div class="arrow">·</div>
+  <div class="node debt"><b>Nợ 2 — Không có cơ sở dữ liệu</b>
+    <span>CSV không tra được theo ngách hay theo người. Chuyển Postgres khi trên 100 lần chạy/tháng</span></div>
+  <div class="arrow">·</div>
+  <div class="node debt"><b>Nợ 3 — webapp.py 1.900 dòng</b>
+    <span>Giao diện, logic, cấu hình, CSS chung một file. Tách sau Demo Day</span></div>
+
+  <div class="rev">
+    <h2>Đọc lại bản vẽ lần 1 — tìm thấy 3 chỗ thiếu</h2>
+    <ul>
+      <li><b>Thiếu hẳn cửa vào thứ hai.</b> Bản 1 chỉ vẽ đường người dùng bấm trên web.
+        Nhưng v0.5.0 có agent định kỳ chạy không cần ai bấm — đó là điểm bán chính cho
+        bài "một agent làm thay việc lặp lại". Bản 2 vẽ hai cửa song song.</li>
+      <li><b>Vẽ phân loại luôn thành công.</b> Bản 1 đi thẳng từ quét sang phân loại
+        sang báo cáo. Sai với lịch sử: khoá sai từng khiến máy log "thành công" với 0
+        comment. Bản 2 thêm cổng chặn 401 và cổng 3 mẻ trống.</li>
+      <li><b>Gộp lưu trữ thành một ô "lưu file".</b> Thực tế có ba tầng với hai lỗi
+        thật ở tầng 3 (BOM, ghi đè). Bản 2 tách ba tầng và gắn lỗi đúng tầng.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
