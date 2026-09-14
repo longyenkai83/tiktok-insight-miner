@@ -1,3 +1,13 @@
+# V2 SOURCE-OF-TRUTH — bắt buộc trước khi sửa code
+
+Mọi coding agent **bắt buộc đọc đủ mười file `00`–`09` trong [docs/v2](docs/v2/00-PROJECT-OS.md) trước khi sửa code**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
+
+Current Phase = Phase 0. Status = ARCHITECTURE DOCUMENTATION. Next Phase = Phase 1 Signal Extraction. **Do not start Phase 1 without review.** Phạm vi hiện tại chỉ là tài liệu, existing tests, commit và push; không sửa business logic, refactor pipeline, prompt hoặc runtime behavior.
+
+Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Approval của audit, test xanh hoặc push docs không tự mở Phase 1.
+
+---
+
 # TikTok Insight Miner — Project context
 
 ## 🎯 Mục tiêu
