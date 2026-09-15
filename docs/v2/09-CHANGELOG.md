@@ -1,5 +1,24 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 9 Direct Reelo Integration
+
+- Owner/architect authorize implementation after C4.1 PASS (shared map r6, D13–D17).
+- Add UI-independent producer dispatch service, current authoritative-ledger reload and opt-in
+  send-content-packet CLI / packet-preview Send button with operator-owned host configuration.
+- Reelo independently consumes pinned .1 contract, stores immutable intake/context/revisions,
+  serializes duplicate dispatch reservations and keeps generation/parent history in local SQLite.
+- Bind validated context before native 2.1.270 host; correlate tool/task/terminal artifact,
+  preserve A/B, retain failed slots, and keep existing Writer → independent Critic → one rewrite.
+- V2-only truth/psychology/profile/fake-percentage/title-8 guards; legacy creative prompts retained.
+- Main-only Notion draft outbox with currentness, claim-once, verified destination/status/source
+  receipt; synthetic draft successfully created at owner-designated test destination, not published.
+- Verification: Insight 488 tests; Reelo 20 tests; legacy comparison and canonical parity PASS.
+  Live synthetic native-host E2E PASS (controlled creative responses). Real-brand creative attempt
+  timed out at Writer after 600s: UNKNOWN, quality acceptance OPEN, no automatic relaunch.
+- Add doc 16, DEC-067 and agent read rules 00–16. No private data, operational vault edits,
+  default runtime change, web deployment, main merge or next-phase implementation.
+
+
 ## 2026-09-15 — Phase 8 Content Intelligence Packet
 
 - Owner accepts Content Route and Product Discovery Route. Packet implementation pending review.

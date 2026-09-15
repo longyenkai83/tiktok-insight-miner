@@ -1,47 +1,53 @@
 # 08 — PROJECT STATE
 
-Current Phase = Phase 8 — Content Intelligence Packet
+Current Phase = Phase 9 — Direct Reelo Integration
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+Phase 8 — ACCEPTED
 Core Customer Intelligence MVP = ACCEPTED
 Content Route = ACCEPTED
 Product Discovery Route = ACCEPTED
-Direct Reelo Integration = NOT STARTED
+Direct Reelo Integration = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Next Phase = DO NOT START
 
-Branch: v2-phase-8-content-packet
-Base: 78f47def5614723a1cb973d9c5ae6a5f9d3ca7a5
-Authority: owner Phase 8 request, DEC-062–066. Read docs 00–15 plus contracts README.
+Insight branch: v2-phase-9-reelo-integration; base ca09ae4d984f925a10c683bb1ddce9d448249319.
+Reelo branch: v2-content-intelligence-consumer; base 764f992d6a2930c1a096748cb80322e82cd867fe.
+Authority: owner Phase 9 blueprint, architect C4.1 PASS/shared map r6, DEC-067, D13–D17.
+Read docs 00–16 plus contracts README. No main merge or next-phase work.
 
-Implemented canonical v2.content-intelligence-packet.1, exported JSON Schema, synthetic
-cross-repo fixture, current human approval/selection gate, immutable A/B/C separation,
-exact source/language/Value Scene preservation, external requirements, revision and
-immutable storage. Explicit CLI build/validate and UI PASS/FAIL/preview/local export.
-No model/API calls in builder. No Writer generation or Reelo repo change.
+Implemented: current-ledger producer service, opt-in CLI/UI, independent pinned consumer,
+immutable packet/context, local durable intake/reservations/revisions, configured native host,
+correlated terminal results, V2 Writer/Critic/bounded rewrite, source/creative authority guards,
+immutable output versions, and Main-owned Notion draft outbox. See doc 16 and Reelo runbook.
 
-Default legacy runtime changed: NO. Existing Content/Product engine code unchanged.
-Dev-only jsonschema dependency added for portable schema tests; runtime deps unchanged.
+## Verification
 
-## Tests
+Insight full suite: 488 passed. Reelo full suite: 20 passed (includes Node Workflow harness).
+Legacy Writer/Critic prompts and result match pinned Reelo base in the comparison fixture.
+Canonical schema and shared synthetic fixture match. Native 2.1.270 synthetic E2E PASS:
+current synthetic ledgers → intake → real Workflow with controlled creative responses →
+Critic/rewrite/Critic → correlated result and duplicate-request reuse. Latest task: w8fklc5q7.
+A/B and packet identity preserved. Mock creative responses do not prove writing quality.
 
-`python -m pytest tests -q -p no:cacheprovider` → **486 passed in 55.69s**.
-33 new offline cases; all 453 previous cases pass, including Content/Product and legacy.
-Tests cover both current human gates, stale tree/ledger/export, exact A/B/C fields, source
-spans/hashes/language/counters/limits, Value Scene, external requirements, no truth promotion,
-immutable revisions, JSON Schema valid/malformed fixture, CLI and UI revocation/PASS/FAIL.
-Python 3.13.15 / pytest 8.4.2. No live AI/API calls.
+Owner-authorized Notion destination: one synthetic test draft created, fetched and verified
+as awaiting review, with packet/generation/outbox provenance. No publication or human approval.
+Receipt/link stay in the local implementation report, not customer/brand data in Git.
 
-## Real-data review
+## Open acceptance item
 
-SKIPPED: actual Phase 5 sample still has 0 human review events and 0 Verified Insights;
-therefore no qualifying verified + human-selected angle pair. No approvals manufactured.
-Local ignored review: output/phase8-packet-review/phase8-content-packet-review.md.
-Committed contracts fixture is entirely synthetic, clearly labeled; no private data committed.
+Controlled real-brand assets with synthetic customer truth: UNKNOWN after 600-second timeout
+at Writer (task w82w13hd3); no terminal result, no quality PASS and no automatic relaunch.
+62 allowed read assets were unchanged at the completion check. No real customer content sent.
+The reviewer must assess this before treating the real creative path as accepted. It does not
+invalidate the separately completed controlled synthetic host test or Notion draft test.
+Real customer-data E2E SKIPPED: no qualifying real approved packet used; approvals not fabricated.
+C5 creative-quality acceptance remains OPEN. Phase 9 is not ACCEPTED or production-deployed.
 
-## Limits
+Runtime default changed: Insight NO; Reelo NO. V2 opt-in runtime added: YES.
+No extraction/pattern/insight/content/product engine change; no operational J: files edited.
+Local state is single-machine under LOCALAPPDATA; no distributed sync/auth or remote service.
+Hashes are integrity checks, not authentication. Critic remains fallible semantic review.
+UNKNOWN execution needs reconciliation, not a retry disguised as a new request.
 
-Offline snapshot PASS does not prove current approval; current validation requires both
-authoritative ledgers and current upstream artifacts. Unsigned hashes are not authentication.
-JSON Schema checks shape/constants, not semantic truth or currentness. Future Phase 9 must
-define trusted intake/currentness and WriterResult checks. Cross-file local reads are not a
-distributed transaction; immutable revisions are separate files, not a latest-version registry.
-No Phase 9 or Reelo integration started.
+Next actor: Architect reviews the implementation report and open quality result.
+Owner action currently required: none. Do not start Source Router, unified web implementation,
+publication, or another phase without a new reviewed scope.

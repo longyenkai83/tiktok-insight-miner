@@ -1,6 +1,20 @@
 # 00 — PROJECT OS
 
-## Current authority — Phase 8 (DEC-062–066)
+## Current authority — Phase 9 (DEC-067)
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+Next Phase = DO NOT START. No main merge.
+
+Owner blueprint and shared map r6 authorize direct typed integration from Insight ca09ae4d
+and Reelo 764f992d. Read docs 00–16 plus contracts README. See
+[16-REELO-INTEGRATION.md](16-REELO-INTEGRATION.md) for the application/host/Notion boundary.
+Strategyzer, B2C, evidence and current human-governance rules remain binding. Web is the future
+surface; this phase adds a callable service and minimal existing UI/CLI adapters only.
+
+## Historical Phase 8 authority (superseded scope gate)
+
+## Phase 8 (DEC-062–066)
 
 Current Phase = Phase 8 — Content Intelligence Packet
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW

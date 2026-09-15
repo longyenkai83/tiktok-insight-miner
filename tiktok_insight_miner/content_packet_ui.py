@@ -55,5 +55,22 @@ def render_packet_preview(output_root):
             st.subheader('External evidence still required'); st.json([r.model_dump() for r in packet.external_evidence_requirements])
             st.download_button('Export packet JSON',packet.model_dump_json(indent=2),'content_intelligence_packet.json',mime='application/json')
             st.download_button('Preview Markdown — view only',packet_preview(packet),'content_packet_preview.md',mime='text/markdown')
+            # Configuration is operator-owned; web users cannot choose executable or code paths.
+            import os, json
+            from uuid import uuid4
+            configured = os.environ.get('REELO_CONFIG')
+            if configured:
+                from .reelo_dispatch import send_packet
+                request_key = 'reelo_request_' + packet.packet_id
+                if request_key not in st.session_state:
+                    st.session_state[request_key] = 'UI-' + uuid4().hex
+                if st.button('Send to Reelo (draft)'):
+                    config = json.loads(Path(configured).read_text(encoding='utf-8'))
+                    result = send_packet(packet, load_current=inputs, config=config,
+                                         request_id=st.session_state[request_key])
+                    st.session_state['reelo_result_' + packet.packet_id] = result.model_dump(mode='json')
+                result = st.session_state.get('reelo_result_' + packet.packet_id)
+                if result:
+                    st.json(result)
     except (OSError,ValueError):
         st.error('FAIL — packet hoặc upstream không hợp lệ/đã cũ. Kiểm tra current ledger và xuất lại lựa chọn; không export packet này.')

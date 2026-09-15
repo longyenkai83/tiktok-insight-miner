@@ -1,5 +1,22 @@
 # 07 — DECISIONS
 
+## DEC-067 — Phase 9 scope and host boundary — ACCEPTED owner/architect requirements
+
+2026-09-15: owner instructs implementation after architect C4.1 PASS, shared map r6.
+Pinned bases: Insight ca09ae4d984f925a10c683bb1ddce9d448249319 and Reelo
+764f992d6a2930c1a096748cb80322e82cd867fe. Branches v2-phase-9-reelo-integration and
+v2-content-intelligence-consumer. No merge. Implementation itself remains pending review.
+D13: conflicting truth/psychology/critic changes V2-only; preserve creative engine.
+D14: acceptance reaches Notion Draft, not social publication. D15: synthetic E2E before
+controlled real assets; private sources read-only, no private data commit or fake approval.
+D16: communicate deltas with canonical references; do not repeat unchanged shared knowledge.
+D17: B2C Web Business OS is future target; Phase 9 service stays UI independent, no web redesign.
+Deterministic Reelo adapter runs before native host. Currentness is producer-owned; snapshot
+integrity is checked independently by consumer. Canonical .1 identity stays unchanged.
+Use local durable state and task-correlated completion; model receipt/prose is not authority.
+No Source Router, research agent, distributed queue, generic orchestrator or brand migration.
+
+
 ## DEC-062 — Phase 8 and route acceptance — ACCEPTED owner request
 
 2026-09-15: Content Route and Product Discovery Phase 7 are ACCEPTED. Authorize

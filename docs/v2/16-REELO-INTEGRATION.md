@@ -1,0 +1,72 @@
+# 16 — Direct Reelo Integration
+
+Phase 9 implementation; pending architect review. Owner blueprint and shared map r6
+(C4.1 PASS, D13–D17) authorize this scope from Insight ca09ae4d and Reelo 764f992d.
+
+## Execution boundary
+
+`send_packet` is a callable application service. CLI `send-content-packet` and the existing
+packet-preview UI are adapters. The operator supplies the Reelo implementation workspace,
+native executable, LOCALAPPDATA state directory and exact read-only creative asset files.
+UI configuration comes from server-owned `REELO_CONFIG`, never a visitor-entered code path.
+Default legacy commands and Content/Product extraction engines are unchanged.
+
+The producer reloads verified insights, content tree, selection export and both authoritative
+ledgers before dispatch. The Reelo consumer independently checks the pinned .1 contract,
+source spans, hashes, language, selection lineage and permissions. It does not import the
+producer extraction/governance pipeline. Its bounded Pydantic port has schema/fixture parity.
+Only the trusted application callback establishes current authorization; a model cannot
+supply an `authorized` flag. Local reads reduce but do not constitute a distributed transaction.
+
+Before host launch, Reelo stores the entire canonical packet/context and an intake receipt
+in local SQLite. Same packet and request ID reuses one generation, including concurrent
+requests. A new generation requires an explicit parent. New packet revisions must extend
+the known chain; old packets remain readable and cannot be dispatched after supersession.
+Canonical packet_id, created_at, revision and A/B/C are not rebuilt by Reelo.
+
+The configured native Claude 2.1.270 launches a copy of the existing `batch-content.js` with
+validated context embedded after its mandatory first `meta` statement. Model args carry no
+customer authority. There is no PATH fallback or new generic orchestration engine.
+The controlled CLI profile disables hooks/plugins/MCP and allows Workflow/Read only. Creative
+asset files are explicit and hashed. Reelo keeps its Writer, independent Critic, hook/title,
+story, voice and format craft. V2 overrides only conflicting authority and uses all 8 title
+criteria. Returned content is saved by code in distinct local versions, not written into
+the operational brand vault by a creative worker.
+
+Writer → Critic → at most one rewrite → Critic again. A/B context accompanies every call.
+Unknown evidence IDs, missing results and null/failing slots cannot become a successful
+draft. Critic is a fallible semantic check, not mathematical proof of customer truth.
+Unsupported external assertions must be omitted/softened while retaining B or produce
+BLOCKED_PENDING_RESEARCH. No research agent or automatic demand/validation promotion.
+
+## State and handoff
+
+Receipt contains ingestion_id, original packet_id/revision/hash and immutable context_hash.
+ExecutionResult contains generation/parent, explicit status, critic state, validation issues,
+host/task correlation, immutable draft versions and provenance. Human approval remains
+PENDING; publication remains false. No automatic customer/content approval is created.
+
+ACK and exit zero are not completion. Correlate the actual Workflow tool call, task_started
+and terminal task_notification, then parse its returned artifact path. Never guess private
+Claude journal paths or trust prose. Timeout/lost completion is UNKNOWN and transport retry
+does not relaunch. Operator must reconcile the existing run; do not delete its row to retry.
+
+Notion is a Main-owned draft handoff, not a Writer tool. The local outbox prepares a payload
+using the fetched destination schema, rechecks currentness, claims once and records a URL
+only after connector fetch verifies draft status and Source ID. Lost response requires
+reconciliation rather than a second create. Human approval, Critic PASS, Notion DRAFT and
+publication are separate. Existing database properties are used; no new database schema.
+
+## Validation and limits
+
+Offline suites cover contract/provenance rejection before launch, current-ledger reload,
+concurrency, idempotency, revision forks, supersession, failure retention, bounded rewrite,
+title/truth vetoes, terminal correlation and Notion draft outbox. The explicit live-host
+fixture script is `tests/fixtures/phase9_host_e2e.py`: real native Workflow with controlled
+creative responses and synthetic human decisions. This tests transport/control, not writing
+quality or real customer approval. A separate controlled real-assets check remains a quality
+review artifact; private assets/results are not committed.
+
+SQLite is single-machine state outside cloud sync. No remote service, distributed lock,
+unified web redesign, Source Router, ad/sales pipeline, social publication or main merge.
+Web Business OS is the future target surface; Phase 9's core service is UI independent.

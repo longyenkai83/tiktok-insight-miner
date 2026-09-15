@@ -876,6 +876,8 @@ def build_parser() -> argparse.ArgumentParser:
     add_product_commands(sub)
     from tiktok_insight_miner.content_packet_cli import add_packet_commands
     add_packet_commands(sub)
+    from tiktok_insight_miner.reelo_dispatch import add_reelo_commands
+    add_reelo_commands(sub)
 
     p_insights = sub.add_parser("build-insights", help="V2: Insight Candidates pending human review")
     p_insights.add_argument("--patterns", required=True)

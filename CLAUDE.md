@@ -1,31 +1,23 @@
 # V2 SOURCE-OF-TRUTH — read before code changes
 
-Read all sixteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
-[15-CONTENT-INTELLIGENCE-PACKET.md](docs/v2/15-CONTENT-INTELLIGENCE-PACKET.md), plus
+Read all seventeen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
+[16-REELO-INTEGRATION.md](docs/v2/16-REELO-INTEGRATION.md), plus
 [contracts/README.md](contracts/README.md), before architecture/product logic or code changes.
-Check PROJECT-STATE and DECISIONS. Strategyzer, Business OS, Human Governance, Content/Product
-routes and typed packet contract are architecture dependencies. If implementation conflicts
-with accepted decisions or Strategyzer foundations: **STOP and report**. Missing docs require
-reporting. Latest explicit user authorization supersedes historical phase gates.
+If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.
+Latest explicit owner authorization supersedes historical phase gates, never grounding rules.
 
-Current Phase = Phase 8 — Content Intelligence Packet
+Current Phase = Phase 9 — Direct Reelo Integration
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
-Core Customer Intelligence MVP = ACCEPTED
-Content Route = ACCEPTED
-Product Discovery Route = ACCEPTED
-Direct Reelo Integration = NOT STARTED
 Next Phase = DO NOT START. No main merge.
 
-DEC-062 authorizes packet-only Phase 8 from 78f47def5614723a1cb973d9c5ae6a5f9d3ca7a5.
-Require current verified insight + current human-selected angle and both authoritative ledgers.
-Zone A is immutable customer truth; Zone B selected strategy stays PROPOSED; Zone C grants
-presentation permissions only. No invented customer truth, quotes, stats or validation promotion.
-Packet is portable JSON, not Markdown/Drive/config. Snapshot PASS is not current authorization.
-Keep immutable files/revisions; never silently overwrite old packets or inherit stale approvals.
-No fabricated human_attested=true, real sample approvals/angles/Priority Needs. Synthetic fixture
-decisions are not customer decisions. Do not commit private customer data or secrets.
-No Reelo repo changes, Phase 9, Writer output, uploads, external experiments or profile mutation.
-Content/Product engines and default legacy behavior stay unchanged.
+Owner blueprint and shared map r6 authorize Phase 9 from ca09ae4d / Reelo 764f992d.
+Keep current human approval and selection gates; canonical packet .1 and immutable A/B/C.
+Reelo adapter validates independently before native host. Writer creates expression, not customer
+truth. Preserve Reelo craft and legacy behavior. All truth/psychology/critic overrides are V2-only.
+No Source Router, generic orchestrator, unified web implementation, social publication, profile
+mutation, fabricated approvals or private data commits. Native host/state/config are operator-owned.
+Notion handoff is draft-only to an owner-authorized destination, separate from human approval.
+Read the Reelo consumer boundary document before editing its skills/workflow.
 
 Legacy project material below describes CURRENT STATE only, not the target V2 architecture.
 Do not use audit/V1 to override accepted V2 decisions or infer permission for another phase.
