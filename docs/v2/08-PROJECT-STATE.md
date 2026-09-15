@@ -1,6 +1,28 @@
 # 08 — PROJECT STATE
 
-## Latest checkpoint — C5.9 PLAN_READY_FOR_OWNER_REVIEW
+## Latest checkpoint — C5.10 BLOCKED before Writer
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = BLOCKED — reconcile_previous_execution_first
+Phase 9 NOT ACCEPTED. No merge. Next Phase = DO NOT START.
+
+Actual owner EDIT_AND_APPROVE recorded for CP-85101a7f310c492e9be7e09f40b8bf92 revision 1.
+Mode SHORT_ARTICLE, exact edited hook/title, current outline/psychology, CC1 ADJACENT,
+optional Brian Tracy policy and all limitations/publication requirements retained.
+Owner approval is real; customer packet remains a synthetic fixture, not market evidence.
+
+Current packet/plan checks PASS; 21 source hashes unchanged. Existing authoritative intake
+still has parent GEN-e53cd228d7074e43bfd09a76c8ffcc74 UNKNOWN. reserve rejects new Writer
+with reconcile_previous_execution_first. No new intake database or history rewrite to bypass.
+Native Writer/Critic/rewrite calls: zero. No new final body or emotional-review recommendation.
+Lifecycle/permission/packet/Q1/truth categories unchanged; no reconciliation implemented here.
+
+Reelo full suite: 196 PASS. Insight full suite recorded in REPORT-C5.10.md.
+Next actor: Architect reviews the exact execution-history blocker via Anh Tuan.
+Owner does not need to repeat creative approval. Codex STOP; no Notion/publish/merge/next phase.
+Sole handoff: Downloads/REPORT-C5.10.md.
+
+## Historical checkpoint — C5.9 PLAN_READY_FOR_OWNER_REVIEW
 
 Current Phase = Phase 9 — Direct Reelo Integration
 Status = PLAN_READY_FOR_OWNER_REVIEW — awaiting actual owner Creative Plan decision.

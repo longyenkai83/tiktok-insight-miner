@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — C5.10 real owner approval; execution blocked
+
+- Persist actual EDIT_AND_APPROVE with original plan/hash/revision, edited hook/title and SHORT_ARTICLE mode.
+- Reelo-only approval metadata and Writer/Critic guidance distinguish spoken REEL from written short/long articles; clarity first.
+- Current packet/plan and 21 assets PASS. Existing parent UNKNOWN blocks reservation: reconcile_previous_execution_first.
+- No lifecycle reconciliation, new intake bypass or historical mutation; zero native Writer/Critic/rewrite calls.
+- No final draft yet, no Phase9 acceptance, Notion/publication/merge/next phase. Architect reviews blocker next; no repeated owner approval needed.
+
+
 ## 2026-09-16 — C5.9 findings semantics + owner plan review
 
 - Canonical C5.8 names the integrated Planner implementation; architecture accepted, Phase9 not accepted.
