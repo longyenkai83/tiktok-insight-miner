@@ -10,6 +10,8 @@ Do not start Phase 3. Wait for architecture review.
 
 ## Phạm vi đã thực hiện
 
+- Phase 2.1 documentation memory patch trên base `20736d0ed9bd3b09e81ac67c70d2fee01e9303b0`: [Strategyzer foundations](10-STRATEGYZER-FOUNDATIONS.md) nay là **explicit architecture dependency**. Agent phải đọc `00`–`10` trước architecture/product-logic changes và STOP/report nếu có xung đột. Patch chỉ sửa tài liệu, không đổi runtime hoặc Phase 2 extraction behavior; không mở Phase 3.
+
 - Base branch v2-phase-1-signal-extraction, commit 241fa436b962341df60034a105f6878fd7fa03ac. Branch bàn giao: v2-phase-2-customer-context. Authorization trực tiếp ghi tại DEC-032.
 - Kiến trúc shared Customer Intelligence Engine + Content Research / Product Discovery và DEC-024–032 đã cập nhật trước implementation. Router/UI/mode execution vẫn chỉ là tài liệu, chưa triển khai.
 - customer_context_models.py + customer_context_extractor.py: signals.json v2.signals.1 → contexts.json v2.contexts.1, đúng năm field B2C, zero/multiple per-comment candidates, OBSERVED/DERIVED, code-generated exact claim, source/hash/span/issue trace.
@@ -18,6 +20,8 @@ Do not start Phase 3. Wait for architecture review.
 - Default legacy runtime behavior changed: **NO**. Phase 1, classifier/run, bank/selection, strategy/Reelo và legacy outputs giữ nguyên hành vi. Không clustering/final segment/frequency/insight/content/product generation/Value Map/experiment/router.
 
 ## Tests và kiểm chứng
+
+- Phase 2.1 docs-only regression: `python -m pytest tests -q -p no:cacheprovider` → **178 passed in 1.18s**. Diff chỉ có tài liệu Markdown; runtime code và Phase 2 extraction behavior không đổi.
 
 - `python -m pytest tests -q -p no:cacheprovider` → **178 passed in 1.42s**, Python 3.13.15 / pytest 8.4.2.
 - 48 offline cases mới cho năm field, multi/zero/ambiguous, unsupported demographics/quotes/IDs/truth types/B2B fields, serialization/hash/spans, API errors, CLI và Phase 1 compatibility. Toàn bộ 130 tests từ base vẫn pass; không live API trong test suite.

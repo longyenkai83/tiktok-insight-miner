@@ -1,6 +1,8 @@
 # V2 SOURCE-OF-TRUTH — bắt buộc trước khi sửa code
 
-Mọi coding agent **bắt buộc đọc đủ mười file `00`–`09` trong [docs/v2](docs/v2/00-PROJECT-OS.md) trước khi sửa code**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
+Mọi coding agent **bắt buộc đọc đủ mười một file từ [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) đến [10-STRATEGYZER-FOUNDATIONS.md](docs/v2/10-STRATEGYZER-FOUNDATIONS.md) trước khi sửa code, đặc biệt trước architecture/product-logic changes**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
+
+Strategyzer foundations là explicit architecture dependency. **If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.** Không âm thầm diễn giải lại quyết định/nguyên tắc để hợp thức hóa implementation.
 
 Current Phase = Phase 2 — Customer Context. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-032. Chỉ per-comment context từ signals.json, không clustering/content/product generation/router. Giữ Phase 1 và default legacy compatibility. **Do not start Phase 3. Wait for architecture review.**
 

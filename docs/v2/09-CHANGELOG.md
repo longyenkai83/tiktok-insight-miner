@@ -1,5 +1,12 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 2.1 Documentation Memory Patch
+
+- Thêm 10-STRATEGYZER-FOUNDATIONS.md, bản ghi nhớ ngắn từ nền tảng đã duyệt; tách SOURCE PRINCIPLE / V2 DECISION / DERIVED IMPLEMENTATION RULE, không chép knowledge base 14 bài.
+- Strategyzer foundations nay là explicit architecture dependency. AGENTS.md/CLAUDE.md và PROJECT-OS yêu cầu đọc đủ `00`–`10`, STOP/report nếu implementation xung đột nền tảng hoặc accepted decisions.
+- Giữ Current Phase = Phase 2 — Customer Context; Status = IMPLEMENTED — PENDING ARCHITECT REVIEW; Next Phase = DO NOT START.
+- Chỉ sửa tài liệu; không thay runtime, schema, prompt hoặc extraction behavior. Full-test result ghi tại PROJECT-STATE. Không mở Phase 3.
+
 ## 2026-09-15 — Phase 2 Customer Context
 
 - Cập nhật official architecture trước implementation: shared evidence-backed Customer Intelligence Engine + Content Research / Product Discovery; DEC-024–032, evidence-first product rules, B2C-first. Router/UI/downstream vẫn chỉ là thiết kế.
