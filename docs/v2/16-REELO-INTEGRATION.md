@@ -91,3 +91,22 @@ The consumer draft gate accepts verified support refs plus validated contradicti
 these are already source-span/hash checked by the canonical snapshot validator. No unknown IDs.
 C5.1 acceptance remains BLOCKED: final native task stopped during rewrite, before second Critic.
 First Critic findings cannot be ignored just because its verdict string says PASS. See doc 08.
+
+## C5.2 — owner-authorized bounded follow-up
+
+Q1 remains CLOSED/PASS. Only native lifecycle diagnosis, V2 Critic terminal semantics,
+creator/external attribution and context/scope quality closure are authorized.
+No merge, Source Router, Unified Web, legacy refactor or Phase 8 packet schema change.
+
+V2 reviews now separate blocking_issues from informational notes and use PASS/REVISE.
+Code retains the original review and projects PASS only when no blockers remain and all
+strict truth/intent/limitations/external/creator/context/source checks plus eight title
+criteria pass. Missing or malformed checks remain blockers. Notes alone do not require
+rewrite; every factual or source-verification defect must remain a blocker. One rewrite
+maximum, independent Critic again, and human approval still PENDING.
+
+A stopped native task is not completed even when CLI exit/result says success. Consumer
+records workflow_stopped_completion_unknown and retains UNKNOWN/no automatic retry.
+Public stream lifecycle metadata and local native debug logs improve diagnosis, never
+replace the task-correlated structured output contract. No undocumented API or timeout
+increase is introduced. One controlled real-assets attempt is authorized before STOP/report.

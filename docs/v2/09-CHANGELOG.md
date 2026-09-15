@@ -1,5 +1,18 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 - C5.2 bounded patch; BLOCKED at host permission review
+
+- V2-only PASS/REVISE + blocking_issues/notes; preserve raw reviews/findings; strict code gate.
+- Explicit creator truth/external attribution, context/scope, source-verification checks.
+- Distinct native stopped completion-unknown issue, public lifecycle metadata and local debug.
+  No timeout increase, undocumented completion API, automatic retry or truth-guard removal.
+- One controlled real-assets run: native completed Writer -> Critic PASS, no rewrite needed.
+  Post-completion main Read of task output denied; adapter stays UNKNOWN. No second attempt.
+- Insight 489 / Reelo 26 tests PASS; input A/B unchanged, 16 assets unchanged, legacy unchanged.
+- Single local REPORT-C5.2.md, sanitized private-source handoff; STOP for Architect review.
+  No merge, Notion write, publication, Source Router, Unified Web or next phase.
+
+
 ## 2026-09-15 - C5.1 bounded quality patch; BLOCKED, not accepted
 
 - V2 removes fixed TRUC_POOL[0] preference; selected Zone B direction stays authoritative.

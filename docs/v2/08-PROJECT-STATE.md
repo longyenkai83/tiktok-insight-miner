@@ -1,6 +1,38 @@
 # 08 — PROJECT STATE
 
-## Latest checkpoint - C5.1 bounded quality closure
+## Latest checkpoint - C5.2 BLOCKED, owner-authorized single attempt complete
+
+Current Phase = Phase 9 - Direct Reelo Integration
+C5.2 Status = BLOCKED - main-agent Read of returned output was denied; adapter retains UNKNOWN
+Q1 = CLOSED/PASS. Phase 9 NOT ACCEPTED. Next Phase = DO NOT START. No merge.
+
+V2 Critic uses PASS/REVISE with blocking_issues/notes, raw review retained and code-owned
+terminal semantics. Creator truth, external attribution, context/scope and independent
+source verification are explicit checks. Existing truth guards and legacy remain intact.
+Native stopped has a distinct completion-unknown issue; bounded limits/no retry unchanged.
+
+ONE authorized independent synthetic acceptance, same packet/context as C5.1, real read-only
+assets: native task wxb01obtr COMPLETED; Writer 319.431s -> Critic 174.064s -> DRAFT_READY.
+Critic PASS, zero blocking issues, ten informational notes; no rewrite required or launched.
+Overall 538.54s, prior 900s outer bound unchanged, medium effort, max budget USD5 unchanged.
+After native completion, main agent tried Read on the returned task-output path outside its
+allowlist. The permission review gate correctly left adapter UNKNOWN with
+host_permission_denials_require_review. No bypass, reservation reset, or second attempt.
+The correlated structured candidate exists and matches receipt/context, but is not a
+successful dispatch. Historical C5.1 stop trigger remains unknown; native stopped condition
+is safely rejected, and a successful shorter C5.2 run does not prove the old cause fixed.
+
+Full tests: Insight 489 PASS (61.05s), Reelo 26 PASS (0.95s, includes expanded Node harness).
+16/16 assets unchanged; A/B/context/provenance intact; no Notion write/publication/private
+source commit. Local REPORT-C5.2.md includes the terminal draft with private Story passages
+redacted for handoff; original stays in local diagnostics. Owner quality approval PENDING.
+
+NEXT: Architect reviews the bounded host output-read/permission mismatch and determines
+any next prompt. Codex STOP after REPORT-C5.2; no automatic continuation.
+
+## Historical C5.1 checkpoint
+
+
 
 Current Phase = Phase 9 - Direct Reelo Integration
 C5.1 Status = BLOCKED - native Workflow stopped during rewrite; second Critic missing
