@@ -39,7 +39,7 @@ def main():
         external_dispositions=[dict(strategy_field=r.strategy_field, disposition='omitted',
                                     explanation='Synthetic framing is not established external evidence.')
                                for r in packet.external_evidence_requirements])
-    passed = dict(findings=[], verdict='PASS', truth_preserved=True, selected_intent_preserved=True,
+    passed = dict(title_meaning_clear=True, reader_centered_pov=True, non_prescriptive_tone=True, findings=[], verdict='PASS', truth_preserved=True, selected_intent_preserved=True,
                   limitations_preserved=True, external_claims_safe=True, title_criteria=[True]*8, blocking_issues=[], notes=[],
                   creator_truth_preserved=True, context_scope_preserved=True, source_verification_complete=True)
     failed = dict(passed, verdict='REVISE', blocking_issues=['synthetic_first_review_requires_revision'])

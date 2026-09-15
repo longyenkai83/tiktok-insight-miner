@@ -1,5 +1,18 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — C5.6 voice/title/tone; quality closure BLOCKED
+
+- Owner rejected C5.5 quality despite technical PASS. V2 only: reader-centered POV, immediate
+  title meaning/natural Vietnamese, non-prescriptive reflection; retain personal-story exception.
+- Add required semantic quality booleans and fail-closed normalization; no pronoun regex/counts.
+  Preserve nine hard truth categories and all closed lifecycle/permission/identity/Q1 boundaries.
+- Full suites before live: Reelo 149 PASS / Insight 489 PASS. Strict/missing/false quality fields,
+  bounded rewrite, hard-truth precedence and existing regressions covered.
+- ONE same-packet/same-assets live: Writer -> Critic1 REVISE -> Rewrite -> Critic2 REVISE.
+  Final CRITIC_FAILED: unsupported_identity remains, with context/contradiction implications.
+  Quality booleans true do not override this. Keep format/creative-quality advisories visible.
+- 16 assets and four canonical contexts unchanged. No Notion/publish/source writes; no second
+  rewrite. REPORT-C5.6.md is sole local handoff. Phase 9 NOT ACCEPTED, no merge/next phase.
 
 ## 2026-09-15 — C5.5 typed Critic findings; READY FOR OWNER QUALITY REVIEW
 

@@ -1,5 +1,39 @@
 # 08 — PROJECT STATE
 
+## Latest checkpoint — C5.6 BLOCKED: unsupported identity in final rewrite
+
+Current Phase = Phase 9 — Direct Reelo Integration
+C5 Status = C5 BLOCKED — final rewrite infers distinct people and different contexts from anonymous comments.
+Phase 9 NOT ACCEPTED. human_approval PENDING. Next Phase DO NOT START. No merge.
+C5.5 technical path PASS; OWNER QUALITY REVIEW = FAIL (owner-confirmed input to C5.6).
+
+V2 Writer/Rewrite/Critic guidance now requires reader-centered POV, meaningful natural
+Vietnamese titles and non-prescriptive tone. Three required strict Critic booleans enforce
+these quality checks; false blocks PASS, missing/malformed fails closed. No pronoun counting.
+Personal-story-first remains a selected-format exception. Existing truth categories and
+closed host lifecycle, orchestration, permissions, Q1, packet and stage state machine unchanged.
+
+Full pre-live suites: Reelo 149 PASS (5.59s); Insight 489 PASS (55.87s).
+Exactly ONE live acceptance, same C5.5 synthetic packet and 16 real read-only assets:
+Writer 357.542s -> Critic1 REVISE 199.522s -> Rewrite 189.611s -> Critic2 REVISE 193.762s.
+Wall 945.789s. Final CRITIC_FAILED / critic_status FAIL, not DRAFT_READY. No retry/second rewrite.
+Generation GEN-52285892e47f4453b2a7de7a84540257.
+
+Critic1 found scope_broadening, unsupported_causality and creator_truth_drift. Rewrite removed
+those formulations but used distinct-people framing suggested by Critic1. Critic2 correctly
+blocked unsupported_identity: author=null does not establish people count or different contexts;
+it also flags lost contradictory meaning within one source. Four normalized blocking entries
+represent one typed hard finding plus raw issue/two false truth checks, not four separate defects.
+All three new quality checks true in both Critics; this does not override truth failure.
+Final advisories: format and a sentence that presents the proposed two-number lens too firmly.
+Code/context/packet/asset hashes unchanged during live. Two immutable drafts retained.
+No Notion, publish, source writeback or private data commit. Latest candidate is not approved.
+
+Sole owner/Architect handoff: local REPORT-C5.6.md; private Story/WIKI paragraphs redacted,
+full original retained locally for owner. Architect reviews blocker through anh Tuan; Codex STOP.
+No Source Router, Unified Web, next phase or new live cycle without new reviewed scope.
+
+## Historical checkpoints (C5.5 and earlier)
 
 ## Latest checkpoint — C5.5 READY FOR OWNER QUALITY REVIEW
 

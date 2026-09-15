@@ -158,3 +158,21 @@ the appropriate typed category. No regex semantic detection, second Critic or ex
 Finding detection remains fallible; deterministic category enforcement is not proof of prose
 truth when the model omits or mislabels a finding. Final owner quality review remains required.
 C5.4 stage orchestration/permission/provenance/Q1 stay closed. No merge or new phase.
+
+## C5.6 — owner-confirmed voice philosophy and title meaning
+
+C5.5 technical path passed, but owner quality review FAILED. V2 content keeps the reader central;
+creator stories/observations establish useful lived credibility briefly, then return to the reader.
+An explicitly selected personal-story-first format is allowed. No mechanical pronoun-count rule.
+Titles must immediately make sense, match the selected angle, use natural Vietnamese and offer
+useful curiosity without awkward contrast/AI wordplay. The owner-rejected C5.5 title is not a
+starting point for paraphrase. Tone invites reflection and preserves agency, not lecturing,
+unsupported diagnosis or a universally imposed framework. These product requirements reach
+Writer/rewrite/Critic through the shared V2 context, without broad legacy craft changes.
+
+Three required semantic Critic checks (title_meaning_clear, reader_centered_pov,
+non_prescriptive_tone) independently veto PASS when false. Failures require blocking voice or
+creative_quality findings; existing truth hard categories remain unchanged and cannot be softened
+for better prose. No new Critic, pronoun counter, host/orchestration/permission/Q1/packet changes.
+Exactly one same-packet/assets acceptance, max one rewrite, no Notion/publish/source writeback.
+Owner still reviews the final result; no merge, next phase or self-acceptance.
