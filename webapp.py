@@ -1841,6 +1841,11 @@ def main() -> None:
             st.warning("👈 Nhập tên/mã ở sidebar trước khi tiếp tục.")
             return
 
+        if st.sidebar.checkbox("V2 — Product Discovery", value=False, key="v2_product_discovery"):
+            from tiktok_insight_miner.product_ui import render_product_discovery
+            render_product_discovery(OUTPUT_ROOT, user)
+            return
+
         if st.sidebar.checkbox("V2 — Content Route", value=False, key="v2_content_route"):
             from tiktok_insight_miner.content_route_ui import render_content_route
             render_content_route(OUTPUT_ROOT, user)

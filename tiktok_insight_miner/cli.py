@@ -872,6 +872,8 @@ def build_parser() -> argparse.ArgumentParser:
     add_governance_commands(sub)
     from tiktok_insight_miner.content_route_cli import add_content_commands
     add_content_commands(sub)
+    from tiktok_insight_miner.product_cli import add_product_commands
+    add_product_commands(sub)
 
     p_insights = sub.add_parser("build-insights", help="V2: Insight Candidates pending human review")
     p_insights.add_argument("--patterns", required=True)

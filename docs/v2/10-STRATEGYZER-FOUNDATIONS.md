@@ -1,21 +1,23 @@
 # 10 — STRATEGYZER FOUNDATIONS
 
-## Current authority — Phase 6 (DEC-053–056)
+## Current authority — Phase 7 (DEC-057–061)
 
-Current Phase = Phase 6 — Content Route
+Current Phase = Phase 7 — Product Discovery Route
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Core Customer Intelligence MVP = ACCEPTED
+Content Route = IMPLEMENTED
+Product Discovery Route = PENDING ARCHITECT REVIEW
 Next Phase = DO NOT START
 
-The owner's Phase 6 request authorizes Content Opportunity → Topic → Angle → Human
-Angle Selection from base `7972a849b27fed00308bcfd2870bf8a24c2be216` on
-`v2-phase-6-content-route`. Read all fourteen documents 00–13, including
-[13-CONTENT-ROUTE.md](13-CONTENT-ROUTE.md). It supersedes earlier Phase 6 prohibitions
-and MVP acceptance status below. Earlier phase sections are historical scope records;
-their evidence, B2C, Strategyzer and human-governance principles remain binding.
-No Product Discovery, final writing, Reelo integration, next phase or main merge.
+Owner Phase 7 authorization from `4b11e45c55a33030d030b14cfd06ce10f285730f` opens only
+Priority Need → Product Opportunity → Possible Value Map → Assumptions → Experiment Plan
+→ Human Decision To Test on `v2-phase-7-product-discovery`. Earlier product-route prohibitions
+below are historical phase gates, superseded by this explicit request; accepted evidence,
+Strategyzer and B2C rules remain binding. Read all fifteen documents 00–14, including
+[14-PRODUCT-DISCOVERY-ROUTE.md](14-PRODUCT-DISCOVERY-ROUTE.md). No Content Packet,
+Reelo integration, external experiment execution, Customer Profile update or main merge.
 
-SOURCE PRINCIPLE: customer evidence precedes content creativity. V2 DECISION: Content Route starts only from currently human-verified insight and remains B2C-first. DERIVED IMPLEMENTATION RULE: generated framing is PROPOSED; code owns exact evidence/language and grounded Scene fields; missing Gain cannot become observed desire.
+SOURCE PRINCIPLE: independent Customer Profile → Value Map → possible Fit; evidence precedes validation. V2 DECISION: Product Opportunity is a V2 term, PROPOSED, with broad free/paid formats. DERIVED IMPLEMENTATION RULE: Value Map → HYPOTHESIS assumptions → proposed plans → future evidence → human decision; current speech cannot validate a newly proposed solution. The 0–5 operational ladder follows the owner Phase 7 instruction, not a newly attributed verbatim source.
 
 ## Earlier phase documentation (historical gates)
 

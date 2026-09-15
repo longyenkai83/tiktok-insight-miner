@@ -1,5 +1,26 @@
 # 13 — CONTENT ROUTE
 
+## Current authority — Phase 7 (DEC-057–061)
+
+Current Phase = Phase 7 — Product Discovery Route
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+Core Customer Intelligence MVP = ACCEPTED
+Content Route = IMPLEMENTED
+Product Discovery Route = PENDING ARCHITECT REVIEW
+Next Phase = DO NOT START
+
+Owner Phase 7 authorization from `4b11e45c55a33030d030b14cfd06ce10f285730f` opens only
+Priority Need → Product Opportunity → Possible Value Map → Assumptions → Experiment Plan
+→ Human Decision To Test on `v2-phase-7-product-discovery`. Earlier product-route prohibitions
+below are historical phase gates, superseded by this explicit request; accepted evidence,
+Strategyzer and B2C rules remain binding. Read all fifteen documents 00–14, including
+[14-PRODUCT-DISCOVERY-ROUTE.md](14-PRODUCT-DISCOVERY-ROUTE.md). No Content Packet,
+Reelo integration, external experiment execution, Customer Profile update or main merge.
+
+Content Route implementation and schemas remain unchanged. Phase 7 adds a separate Product Discovery branch of the architecture; product transport rejects content objects and does not produce Topic/Angle/Hook/Script/CTA. Neither route may begin Content Packet or Reelo work.
+
+## Earlier phase documentation (historical gates)
+
 Current Phase = Phase 6 — Content Route
 
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW

@@ -1,5 +1,22 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 7 Product Discovery Route
+
+- Add independent current-human Priority Need gate and typed product opportunity, Value Map,
+  assumption, experiment plan and selected-product schemas. Preserve immutable customer truth.
+- Broad product alternatives with no paid default; exact fit links and proposed desired progress.
+- Separate need speech level 1 from solution assumption level 0; no automatic validation;
+  tagged proposed test thresholds, no experiment execution.
+- Add append-only explicit Explore/Reject/Defer, current-tree/ledger stale-choice checks,
+  first-test human assessment, opt-in CLI and evidence-visible UI.
+- Full suite: `python -m pytest tests -q -p no:cacheprovider` → 453 passed in 36.72s.
+  52 new offline cases; all 401 previous cases green, including unchanged Content Route.
+- Real sample SKIPPED: 0 actual Priority Needs; no private data or model generation committed.
+- Add 14-PRODUCT-DISCOVERY-ROUTE, update source-of-truth/DEC-057–061 and agent read rules 00–14.
+- Content Route and default legacy unchanged; no Content Packet/Reelo/next phase or main merge.
+
+## Earlier changelog
+
 ## 2026-09-15 — Phase 6 Content Route
 
 - Owner accepts core Customer Intelligence MVP; Phase 6 implemented pending architect review.

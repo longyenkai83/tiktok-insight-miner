@@ -1,24 +1,29 @@
 # V2 SOURCE-OF-TRUTH — read before code changes
 
-Read all fourteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
-[13-CONTENT-ROUTE.md](docs/v2/13-CONTENT-ROUTE.md) before code changes, especially
-architecture/product logic. Check PROJECT-STATE and DECISIONS. Strategyzer foundations,
-Business OS north star, Human Governance and Content Route are architecture dependencies.
+Read all fifteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
+[14-PRODUCT-DISCOVERY-ROUTE.md](docs/v2/14-PRODUCT-DISCOVERY-ROUTE.md) before code changes,
+especially architecture/product logic. Check PROJECT-STATE and DECISIONS. Strategyzer foundations,
+Business OS, Human Governance, Content Route and Product Discovery are architecture dependencies.
 If implementation conflicts with accepted decisions or Strategyzer foundations: **STOP and report**.
-Current user authorization takes precedence over historical phase gates. Missing docs require reporting.
+Current explicit user authorization supersedes historical phase gates. Missing docs require reporting.
 
-Current Phase = Phase 6 — Content Route
+Current Phase = Phase 7 — Product Discovery Route
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Core Customer Intelligence MVP = ACCEPTED
-Next Phase = DO NOT START. Do not merge main.
+Content Route = IMPLEMENTED
+Product Discovery Route = PENDING ARCHITECT REVIEW
+Next Phase = DO NOT START. No main merge.
 
-DEC-053 authorizes Phase 6 only from 7972a849b27fed00308bcfd2870bf8a24c2be216.
-Only currently human-verified insights enter Content Opportunity → Topic → Angle → Human Selection.
-Generated content stays PROPOSED. Code owns evidence, hashes, customer language and source-grounded
-Value Scene. No invented quotes, stats, customers or demand. Explicit human choices only;
-never invent human_attested=true or customer approvals. Synthetic tests are not approvals.
-Current governance and selection ledgers are authoritative. No final writing, Product Discovery,
-Reelo integration, router/scheduler/adapters, multi-tenancy or package rename.
+DEC-057 authorizes Phase 7 from 4b11e45c55a33030d030b14cfd06ce10f285730f.
+Only current human-verified Priority Needs enter Product Discovery. Product Opportunity and
+Value Map/experiment plans stay PROPOSED; assumptions HYPOTHESIS; customer evidence immutable.
+Customer Profile → Value Map, never invent a need for a desired product. No fake quotes,
+statistics, Jobs/Pains/Gains, purchase claims, source hashes or automatic evidence promotion.
+Human Explore/Reject/Defer is a testing choice, not validated product. Never manufacture
+human_attested=true, sample approvals or Priority Needs. Synthetic tests are not customer decisions.
+Validate current tree and current authoritative governance/product ledgers at every boundary.
+Content Route remains unchanged. No Content Packet/Reelo, external experiments, automatic
+Customer Profile update, new adapters/scheduler, package rename or next phase.
 Default legacy behavior stays unchanged. No private customer data or secrets in Git.
 
 Legacy project material below describes CURRENT STATE only, not the target V2 architecture.

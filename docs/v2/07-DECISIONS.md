@@ -1,5 +1,46 @@
 # 07 — DECISIONS
 
+## DEC-057 — Phase 7 authority — ACCEPTED by owner request
+
+2026-09-15: Authorize v2-phase-7-product-discovery from 4b11e45c55a33030d030b14cfd06ce10f285730f.
+Supersedes prior Product Discovery phase prohibitions only. Core MVP ACCEPTED, Content Route
+IMPLEMENTED. No main merge, Content Packet/Reelo, external experiments or profile mutation.
+
+## DEC-058 — Human Priority Need and proposed solutions — ACCEPTED requirement
+
+Current-ledger full verified artifact plus human priority_need is mandatory. No unassessed/monitor
+input. Product includes free resources/services/tools and paid formats, with no paid default.
+Competing mechanisms; no AI opportunity score/investment. Product/map/plan remain PROPOSED,
+assumptions HYPOTHESIS. Human Explore means choose for testing, not approve a validated product.
+
+## DEC-059 — Profile → Value Map and fit — ACCEPTED requirement
+
+Customer side is independent Jobs/Pains/Gains + Context. Code attaches exact source/profile refs;
+all services need targets; reliever must link service → Pain, creator service → Gain. Empty Gain
+Creators allowed. Ground struggle/job; missing Gain cannot become customer-stated future.
+Product Opportunity is a V2 implementation concept, not asserted as a Strategyzer source term.
+
+## DEC-060 — Evidence ladder and assumptions — ACCEPTED owner operational semantics
+
+0 idea, 1 speech, 2 speech + prototype reaction, 3 light behavior, 4 commitment/meaningful action,
+5 real market behavior. More comments never promote strength. Current need is speech level 1;
+new solution assumptions/experiment current strength 0. Discrete testable assumptions with
+relevant desirability/feasibility/viability/survivability categories; human may choose first test.
+Target experiment level is proposed, not achieved. Numeric thresholds explicitly
+PROPOSED_TEST_THRESHOLD. Demand/market/purchase/validated_product all remain false in Phase 7.
+
+## DEC-061 — Product implementation choices — IMPLEMENTED, PENDING ARCHITECT REVIEW
+
+Combined replayable JSON tree with separable typed objects; full alternative bundle validation;
+closed evidence IDs and code-owned refs/metrics/hashes. Conservative EN/VI lexical guards and
+near-text mechanism dedup are not semantic proof. Request counts 1–20, not quotas/quality thresholds.
+Unknown original assumption importance; human assessment/first test lives in immutable decisions.
+Append-only revisions and hash-linked Explore/Reject/Defer history; current-tree binding,
+fresh selection on change, local locks/optimistic hashes/atomic files. Not distributed auth.
+Read docs 00–14. Real sample generation SKIPPED absent actual approved Priority Need.
+
+## Earlier decisions — historical scope and supersession
+
 ## DEC-053 — Phase 6 scope — ACCEPTED by owner request
 
 2026-09-15: Core Customer Intelligence MVP is ACCEPTED. Authorize Phase 6 only from
