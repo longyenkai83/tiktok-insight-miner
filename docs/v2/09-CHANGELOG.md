@@ -1,5 +1,17 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 - C5.1 bounded quality patch; BLOCKED, not accepted
+
+- V2 removes fixed TRUC_POOL[0] preference; selected Zone B direction stays authoritative.
+- Bounded read guidance and concrete operator-selected knowledge assets; no truth guard removal.
+- Optional session effort_level passes through producer to native host without changing global defaults.
+- Consumer accepts existing validated contradiction counter_ref IDs; invented counter quotes still reject.
+- Full tests: Insight 489, Reelo 24 PASS. Legacy creative code and read-only private assets unchanged.
+- Real Writer + first Critic completed, rewrite started; native task stopped before second Critic,
+  despite outer 900s limit. UNKNOWN preserved; no quality acceptance, no further automatic attempt.
+- Private drafts/metadata/report remain local. No Notion write, publication, merge or next phase.
+
+
 ## 2026-09-15 — Phase 9 Direct Reelo Integration
 
 - Owner/architect authorize implementation after C4.1 PASS (shared map r6, D13–D17).

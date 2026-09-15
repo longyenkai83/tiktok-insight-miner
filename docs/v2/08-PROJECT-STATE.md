@@ -1,5 +1,42 @@
 # 08 — PROJECT STATE
 
+## Latest checkpoint - C5.1 bounded quality closure
+
+Current Phase = Phase 9 - Direct Reelo Integration
+C5.1 Status = BLOCKED - native Workflow stopped during rewrite; second Critic missing
+Next Phase = DO NOT START. No merge.
+
+Owner authorizes Q1 selected-direction preservation and Q2 creative timeout/quality only.
+Q1 PATCH/PASS: neutral Zone B direction replaces TRUC_POOL[0] in V2 only. Three controlled
+comparison/question_answer/story cases preserve the entire context through all four calls;
+actual Writer and first Critic retain the question opening. Legacy code is unchanged.
+
+Q2 remains blocked. With 16 concrete read-only assets, inherited effort still timed out
+at 600s. Explicit session medium effort returned a real draft in 333s, exposing a false
+rejection of a validated contradiction counter_ref. That gate is fixed; unknown IDs and
+invented counter quotes still reject. Default/global settings are unchanged.
+
+The final same-packet child generation reached Writer -> independent Critic -> rewrite.
+Native task wx4svkdik returned stopped with an empty output, after about 623s overall,
+before the Python 900s deadline. No rewrite result or second Critic. Adapter retains
+UNKNOWN / workflow_failed. The exact native stop trigger is not established; medium
+effort and a larger outer timeout do not prove reliable completion. No automatic retry.
+First Critic said PASS but had findings, so code correctly required rewrite. Recovered
+stage results are partial diagnostics, not completed Workflow or approved content.
+
+Open quality findings: translated quotes presented as literal, unsupported shared/rental
+context, and incomplete independent voice/hook verification. Semantic preservation is
+not certified. Input A/B, receipt and parent lineage are unchanged across generations.
+All 16 read-only assets unchanged. No Notion write, publication or private-data commit.
+
+Full tests: Insight 489 PASS; Reelo 24 PASS. Synthetic customer truth, real creative assets.
+Local report/draft: Downloads/C5.1-QUALITY-REPORT.md and C5.1-OWNER-DRAFT.md.
+Next actor: Architect reviews the native lifecycle blocker and outstanding quality findings.
+Codex stops after C5.1. No Source Router, Unified Web or new phase.
+
+## Historical Phase 9 implementation handoff
+
+
 Current Phase = Phase 9 — Direct Reelo Integration
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Phase 8 — ACCEPTED

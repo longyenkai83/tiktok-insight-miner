@@ -36,7 +36,7 @@ def consumer_modules(workspace: Path):
 def send_packet(packet, *, load_current, config: dict, request_id: str, parent_id=None,
                 launch_override=None):
     required = {'execution_workspace', 'executable', 'state_directory', 'read_files'}
-    optional = {'timeout_seconds', 'max_budget_usd'}
+    optional = {'timeout_seconds', 'max_budget_usd', 'effort_level'}
     if not required <= set(config) or set(config) - required - optional:
         raise ValueError('reelo_config_requires_explicit_workspace_executable_local_state_and_read_files')
     workspace = Path(config['execution_workspace']).resolve()
@@ -53,7 +53,8 @@ def send_packet(packet, *, load_current, config: dict, request_id: str, parent_i
                           state_directory=state/'executions',
                           read_files=tuple(Path(p) for p in config['read_files']),
                           timeout_seconds=config.get('timeout_seconds', 600),
-                          max_budget_usd=config.get('max_budget_usd', 5.0))
+                          max_budget_usd=config.get('max_budget_usd', 5.0),
+                          effort_level=config.get('effort_level'))
     def authorize(raw):
         current_packet = ContentIntelligencePacket.model_validate(raw)
         validate_current(current_packet, **load_current())

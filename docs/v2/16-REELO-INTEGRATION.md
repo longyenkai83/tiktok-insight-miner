@@ -70,3 +70,24 @@ review artifact; private assets/results are not committed.
 SQLite is single-machine state outside cloud sync. No remote service, distributed lock,
 unified web redesign, Source Router, ad/sales pipeline, social publication or main merge.
 Web Business OS is the future target surface; Phase 9's core service is UI independent.
+
+
+## C5.1 bounded quality closure
+
+Owner authorizes only selected-direction preservation and creative timeout/quality work.
+V2 now uses Zone B direction with no forced legacy TRUC_POOL axis. Legacy remains unchanged.
+Read-only source discovery is bounded to operator-selected concrete assets, not an index-only
+knowledge grant. Writer records usage/omissions; Critic independently verifies relevant sources.
+
+Operator config optionally accepts effort_level=low/medium/high for one native host session.
+Omitting it preserves inherited settings. It changes neither model nor customer truth guards,
+permissions, packet/currentness, provenance or the 600-second default timeout. No global setting
+is edited. Result host metadata records requested effort; it is not proof of actual thinking time.
+Controlled tests compare inherited effort with an explicit medium session; all remain synthetic
+customer truth plus real read-only creative assets, never fabricated real customer approvals.
+No Notion write, publication, merge, Source Router or Unified Web is authorized by this patch.
+
+The consumer draft gate accepts verified support refs plus validated contradiction counter_refs;
+these are already source-span/hash checked by the canonical snapshot validator. No unknown IDs.
+C5.1 acceptance remains BLOCKED: final native task stopped during rewrite, before second Critic.
+First Critic findings cannot be ignored just because its verdict string says PASS. See doc 08.
