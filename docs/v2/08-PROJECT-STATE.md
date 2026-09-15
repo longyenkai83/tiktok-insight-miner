@@ -12,7 +12,7 @@ Do not start Phase 1 without review.
 
 - Audit CURRENT STATE đã được chủ dự án chấp nhận; baseline và hash ở [00-PROJECT-OS.md](00-PROJECT-OS.md).
 - Bộ source-of-truth V2 `00`–`09` được chuẩn hóa cho review, cùng quy tắc đọc docs trong CLAUDE.md/AGENTS.md.
-- Architecture correction đã được ghi nhận: V2 B2C-first, DEC-019 thay DEC-004; loại logic hệ sinh thái B2B khỏi target. Customer Identity dùng audience_segment/context/situation, life/business stage khi liên quan; user/buyer chỉ khi cần cho B2C. Chi tiết schema/implementation còn PROPOSED/OPEN.
+- Architecture correction đã được ghi nhận: V2 B2C-first, DEC-019 thay DEC-004; loại logic hệ sinh thái B2B khỏi target. Customer Identity dùng audience_segment/context/situation, `life_or_business_stage` khi liên quan; `user_buyer_distinction` (optional) chỉ khi cần cho B2C. Chi tiết schema/implementation còn PROPOSED/OPEN.
 - V2 Signal Extraction, Pattern, Evidence/Insight, typed packet, Writer integration và Unified Agent: **NOT IMPLEMENTED trong lần thay đổi này**.
 - Runtime behavior changed: **NO**. Không sửa business logic, pipeline, prompt, runtime config hoặc tests.
 - Chưa có review cho phép bắt đầu Phase 1. Sau bàn giao phải STOP.

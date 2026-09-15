@@ -32,11 +32,23 @@ Phải có ít nhất external ID hoặc locator nhập liệu đủ phân biệ
 
 ## Customer Identity V2 — B2C-first
 
-- CustomerIdentity: `audience_segment`, `context`, `situation`; `life_stage?`, `business_stage?` chỉ khi liên quan tới use case B2C.
-- `user_buyer_distinction?`: chỉ xuất hiện khi cần phân biệt người dùng và người mua trong use case B2C; kèm use_case_reason và Claim có nguồn cho từng nhận định. Không cần thì bỏ trường này, không tự tạo role assignment.
+Tên field chuẩn đã được chủ dự án chốt (DEC-020):
+
+```text
+audience_segment
+context
+situation
+life_or_business_stage
+user_buyer_distinction (optional)
+```
+
+`life_or_business_stage` là một field thống nhất, không tách thành hai field riêng. Khi không có dữ liệu phù hợp, giữ null/unknown với lý do theo quy tắc nguồn; không bịa giá trị để điền. `(optional)` là chú thích, không phải một phần tên field `user_buyer_distinction`.
+
+- CustomerIdentity: `audience_segment`, `context`, `situation`; `life_or_business_stage` chỉ khi liên quan tới use case B2C.
+- `user_buyer_distinction` (optional): chỉ xuất hiện khi cần phân biệt người dùng và người mua trong use case B2C; kèm use_case_reason và Claim có nguồn cho từng nhận định. Không cần thì bỏ trường này, không tự tạo role assignment.
 - Mỗi thuộc tính khẳng định phải có Claim; unknown là thiếu dữ liệu, không phải persona mặc định. Business stage không hàm ý buying committee hay customer ecosystem.
 - AudienceContext là view ngữ cảnh của CustomerIdentity, gồm context, situation và các claim về trigger/task/constraints/channel khi có nguồn; không có role_assignments hoặc ecosystem_roles.
-- Chi tiết field vẫn PROPOSED (DEC-012); phạm vi B2C-first là ACCEPTED (DEC-019).
+- Tên năm field đã ACCEPTED (DEC-020); chi tiết kiểu dữ liệu/validation vẫn PROPOSED (DEC-012); phạm vi B2C-first là ACCEPTED (DEC-019).
 
 ## CustomerSignal
 

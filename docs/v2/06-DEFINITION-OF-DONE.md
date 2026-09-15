@@ -22,7 +22,7 @@ Hoàn tất bàn giao Phase 0 không tự chuyển phase. Review của chủ d�
 | Phần | Các trường hợp phải chứng minh khi triển khai được duyệt |
 |---|---|
 | Source/Signal | Nhiều signal/comment, zero signals, Unicode quote spans, missing metrics, dedup, lineage qua export, không ép bucket |
-| Context/Profile | audience_segment/context/situation có nguồn hoặc unknown; life/business stage chỉ khi liên quan; user/buyer chỉ khi use case B2C cần; persona/meta-pain chỉ là giả định; Jobs/Pains/Gains có refs |
+| Context/Profile | audience_segment/context/situation có nguồn hoặc unknown; `life_or_business_stage` chỉ khi liên quan; `user_buyer_distinction` (optional) chỉ khi use case B2C cần; persona/meta-pain chỉ là giả định; Jobs/Pains/Gains có refs |
 | Pattern | Count nguồn phân biệt, không count signal thành người, scope mẫu và phản chứng, không suy market % từ like |
 | Insight/Evidence | Mỗi DERIVED claim trace nguồn; quote/metric lệch bị chặn; single-case không thành recurring fact; hypothesis giữ riêng |
 | Topic/Angle | Bắt đầu từ insight, không thêm customer fact; wording linh hoạt không cần regex/đếm từ V1 |

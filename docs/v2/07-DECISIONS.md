@@ -28,15 +28,19 @@ Ngày ghi nhận: 2026-09-15. ACCEPTED là quyết định thiết kế theo ch�
 
 **"V2 is B2C-first. Do not introduce B2B complexity unless explicitly approved later."**
 
-Theo architecture correction trực tiếp của chủ dự án, quyết định này supersedes DEC-004. Customer Identity V2 tập trung `audience_segment`, `context`, `situation`, life/business stage khi liên quan và user/buyer distinction chỉ khi use case B2C thực sự cần.
+Theo architecture correction trực tiếp của chủ dự án, quyết định này supersedes DEC-004. Customer Identity V2 tập trung `audience_segment`, `context`, `situation`, `life_or_business_stage` khi liên quan và `user_buyer_distinction` (optional) chỉ khi use case B2C thực sự cần.
 
-Loại khỏi target: economic buyer, decision committee, channel partner, recommender, saboteur và mọi B2B-specific customer ecosystem logic. Từ Role trong DEC-011 chỉ còn phạm vi user/buyer tùy chọn của B2C; không phải taxonomy vai trò tổ chức. Không bổ sung schema hoặc roadmap B2B khi chưa được phê duyệt rõ ràng. Phase 0 và các quy tắc bằng chứng không đổi.
+Loại khỏi target: economic buyer, decision committee, channel partner, recommender, saboteur và mọi B2B-specific customer ecosystem logic. Từ Role trong DEC-011 chỉ còn phạm vi `user_buyer_distinction` (optional) tùy chọn của B2C; không phải taxonomy vai trò tổ chức. Không bổ sung schema hoặc roadmap B2B khi chưa được phê duyệt rõ ràng. Phase 0 và các quy tắc bằng chứng không đổi.
+
+## DEC-020 — Customer Identity field names — ACCEPTED
+
+Theo xác nhận trực tiếp của chủ dự án, tên field chuẩn là `audience_segment`, `context`, `situation`, `life_or_business_stage`, `user_buyer_distinction` (optional). Dùng một field `life_or_business_stage` thống nhất. Đây là cập nhật tên field trong DEC-012/019; kiểu dữ liệu và validation chi tiết vẫn cần review. Không mở Phase 1.
 
 ## Chưa quyết định — không được coi là quyền triển khai
 
 | ID | Trạng thái | Nội dung cần review |
 |---|---|---|
-| DEC-012 | PROPOSED | Field schema Customer Identity B2C, enum signals, nullable fields, định dạng snapshot/offset, lỗi contract và WriterResult trong 02–04 |
+| DEC-012 | PROPOSED | Kiểu dữ liệu/validation Customer Identity B2C (tên field đã chốt tại DEC-020), enum signals, nullable fields, định dạng snapshot/offset, lỗi contract và WriterResult trong 02–04 |
 | DEC-016 | OPEN | Model/prompt/SDK, thuật toán clustering/ranking, ngưỡng support, sampling/dedup policy |
 | DEC-017 | OPEN | Storage, transport Reelo, UI/CLI, orchestrator, retry/rewrite, adapter/migration legacy |
 | DEC-018 | PROPOSED | Cách chia Phase 2–9 và tiêu chí tương lai; cần review từng phase |

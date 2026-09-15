@@ -1,5 +1,10 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Chuẩn hóa tên field Customer Identity
+
+- DEC-020 chốt `audience_segment`, `context`, `situation`, `life_or_business_stage`, `user_buyer_distinction` (optional).
+- Đồng bộ tài liệu hiện hành, thay hai field stage riêng bằng một field thống nhất. Không thay runtime, không mở Phase 1.
+
 ## 2026-09-15 — Architecture correction: B2C-first
 
 - DEC-019 thay DEC-004: "V2 is B2C-first. Do not introduce B2B complexity unless explicitly approved later."
