@@ -1,5 +1,38 @@
 # 08 — PROJECT STATE
 
+## Latest checkpoint — Integrated Creative Planner + one gate (new prompt named C5.6)
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = IMPLEMENTED — BLOCKED AT CONTROLLED PLANNER ACCEPTANCE
+Phase 9 NOT ACCEPTED. No merge. Next Phase = DO NOT START.
+Authority: owner approved Option B after C5.7; new implementation prompt reuses C5.6 label.
+Historical prompt-only C5.6 and C5.7 reports remain evidence, not the current implementation scope.
+
+Typed internal PROPOSED plan, one explicit local human decision, source origin/reference checks,
+revision-bound approval, minimal inspect/review CLI and approved-plan Writer/Critic inputs exist.
+No Phase8 schema, legacy library, currentness, host lifecycle/permissions or truth-category changes.
+A later review/revision/source change invalidates earlier creative approval. Final human approval
+remains PENDING; no model can create it. Synthetic review fixtures are labeled separately.
+
+ONE live Planner run: native terminal completed (task wq6pry6ih), application result UNKNOWN
+with psychology_mechanism_not_in_library after 351.924s (wall 357.556s). The valid library name
+contained two spaces before its English parenthetical while the model emitted one. Code fix now
+compares normalized whitespace only, preserving raw wording and rejecting unknown mechanisms.
+OFFLINE validation of the SAME returned output passes after that fix; no new native call,
+no rewriting historical UNKNOWN. Six model issues remain blocking under the current plan policy.
+Several are informational limitations/mitigations, but they have not been silently downgraded.
+No live approval, Writer, Critic or final draft. Eight hooks/four titles are unapproved proposals.
+Generation GEN-e53cd228d7074e43bfd09a76c8ffcc74. All 21 read-only assets unchanged.
+
+Reelo full suite after fix: 180 PASS. Insight full suite: 489 PASS (54.84s).
+Offline synthetic approval tests cover Writer/Critic/bounded rewrite and stale/rejected approvals;
+these are not a live owner-approved execution. Sole handoff: local REPORT-C5.6.md, clearly titled
+Integrated Creative Planner. Old same-name quality report backed up outside Downloads.
+Next actor: Architect reviews blocked plan issues and candidate/outline semantics via anh Tuan.
+Codex STOP, no second acceptance, Source Router, portfolio, Unified Web or publication.
+
+## Historical checkpoints (before integrated Planner)
+
 ## Latest checkpoint — C5.6 BLOCKED: unsupported identity in final rewrite
 
 Current Phase = Phase 9 — Direct Reelo Integration

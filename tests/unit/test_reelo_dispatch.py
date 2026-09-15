@@ -24,7 +24,7 @@ def test_dispatch_reloads_authoritative_state_before_adapter(monkeypatch, tmp_pa
         return 'sent'
     adapter = SimpleNamespace(IntakeStore=Store, dispatch=dispatch)
     configs = []
-    host = SimpleNamespace(HostConfig=lambda **kw: configs.append(kw) or kw, NativeHost=lambda cfg: None)
+    host = SimpleNamespace(HostConfig=lambda **kw: configs.append(kw) or kw, NativeHost=lambda cfg, approval_id=None: None)
     monkeypatch.setattr(module, 'consumer_modules', lambda path: (adapter, host))
     monkeypatch.setenv('LOCALAPPDATA', str(tmp_path))
     config = dict(execution_workspace=str(tmp_path), executable=str(tmp_path/'claude.exe'),

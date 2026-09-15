@@ -1,5 +1,18 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — Integrated Creative Planner / one human gate (new C5.6 scope)
+
+- Owner-approved Option B after C5.7: typed internal PROPOSED creative plan, source origins,
+  library mechanism/candidate checks, immutable revision-bound local review, one select/edit/
+  approve/reject/defer gate. Writer requires current approval; Critic receives same plan.
+- Minimal Insight inspect/review CLI and approval-ID dispatch; no Unified Web or Phase8 change.
+- Preserve closed technical lifecycle/permission/currentness/Q1/hard categories and legacy code.
+- ONE live Planner terminal completed but application rejected whitespace-different library label.
+  Fixed only whitespace comparison and regression-tested; offline replay of same output validates.
+  Six reported issues remain blockers; no live approval, Writer, Critic or final draft, no retry.
+- Full Reelo 180 PASS; full Insight result in report. Synthetic offline approval is not owner approval.
+  21 real read-only assets unchanged; no Notion/publish/source writeback. Phase9 NOT ACCEPTED.
+
 ## 2026-09-15 — C5.6 voice/title/tone; quality closure BLOCKED
 
 - Owner rejected C5.5 quality despite technical PASS. V2 only: reader-centered POV, immediate

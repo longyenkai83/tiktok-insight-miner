@@ -176,3 +176,16 @@ creative_quality findings; existing truth hard categories remain unchanged and c
 for better prose. No new Critic, pronoun counter, host/orchestration/permission/Q1/packet changes.
 Exactly one same-packet/assets acceptance, max one rewrite, no Notion/publish/source writeback.
 Owner still reviews the final result; no merge, next phase or self-acceptance.
+
+
+## Owner-approved integrated Creative Planner (scope supplied after C5.7)
+
+The new implementation prompt reuses label C5.6; it supersedes the prompt-only quality
+scope without erasing that historical failure. Consumer now defaults to CREATIVE_PLAN
+and pauses at PLAN_PENDING_APPROVAL. Use `review-reelo-plan` to inspect/submit one local
+human review, then `send-content-packet --approval-id ... --parent-generation-id ...`.
+The internal plan and approval live in local consumer storage, not the Phase8 packet.
+Current ledgers are checked again before Writer. No topic/angle/customer truth reselection.
+One explicit gate covers source matches, psychology, format/treatment, hook/title and
+outline; final article approval remains separate. See consumer README for review JSON.
+No Unified Web or publication-flow change. Semantic model checks remain fallible.
