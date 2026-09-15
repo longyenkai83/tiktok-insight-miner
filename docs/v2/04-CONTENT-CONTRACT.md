@@ -1,5 +1,18 @@
 # 04 — CONTENT CONTRACT
 
+## Phase 5 — implemented downstream eligibility boundary, no generation
+
+Future Content Research must first pass require_verified(verified_envelope, current_reviews).
+Phase 4 candidates, bare human_verified=true objects, stale/revoked projections and altered
+evidence cannot enter. The caller obtains the current ledger from trusted authoritative storage.
+Verified Insight still requires downstream Content Opportunity → Topic → Angle → Human Selection
+→ typed Content Intelligence Packet before Reelo. Human Insight approval does not replace
+Angle selection or validate market/purchase behavior. No packet/Writer integration here.
+
+Future Customer Profile updates may PROPOSE add / merge / supersede / archive; human approval
+is required for supersession. Preserve legacy Reelo's useful dedupe/provenance/conflict behavior,
+but do not implement living profile merge or direct Reelo ingestion in Phase 5.
+
 ## Phase 4.1 — future Human Governor prerequisite
 
 The shared engine emits Insight Candidates. Phase 5 Human Approval must first produce a

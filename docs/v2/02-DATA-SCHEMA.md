@@ -1,5 +1,37 @@
 # 02 — DATA SCHEMA
 
+## Phase 5 — executable human contracts
+
+`v2.insight-reviews.1`: ordered immutable v2.insights.2 snapshots and append-only events;
+last snapshot is current. Event: review_event_id, sequence, previous_event_id,
+source_schema_version, source_insights_hash, action, reviewed_at, original_statement,
+approved_statement. Action: request_id, candidate_insight_id/hash, decision, reviewer_id,
+human_attested=true, edited_statement when edited, rationale and PriorityDecision.
+Decision is approved / edited_and_approved / rejected / deferred, never verified.
+
+`v2.verified-insights.1`: input_reviews_hash, review_history, verified_insights. Every record
+has verified_insight_id, source_candidate_id/hash, source_insights_hash, revision, supersedes,
+DERIVED statement with machine_approved/human_edited origin, unchanged evidence/profile/scope,
+relationship type, support_pattern_ids, human_review, verification, priority, status=verified.
+No rejected/deferred record in current projection. Original candidate and machine review stay
+in immutable snapshots; original and edited text remain in the event. Whole-statement refs
+are retained; old machine part offsets are not reused for edited wording.
+
+Verification: source_grounded=true, evidence_support_present=true, machine_review_passed=true
+with machine_review_scope=source_candidate_only, human_verified=true, market_validated=false,
+purchase_validated=false. Human edits are not falsely claimed to have fresh machine review.
+Only explicit approved/edited_and_approved events can materialize these records; a flag alone
+is not enough. Full envelope replay checks event chain, source/hash, decision and copied fields.
+
+PriorityDecision: priority_status unassessed/monitor/priority_need, assessment_origin human_assessment;
+optional important/urgent/frequent/expensive/emotional_intensity high/medium/low/unknown (default
+unknown), note. No auto score or forced completeness. Non-default priority requires approval.
+
+Downstream must use require_verified(full_artifact, current_authoritative_reviews), not a
+standalone VerifiedInsight flag. Old ledgers/candidates/stale projections fail. Source schema
+v2.insights.2 and earlier extraction contracts remain unchanged. Detailed contracts and
+revision/storage rules: [12-HUMAN-GOVERNANCE.md](12-HUMAN-GOVERNANCE.md).
+
 ## Phase 4.1 schema transition — explicit rejection, no implicit migration
 
 `v2.insights.1` → `v2.insights.2` is an intentional unreleased V2 contract break.
@@ -20,7 +52,7 @@ separate file. No silent promotion, automatic migration or Phase 1–3 schema ch
 - Envelope replay checks outcome flags against reviews and emitted verification against
   code-built evidence. An empty/missing/forged evidence bundle cannot claim support.
 - Structural source validity and attached support are not semantic certainty. Phase 5
-  alone may later approve a Verified Insight; its schema/workflow is not implemented.
+  alone may later approve a Verified Insight; its schema/workflow is defined in 12-HUMAN-GOVERNANCE.md.
 
 ## Future normalized source adapter contract — design only (DEC-045)
 

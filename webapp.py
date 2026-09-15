@@ -1841,6 +1841,11 @@ def main() -> None:
             st.warning("👈 Nhập tên/mã ở sidebar trước khi tiếp tục.")
             return
 
+        if st.sidebar.checkbox("V2 — Human Review", value=False, key="v2_human_review"):
+            from tiktok_insight_miner.governance_ui import render_human_review
+            render_human_review(OUTPUT_ROOT, user)
+            return
+
         runs_today = get_user_runs_24h(user)
         if runs_today >= MAX_RUNS_PER_USER_PER_DAY:
             st.error(

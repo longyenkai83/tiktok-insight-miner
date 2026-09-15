@@ -1,5 +1,25 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 5 Human Governor, pending architect review
+
+- DEC-048–052 authorize first explicit human semantic gate from 66b387e; new branch
+  v2-phase-5-human-governor. Core Customer Intelligence MVP remains NOT YET ACCEPTED.
+- Add governance models/engine/store/CLI/UI: v2.insight-reviews.1 append-only events and
+  immutable snapshots, v2.verified-insights.1 deterministic projection, explicit human
+  approved/edited_and_approved/rejected/deferred, exact provenance and revision/supersedes.
+- Human Priority Need with optional unknown dimensions; no score or automated approval.
+  DERIVED stays DERIVED; market/purchase false; machine review scoped to original candidate.
+- Downstream gate validates current ledger; stale/revoked/machine artifacts fail. Atomic
+  local file writes and locking, idempotent prepare/apply/retries, stale-write protection.
+- Minimal opt-in review screen in existing webapp, one-expand evidence, filters, metrics,
+  four actions, rationale, priority and JSON export. Three independent CLI commands.
+- Add 12-HUMAN-GOVERNANCE; update docs 00–12 and agent read rules. Preserve future routers,
+  direct Reelo/Drive-backup memory, profile proposal/supersession contract and B2C/Strategyzer.
+- Full suite 365 passed in 5.29s; 48 new offline tests including four Streamlit action flows.
+  Real 12-candidate queue: all pending, zero human events/verified/priority; local preview only.
+- Legacy default unchanged. No generation, Reelo integration, profile merge, scheduler,
+  adapters, state-store, private data committed, main merge or Phase 6.
+
 ## 2026-09-15 — Phase 4.1 state semantics and router memory
 
 - DEC-042–047: source_grounded is structural provenance; evidence_support_present replaces

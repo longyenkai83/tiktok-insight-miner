@@ -1,10 +1,24 @@
 # 11 — BUSINESS OS NORTH STAR
 
+## Phase 5 — first explicit Human Governor implemented, pending acceptance
+
+AGENTS EXECUTE. EVIDENCE INFORMS. HUMAN APPROVES CONSEQUENTIAL DECISIONS.
+The current implementation ends at human-approved, corpus-scoped Verified Insight / human
+Priority Need. When Phase 5 passes architect review, the core Customer Intelligence MVP is
+the first usable sensing module of Business OS. It is currently NOT YET ACCEPTED.
+
+Source Router and Downstream Router below remain future contracts. Their downstream branches
+must use the current-human-review gate; approval is not market/purchase/product validation.
+Future profile updates may PROPOSE add/merge/supersede/archive, with human supersession approval.
+No living-profile merge, downstream generation, Reelo integration, source scheduler or new
+adapter here. Governance authority, storage and trust boundary: [12](12-HUMAN-GOVERNANCE.md).
+Read docs 00–12. Do not start Phase 6.
+
 ## Phase 4.1 — Source Router and Downstream Router (ACCEPTED future architecture)
 
 Customer Intelligence is the FIRST sensing layer of Business OS. Agents execute.
 Evidence informs. Human approves consequential decisions. Phase 5 Human Approval is the
-first explicit Human Governor gate and authoritative semantic gate; not implemented here.
+first explicit Human Governor gate and authoritative semantic gate; implemented in the Phase 5 slice.
 Phase 4 ends at Insight Candidates, not Verified Insights; machine review remains fallible.
 
 ### SOURCE ROUTER — activate only what the user needs
@@ -115,7 +129,7 @@ in Phase 4. Attached evidence is not human-, market- or purchase-validated.
 
 ## Operational rule
 
-Read docs/v2/00–11 before architecture/product-logic work; STOP and report conflicts
+Read docs/v2/00–12 before architecture/product-logic work; STOP and report conflicts
 with accepted decisions or Strategyzer foundations. Phase 4 ends at evidence-linked
 Insight Candidates. No priority ranking, downstream generation, Reelo integration,
-YouTube, ingestion state or Phase 5 is authorized by this north star.
+YouTube, ingestion state or Phase 6 is authorized by this north star; Phase 5 is separately authorized by DEC-048.

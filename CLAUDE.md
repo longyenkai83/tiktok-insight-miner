@@ -1,20 +1,31 @@
-# V2 SOURCE-OF-TRUTH — bắt buộc trước khi sửa code
+# V2 SOURCE-OF-TRUTH — read before code changes
 
-## Phase 4.1 memory patch
+Read all thirteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
+[12-HUMAN-GOVERNANCE.md](docs/v2/12-HUMAN-GOVERNANCE.md) before code changes, especially
+architecture/product logic. Check [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) and
+[DECISIONS](docs/v2/07-DECISIONS.md). Strategyzer foundations, Business OS north star and
+Human Governance are explicit architecture dependencies. If implementation conflicts with
+accepted decisions or Strategyzer foundations: **STOP and report**. Missing docs require
+reporting, not invention. Current user authorization takes precedence over historical phase gates.
 
-DEC-042–047 refine accepted architecture. Phase 4 output is Insight Candidates only:
-machine_accepted / pending_human_review, never verified customer truth. Read 00–11 as below.
-Phase 5 Human Approval is the first explicit Human Governor and authoritative semantic gate;
-DO NOT START. Source/Downstream Routers, schedulers, adapters and state store remain future
-documentation only. Keep current semantic review; do not add an expensive multi-reviewer system.
+Current Phase = Phase 5 — Human Governor
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+Core Customer Intelligence MVP = NOT YET ACCEPTED (await architect review)
+Next Phase = DO NOT START. **Do not start Phase 6.**
 
-Mọi coding agent **bắt buộc đọc đủ mười hai file từ [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) đến [11-BUSINESS-OS-NORTH-STAR.md](docs/v2/11-BUSINESS-OS-NORTH-STAR.md) trước khi sửa code, đặc biệt trước architecture/product-logic changes**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
+DEC-048 authorizes Phase 5 from 66b387e4af0e79e0f4fc4e77a766eaf55a228b40. No auto-approval,
+LLM human impersonation or count-based priority. Agents may prepare queues/projections but
+must never invent human_attested=true or submit customer decisions without corresponding
+explicit human instruction. Synthetic tests are not customer approvals. Human verification
+is corpus-scoped; DERIVED stays DERIVED, market/purchase stay false. Evidence is immutable.
 
-Strategyzer foundations và Business OS north star là explicit architecture dependencies; đọc đủ docs/v2/00–11. **If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.** Không âm thầm diễn giải lại quyết định/nguyên tắc để hợp thức hóa implementation.
+JSON append-only review history is authoritative; downstream must validate full verified
+artifact against the current ledger. No Content/Product generation, living profile merge,
+router/scheduler/new adapters, Reelo integration, multi-tenancy or legacy package rename.
+Default legacy behavior remains unchanged. No private data/secrets in Git.
 
-Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ Insight Candidates có evidence đính kèm pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
-
-Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Test xanh hoặc push code không tự mở phase kế tiếp.
+Legacy project material below describes CURRENT STATE only, not the target V2 architecture.
+Do not use audit/V1 to override accepted V2 decisions or infer permission for another phase.
 
 ---
 

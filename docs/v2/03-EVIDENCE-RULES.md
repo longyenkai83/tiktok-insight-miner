@@ -1,5 +1,19 @@
 # 03 — EVIDENCE RULES
 
+## Phase 5 — corpus-scoped human semantic authority
+
+Human review may accept/edit/reject/defer a candidate. human_verified=true means the human
+accepts a reasonable interpretation of the cited corpus and scope; not objective truth,
+proven causality, purchase, product demand or population prevalence. DERIVED stays DERIVED;
+market/purchase flags stay false. No LLM may impersonate the human or auto-approve by counts.
+
+Edits preserve evidence IDs/hashes, refs, scope, contradictions and limitations. Code applies
+deterministic numeric/quote/demographic/solution/content integrity guards; no AI semantic veto.
+Broader strategy goes in rationale/note. Optional priority dimensions are HUMAN ASSESSMENTS,
+not customer observations. Machine review status refers only to the original candidate.
+Exact human event and current ledger are required for downstream eligibility; revoked or stale
+approvals must fail. See [12](12-HUMAN-GOVERNANCE.md) for the local trust boundary and limitations.
+
 ## Phase 4.1 — accepted state semantics (DEC-042)
 
 Phase 4 produces **INSIGHT CANDIDATES**, never Verified Insights. Automated acceptance
@@ -10,10 +24,10 @@ review. None certifies semantic truth. `evidence_backed` is removed from the exe
 verification model. Human/market/purchase flags remain false.
 
 **Phase 5 Human Approval is the first explicit Human Governor gate and the authoritative
-semantic gate.** Only that future human process may produce a Verified Insight and set
+semantic gate.** Only that human process may produce a Verified Insight and set
 human_verified=true. Future decisions: approved / edited_and_approved / rejected.
 Human approval does not itself prove purchase, market demand, or turn DERIVED into OBSERVED.
-Do not implement Phase 5 now. Keep current closed IDs, part support, semantic review,
+Phase 5 is now authorized by DEC-048; do not start Phase 6. Keep current closed IDs, part support, semantic review,
 causality/scope/demographic/solution/market checks; no extra multi-reviewer architecture.
 Completion does not require perfect AI. Known semantic misses remain review inputs.
 

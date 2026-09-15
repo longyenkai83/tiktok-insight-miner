@@ -1,5 +1,35 @@
 # 07 — DECISIONS
 
+## Phase 5 — accepted scope, implementation pending architect review
+
+- **DEC-048 — Human Governor authorization.** Owner's Phase 5 request authorizes
+  v2-phase-5-human-governor from 66b387e4af0e79e0f4fc4e77a766eaf55a228b40. Supersedes
+  Phase 5 implementation restrictions in DEC-042/047, not evidence/Strategyzer/B2C rules.
+  Human approval alone creates corpus-scoped Verified Insight; no LLM or threshold approval.
+  No Phase 6 or main merge. Read docs 00–12 before architecture/product-logic changes.
+- **DEC-049 — Review and verification.** approved / edited_and_approved / rejected / deferred;
+  immutable candidates/evidence, append-only events, explicit reviewer/attestation/rationale,
+  exact candidate/source binding, timezone-aware timestamps. DERIVED remains DERIVED;
+  market/purchase false. Machine review is scoped to source_candidate_only, including edits.
+  No AI semantic veto; deterministic integrity guards still apply. Full contracts in [12](12-HUMAN-GOVERNANCE.md).
+- **DEC-050 — Human Priority Need.** unassessed / monitor / priority_need and optional
+  important/urgent/frequent/expensive/emotional_intensity high/medium/low/unknown are HUMAN
+  ASSESSMENTS. UNKNOWN valid. Show deterministic evidence, never a magic score from likes/counts.
+  Non-default priority requires a human-approved insight. This is an explicit owner framework
+  application; do not invent a measured Strategyzer score or source attribution.
+- **DEC-051 — Durable state and downstream gate.** JSON ledger authoritative; atomic local
+  writes, file locks, append-only prefixes, optimistic stale-view checks, idempotent request IDs.
+  v2.verified-insights.1 is a deterministic projection of current human decisions; require current
+  ledger hash for downstream eligibility. Changes create fresh pending snapshots; reapproval
+  has revision/supersedes. Local identity/unsigned hashes are not strong authentication.
+  Future Customer Profile updates PROPOSE add/merge/supersede/archive, human supersession required;
+  no full merge engine. Storage/UI details are implementation choices pending review.
+- **DEC-052 — Core MVP checkpoint.** After architect acceptance of Phase 5, Source Evidence
+  → Signal → Context → Pattern → Insight Candidate → Human Governor → Verified Insight /
+  Priority Need is the first usable Business OS sensing module. Current MVP NOT YET ACCEPTED.
+  Downstream Content/Product/Profile/agents are later separate phases; existing routers and
+  direct typed Reelo/Drive-backup principles remain intact, not implemented by this patch.
+
 ## Phase 4.1 — ACCEPTED scope and architecture, implementation pending architect review
 
 - **DEC-042 — State semantics and Human Governor.** Owner authorizes Phase 4.1 on

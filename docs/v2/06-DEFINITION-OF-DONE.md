@@ -1,5 +1,27 @@
 # 06 — DEFINITION OF DONE
 
+## Phase 5 — ready for architect review only
+
+- Explicit human action required; no machine/threshold auto-approval or priority score.
+- Approve/Edit + Approve/Reject/Defer record durable append-only JSON history, identity,
+  timestamp, rationale, original/edited text and exact candidate/source hashes.
+- Original candidate and machine review remain separate and immutable; evidence is not editable.
+- Verified schema/projection includes only latest approvals on current analysis; rejects/deferred
+  remain in history. DERIVED stays DERIVED; market/purchase false; machine scope explicit.
+- Human Priority Need with optional unknown dimensions; deterministic metrics displayed separately.
+- Repeated preparation/application/retries idempotent; changed source requires new review;
+  revision/supersedes supports future evolution without implementing full profile merge.
+- Atomic writes, append-only prefixes, file locks and stale history checks; projection can rebuild.
+- Minimal webapp UI with one-click evidence, all required filters, deterministic sorting,
+  visible contradictions/limitations, human actions and optional priority; default legacy intact.
+- CLI prepare/record/apply and downstream gate validate full current human provenance.
+- Offline tests and full legacy suite green; real 12-candidate local queue/preview only,
+  zero customer approvals during preparation, no private data or secrets committed.
+- docs 00–12, AGENTS and CLAUDE updated; MVP NOT YET ACCEPTED, Next Phase DO NOT START.
+- No Content/Product generation, Reelo integration, router/scheduler/adapters or Phase 6.
+
+Earlier phase delivery sections below are historical, not the current phase gate.
+
 ## Phase 4.1 delivery checks
 
 - Explicit v2.insights.2 schema/version error for old artifacts; no implicit migration.

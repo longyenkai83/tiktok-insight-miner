@@ -1,9 +1,22 @@
 # 10 — STRATEGYZER FOUNDATIONS
 
+## Phase 5 — explicit V2 application, not a new SOURCE PRINCIPLE
+
+V2 DECISION: Human Governor is the authoritative corpus-scoped semantic gate; AI assists,
+never replaces evidence or human judgment. Verified Insight keeps DERIVED and does not mean
+market/purchase/product validation. Customer Profile remains solution-independent Jobs/Pains/Gains
++ Context, B2C-first; no AI-invented demand.
+
+DERIVED IMPLEMENTATION RULE: human Priority Need uses optional important/urgent/frequent/
+expensive/emotional_intensity assessments with unknown valid, following the owner-supplied
+Customer Dossier framework. These are human assessments, not measured facts or an automatic
+Strategyzer score. Keep evidence beside assessments and the exact review event. Profile changes
+remain proposals needing approval for supersession. See [12](12-HUMAN-GOVERNANCE.md).
+
 ## Phase 4.1 application — V2 DECISION and DERIVED IMPLEMENTATION RULE
 
 V2 DECISION (DEC-042/046): attached support and machine review do not create Verified Insight.
-Only future Phase 5 Human Approval is the authoritative semantic gate. Negative reviews remain
+Only Phase 5 Human Approval is the authoritative semantic gate. Negative reviews remain
 valuable customer speech; rating/text/platform alone never prove purchase. Reliable explicit
 verified_purchase metadata must be represented separately by a future adapter.
 
@@ -76,8 +89,8 @@ Product Opportunity là **PROPOSED**, không phải validated demand. Chuỗi n�
 
 ## Cách dùng và phase gate
 
-Trước thay đổi architecture/product logic, đọc đủ `docs/v2/00`–`11`, đối chiếu quyết định, bằng chứng và phạm vi được phép. Nếu implementation mâu thuẫn accepted decisions hoặc Strategyzer foundations: **STOP and report**; không âm thầm diễn giải lại nền tảng để hợp thức hóa code.
+Trước thay đổi architecture/product logic, đọc đủ `docs/v2/00`–`12`, đối chiếu quyết định, bằng chứng và phạm vi được phép. Nếu implementation mâu thuẫn accepted decisions hoặc Strategyzer foundations: **STOP and report**; không âm thầm diễn giải lại nền tảng để hợp thức hóa code.
 
-Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ evidence-linked Insight Candidates pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
+Current Phase = Phase 5 — Human Governor. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Core MVP = NOT YET ACCEPTED. Next Phase = DO NOT START. DEC-048 authorizes the Human Governor slice; no Phase 6.
 
 Business OS north star bổ sung kiến trúc dài hạn tại [11](11-BUSINESS-OS-NORTH-STAR.md), không thay nền tảng Strategyzer. Phase 4 giữ Customer Profile side; evidence-linked candidate không tự là human/market/purchase validated.

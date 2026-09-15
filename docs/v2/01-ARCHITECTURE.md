@@ -1,5 +1,32 @@
 # 01 — ARCHITECTURE
 
+## Phase 5 — Human Governor (DEC-048–052)
+
+Current Phase = Phase 5 — Human Governor
+
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+
+Core Customer Intelligence MVP = NOT YET ACCEPTED (await architect review)
+
+Next Phase = DO NOT START. Do not start Phase 6.
+
+The owner's Phase 5 request authorizes implementation from
+v2-phase-4-evidence-insight@66b387e4af0e79e0f4fc4e77a766eaf55a228b40 on
+v2-phase-5-human-governor. This supersedes earlier Phase 5 implementation restrictions,
+not the evidence/Strategyzer/B2C rules. Historical phase-specific scopes below do not
+override this authorization. [12-HUMAN-GOVERNANCE.md](12-HUMAN-GOVERNANCE.md) defines the
+new authoritative human gate. No Phase 6, downstream generation or integration is authorized.
+
+`v2.insights.2 → prepare_review → append-only human ReviewEvents → apply_reviews
+→ v2.verified-insights.1`. Inputs and machine review stay immutable, separate from the
+human decision and resulting projection. No model calls or automatic approval.
+
+governance_models/engine/store/cli/ui are platform-neutral modules in the unchanged legacy
+Python package. Webapp adds an opt-in Human Review screen after the existing auth/user gate;
+legacy pipeline remains default. JSON ledger uses atomic writes and file locking; current
+review hash gates downstream. [12](12-HUMAN-GOVERNANCE.md) documents concurrency, edits,
+revision, priority, trust boundary and recovery. Both routers remain future design only.
+
 ## Phase 4.1 — accepted state semantics (DEC-042)
 
 Phase 4 produces **INSIGHT CANDIDATES**, never Verified Insights. Automated acceptance
@@ -10,10 +37,10 @@ review. None certifies semantic truth. `evidence_backed` is removed from the exe
 verification model. Human/market/purchase flags remain false.
 
 **Phase 5 Human Approval is the first explicit Human Governor gate and the authoritative
-semantic gate.** Only that future human process may produce a Verified Insight and set
+semantic gate.** Only that human process may produce a Verified Insight and set
 human_verified=true. Future decisions: approved / edited_and_approved / rejected.
 Human approval does not itself prove purchase, market demand, or turn DERIVED into OBSERVED.
-Do not implement Phase 5 now. Keep current closed IDs, part support, semantic review,
+Phase 5 is now authorized by DEC-048; do not start Phase 6. Keep current closed IDs, part support, semantic review,
 causality/scope/demographic/solution/market checks; no extra multi-reviewer architecture.
 Completion does not require perfect AI. Known semantic misses remain review inputs.
 
@@ -39,7 +66,7 @@ Source-grounded means structurally valid provenance, not correct interpretation.
 Evidence support present means evidence is attached, not proven semantic support.
 Machine review passed records an automated assessment, not human approval.
 Output is Insight Candidates pending_human_review; human/market/purchase flags are false.
-Verified Insight exists only after future Phase 5 Human Approval. No final priority ranking.
+Verified Insight exists only after Phase 5 Human Approval. No final priority ranking.
 
 ## Business OS and future integration — ACCEPTED design, not runtime
 
