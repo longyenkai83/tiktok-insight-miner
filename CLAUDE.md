@@ -1,28 +1,25 @@
 # V2 SOURCE-OF-TRUTH — read before code changes
 
-Read all thirteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
-[12-HUMAN-GOVERNANCE.md](docs/v2/12-HUMAN-GOVERNANCE.md) before code changes, especially
-architecture/product logic. Check [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) and
-[DECISIONS](docs/v2/07-DECISIONS.md). Strategyzer foundations, Business OS north star and
-Human Governance are explicit architecture dependencies. If implementation conflicts with
-accepted decisions or Strategyzer foundations: **STOP and report**. Missing docs require
-reporting, not invention. Current user authorization takes precedence over historical phase gates.
+Read all fourteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
+[13-CONTENT-ROUTE.md](docs/v2/13-CONTENT-ROUTE.md) before code changes, especially
+architecture/product logic. Check PROJECT-STATE and DECISIONS. Strategyzer foundations,
+Business OS north star, Human Governance and Content Route are architecture dependencies.
+If implementation conflicts with accepted decisions or Strategyzer foundations: **STOP and report**.
+Current user authorization takes precedence over historical phase gates. Missing docs require reporting.
 
-Current Phase = Phase 5 — Human Governor
+Current Phase = Phase 6 — Content Route
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
-Core Customer Intelligence MVP = NOT YET ACCEPTED (await architect review)
-Next Phase = DO NOT START. **Do not start Phase 6.**
+Core Customer Intelligence MVP = ACCEPTED
+Next Phase = DO NOT START. Do not merge main.
 
-DEC-048 authorizes Phase 5 from 66b387e4af0e79e0f4fc4e77a766eaf55a228b40. No auto-approval,
-LLM human impersonation or count-based priority. Agents may prepare queues/projections but
-must never invent human_attested=true or submit customer decisions without corresponding
-explicit human instruction. Synthetic tests are not customer approvals. Human verification
-is corpus-scoped; DERIVED stays DERIVED, market/purchase stay false. Evidence is immutable.
-
-JSON append-only review history is authoritative; downstream must validate full verified
-artifact against the current ledger. No Content/Product generation, living profile merge,
-router/scheduler/new adapters, Reelo integration, multi-tenancy or legacy package rename.
-Default legacy behavior remains unchanged. No private data/secrets in Git.
+DEC-053 authorizes Phase 6 only from 7972a849b27fed00308bcfd2870bf8a24c2be216.
+Only currently human-verified insights enter Content Opportunity → Topic → Angle → Human Selection.
+Generated content stays PROPOSED. Code owns evidence, hashes, customer language and source-grounded
+Value Scene. No invented quotes, stats, customers or demand. Explicit human choices only;
+never invent human_attested=true or customer approvals. Synthetic tests are not approvals.
+Current governance and selection ledgers are authoritative. No final writing, Product Discovery,
+Reelo integration, router/scheduler/adapters, multi-tenancy or package rename.
+Default legacy behavior stays unchanged. No private customer data or secrets in Git.
 
 Legacy project material below describes CURRENT STATE only, not the target V2 architecture.
 Do not use audit/V1 to override accepted V2 decisions or infer permission for another phase.

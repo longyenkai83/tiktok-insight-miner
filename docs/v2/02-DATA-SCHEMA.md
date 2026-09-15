@@ -1,5 +1,24 @@
 # 02 — DATA SCHEMA
 
+## Current authority — Phase 6 (DEC-053–056)
+
+Current Phase = Phase 6 — Content Route
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+Core Customer Intelligence MVP = ACCEPTED
+Next Phase = DO NOT START
+
+The owner's Phase 6 request authorizes Content Opportunity → Topic → Angle → Human
+Angle Selection from base `7972a849b27fed00308bcfd2870bf8a24c2be216` on
+`v2-phase-6-content-route`. Read all fourteen documents 00–13, including
+[13-CONTENT-ROUTE.md](13-CONTENT-ROUTE.md). It supersedes earlier Phase 6 prohibitions
+and MVP acceptance status below. Earlier phase sections are historical scope records;
+their evidence, B2C, Strategyzer and human-governance principles remain binding.
+No Product Discovery, final writing, Reelo integration, next phase or main merge.
+
+New typed objects: v2.content-opportunities.1, v2.topics.1, v2.angles.1, combined v2.content-tree.1; selection history v2.content-selection-history.1 and export v2.selected-content-angles.1. See document 13 for fields and provenance.
+
+## Earlier phase documentation (historical gates)
+
 ## Phase 5 — executable human contracts
 
 `v2.insight-reviews.1`: ordered immutable v2.insights.2 snapshots and append-only events;

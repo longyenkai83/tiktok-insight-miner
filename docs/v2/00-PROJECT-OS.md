@@ -1,5 +1,24 @@
 # 00 — PROJECT OS
 
+## Current authority — Phase 6 (DEC-053–056)
+
+Current Phase = Phase 6 — Content Route
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
+Core Customer Intelligence MVP = ACCEPTED
+Next Phase = DO NOT START
+
+The owner's Phase 6 request authorizes Content Opportunity → Topic → Angle → Human
+Angle Selection from base `7972a849b27fed00308bcfd2870bf8a24c2be216` on
+`v2-phase-6-content-route`. Read all fourteen documents 00–13, including
+[13-CONTENT-ROUTE.md](13-CONTENT-ROUTE.md). It supersedes earlier Phase 6 prohibitions
+and MVP acceptance status below. Earlier phase sections are historical scope records;
+their evidence, B2C, Strategyzer and human-governance principles remain binding.
+No Product Discovery, final writing, Reelo integration, next phase or main merge.
+
+Content Route is an explicit opt-in capability. Coding agents must read 00–13; STOP and report conflicts with accepted decisions or Strategyzer foundations.
+
+## Earlier phase documentation (historical gates)
+
 ## Phase 5 — Human Governor (DEC-048–052)
 
 Current Phase = Phase 5 — Human Governor

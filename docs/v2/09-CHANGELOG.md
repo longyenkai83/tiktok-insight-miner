@@ -1,5 +1,20 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 6 Content Route
+
+- Owner accepts core Customer Intelligence MVP; Phase 6 implemented pending architect review.
+- Add typed opportunity/topic/angle generation, current-human gate, immutable code-owned evidence,
+  source/proposed Value Scene, literal language bank and conservative fake-fact/prose guards.
+- Add append-only explicit angle selection and typed export, opt-in CLI and minimal Streamlit UI.
+- Add offline synthetic tests for provenance, grounding, selection, CLI and persistent UI flow.
+- Full suite: `python -m pytest tests -q -p no:cacheprovider` → 401 passed in 24.67s;
+  36 new offline cases, all 365 earlier cases pass. No live test API calls.
+- Real sample SKIPPED: zero actual human approvals; no private data committed or API generation.
+- Add 13-CONTENT-ROUTE; update docs 00–12, DEC-053–056, AGENTS/CLAUDE read requirement 00–13.
+- Default legacy unchanged; no Product Discovery, final writing, Reelo or next phase/main merge.
+
+## Earlier changelog
+
 ## 2026-09-15 — Phase 5 Human Governor, pending architect review
 
 - DEC-048–052 authorize first explicit human semantic gate from 66b387e; new branch

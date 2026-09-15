@@ -1,5 +1,34 @@
 # 07 — DECISIONS
 
+## DEC-053 — Phase 6 scope — ACCEPTED by owner request
+
+2026-09-15: Core Customer Intelligence MVP is ACCEPTED. Authorize Phase 6 only from
+7972a849b27fed00308bcfd2870bf8a24c2be216 on v2-phase-6-content-route. Supersedes prior
+Phase 6 stop/MVP pending status, not evidence rules. No Product Discovery/Reelo/main merge.
+
+## DEC-054 — Content hierarchy and truth — ACCEPTED requirement
+
+One-to-many Verified Insight → Content Opportunity → Topic → Angle → explicit Human Selection.
+Only full verified artifact against current ledger; no machine/stale shortcuts. All generated
+text PROPOSED, copied customer truth remains DERIVED. Code owns refs/language/hashes; missing
+Gain is not observed desire. Before/after belief is framing, not newly observed customer belief.
+
+## DEC-055 — Durable human selection — IMPLEMENTED, PENDING ARCHITECT REVIEW
+
+Versioned combined tree, replayable code-derived objects; append-only selected/rejected/deferred
+history, explicit human attestation, latest choice projection and current-ledger validation.
+Tree change invalidates prior active selection conservatively. Export v2.selected-content-angles.1
+is not Phase 8 packet or legacy selected_angles. Local locking/atomic writes do not authenticate humans.
+
+## DEC-056 — Content guards and review limits — IMPLEMENTED, PENDING ARCHITECT REVIEW
+
+Conservative all-prose needs_external_evidence=true; lexical fake-fact/final-script/product guards;
+near-text argument dedup within each parent. These do not certify semantic truth or diverse reasoning.
+Counts are controls, not quotas/success thresholds. No real generation without actual human approval;
+explicit synthetic fixtures may exercise workflows. Read docs 00–13. Next Phase DO NOT START.
+
+## Earlier decisions — historical scope and supersession
+
 ## Phase 5 — accepted scope, implementation pending architect review
 
 - **DEC-048 — Human Governor authorization.** Owner's Phase 5 request authorizes
