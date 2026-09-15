@@ -1,5 +1,21 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 8 Content Intelligence Packet
+
+- Owner accepts Content Route and Product Discovery Route. Packet implementation pending review.
+- Add canonical typed portable snapshot, immutable customer truth / proposed strategy / Writer
+  permissions, exact sources/language/counters, external-evidence requirements and lineage.
+- Reuse current governance/selection validators; distinguish offline integrity from currentness.
+- Add immutable revisions/storage, CLI build/validate, UI PASS/FAIL and local JSON/Markdown preview.
+- Export JSON Schema and clearly synthetic cross-repo fixture; dev-only jsonschema test dependency.
+- Full suite: `python -m pytest tests -q -p no:cacheprovider` → 486 passed in 55.69s;
+  33 new offline cases, all 453 earlier cases pass. No live AI/API calls.
+- Real packet generation SKIPPED: 0 actual Verified Insights; no manufactured approval/selection.
+- Add doc 15, contracts README, update docs 00–14/DEC-062–066 and agent read rules 00–15.
+- Content/Product engines and legacy default unchanged. No Reelo repo/Phase 9/main merge.
+
+## Earlier changelog
+
 ## 2026-09-15 — Phase 7 Product Discovery Route
 
 - Add independent current-human Priority Need gate and typed product opportunity, Value Map,

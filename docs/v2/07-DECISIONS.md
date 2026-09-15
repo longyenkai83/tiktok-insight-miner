@@ -1,5 +1,48 @@
 # 07 — DECISIONS
 
+## DEC-062 — Phase 8 and route acceptance — ACCEPTED owner request
+
+2026-09-15: Content Route and Product Discovery Phase 7 are ACCEPTED. Authorize
+v2-phase-8-content-packet from 78f47def5614723a1cb973d9c5ae6a5f9d3ca7a5. Supersedes
+prior packet prohibitions and pending route acceptance, not truth/grounding rules.
+Only schema/validator/builder/storage/export/preview. Reelo and Phase 9 NOT STARTED.
+
+## DEC-063 — Canonical portable handoff and zones — ACCEPTED requirement
+
+v2.content-intelligence-packet.1 is selected content intelligence source-of-truth for future
+direct Reelo and Content Agents. Zone A exact immutable customer truth; Zone B selected
+PROPOSED strategy; Zone C Writer-owned presentation under explicit permissions/constraints.
+No Markdown/config/relative-path/Drive dependency. Product objects excluded. Drive remains
+legacy/backup; brief.md, insights-pack, phan-tich-toan-dien.md are not this contract.
+
+## DEC-064 — Currentness, provenance and revision — ACCEPTED requirement
+
+Require current verified artifact, current tree, current selected-angles export and both
+authoritative ledgers; exact lineage must agree. Preserve quotes, source hashes, language,
+Value Scene semantics, contradictions/limitations and external-evidence requirements.
+Immutable historical packets keep their IDs; changed state creates new revision/supersedes.
+No implicit human approval, market/purchase validation or evidence-level upgrade.
+
+## DEC-065 — Packet implementation and trust boundary — PENDING ARCHITECT REVIEW
+
+Selective source snapshots + exact VerifiedInsight, compact strategy projections, code-owned
+external requirements and content-addressed packet IDs. Snapshot runtime validation and JSON
+Schema are distinct from current-ledger authorization. Offline validates integrity only;
+current gate rebuilds and compares projected fields. Unsigned hashes are not authentication.
+Separate immutable revision files, local locking/atomic writes; no distributed latest registry.
+JSON Schema is exported from Pydantic; jsonschema added only to dev test dependencies.
+
+## DEC-066 — Contract versioning / Business OS pattern — ACCEPTED requirement
+
+First production Agent-to-Agent typed contract defined for Business OS; no actual Reelo
+deployment in Phase 8. Contract release 1.0.0 / schema .1. PATCH clarifications/non-wire metadata;
+MINOR optional capability with new schema identifier; MAJOR breaking semantic/field changes
+with explicit migration. Pin versions, never silently change meaning. Future handoffs typed,
+versioned, provenance-aware, state-aware, auditable with Human Governor where consequential.
+Read docs 00–15 and contracts README. Next Phase DO NOT START.
+
+## Earlier decisions — historical scope and supersession
+
 ## DEC-057 — Phase 7 authority — ACCEPTED by owner request
 
 2026-09-15: Authorize v2-phase-7-product-discovery from 4b11e45c55a33030d030b14cfd06ce10f285730f.

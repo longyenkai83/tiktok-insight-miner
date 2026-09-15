@@ -27,6 +27,7 @@ webapp = []
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+    "jsonschema>=4.18,<5",  # Offline portable packet contract tests only.
 ]
 
 [tool.pytest.ini_options]

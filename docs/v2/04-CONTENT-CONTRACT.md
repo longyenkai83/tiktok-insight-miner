@@ -1,21 +1,24 @@
 # 04 — CONTENT CONTRACT
 
-## Current authority — Phase 6 (DEC-053–056)
+## Current authority — Phase 8 (DEC-062–066)
 
-Current Phase = Phase 6 — Content Route
+Current Phase = Phase 8 — Content Intelligence Packet
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Core Customer Intelligence MVP = ACCEPTED
+Content Route = ACCEPTED
+Product Discovery Route = ACCEPTED
+Direct Reelo Integration = NOT STARTED
 Next Phase = DO NOT START
 
-The owner's Phase 6 request authorizes Content Opportunity → Topic → Angle → Human
-Angle Selection from base `7972a849b27fed00308bcfd2870bf8a24c2be216` on
-`v2-phase-6-content-route`. Read all fourteen documents 00–13, including
-[13-CONTENT-ROUTE.md](13-CONTENT-ROUTE.md). It supersedes earlier Phase 6 prohibitions
-and MVP acceptance status below. Earlier phase sections are historical scope records;
-their evidence, B2C, Strategyzer and human-governance principles remain binding.
-No Product Discovery, final writing, Reelo integration, next phase or main merge.
+Owner Phase 8 request accepts Content/Product routes and authorizes only the typed packet
+from `78f47def5614723a1cb973d9c5ae6a5f9d3ca7a5` on `v2-phase-8-content-packet`.
+Earlier packet prohibitions/pending route acceptance below are historical, superseded by
+this explicit request. Evidence, Strategyzer, B2C and human-governance rules remain binding.
+Read docs 00–15 and [contracts/README](../../contracts/README.md), including
+[15-CONTENT-INTELLIGENCE-PACKET.md](15-CONTENT-INTELLIGENCE-PACKET.md).
+No Reelo repository changes, Phase 9, Writer generation, Drive upload or main merge.
 
-Phase 6 ends at human-selected angles, before final writing. PROPOSED framing is separate from immutable customer truth; external explanation remains flagged for evidence checking. Selection export is not the future typed Content Intelligence Packet.
+The Phase 8 typed JSON is now implemented and canonical; earlier conceptual shapes below are historical design, not competing schemas. The recipient needs no local Markdown/config/Drive. Zone A is immutable; B stays PROPOSED; C allows presentation only. See document 15 and contracts README for exact validation/versioning.
 
 ## Earlier phase documentation (historical gates)
 

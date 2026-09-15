@@ -1,0 +1,1808 @@
+{
+  "$defs": {
+    "ContextVariant": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "truth_type": {
+          "const": "DERIVED",
+          "default": "DERIVED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "field": {
+          "enum": [
+            "audience_segment",
+            "context",
+            "situation",
+            "life_or_business_stage",
+            "user_buyer_distinction"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "support": {
+          "$ref": "#/$defs/Support"
+        }
+      },
+      "required": [
+        "label",
+        "evidence_refs",
+        "field",
+        "support"
+      ],
+      "title": "ContextVariant",
+      "type": "object"
+    },
+    "CounterEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "supporting_ref": {
+          "$ref": "#/$defs/EvidenceRef"
+        },
+        "counter_ref": {
+          "$ref": "#/$defs/EvidenceRef"
+        },
+        "truth_type": {
+          "const": "DERIVED",
+          "default": "DERIVED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "status": {
+          "const": "possible_contradiction",
+          "default": "possible_contradiction",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supporting_ref",
+        "counter_ref"
+      ],
+      "title": "CounterEvidence",
+      "type": "object"
+    },
+    "CreativeConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "no_fake_statistics": {
+          "const": true,
+          "default": true,
+          "title": "No Fake Statistics",
+          "type": "boolean"
+        },
+        "no_fake_case_studies": {
+          "const": true,
+          "default": true,
+          "title": "No Fake Case Studies",
+          "type": "boolean"
+        },
+        "no_fake_customers": {
+          "const": true,
+          "default": true,
+          "title": "No Fake Customers",
+          "type": "boolean"
+        },
+        "no_fake_quotes": {
+          "const": true,
+          "default": true,
+          "title": "No Fake Quotes",
+          "type": "boolean"
+        },
+        "no_fake_demographics": {
+          "const": true,
+          "default": true,
+          "title": "No Fake Demographics",
+          "type": "boolean"
+        },
+        "no_fake_research": {
+          "const": true,
+          "default": true,
+          "title": "No Fake Research",
+          "type": "boolean"
+        },
+        "preserve_customer_language": {
+          "const": true,
+          "default": true,
+          "title": "Preserve Customer Language",
+          "type": "boolean"
+        },
+        "do_not_change_customer_truth": {
+          "const": true,
+          "default": true,
+          "title": "Do Not Change Customer Truth",
+          "type": "boolean"
+        },
+        "external_claims_require_evidence": {
+          "const": true,
+          "default": true,
+          "title": "External Claims Require Evidence",
+          "type": "boolean"
+        },
+        "no_evidence_level_upgrade": {
+          "const": true,
+          "default": true,
+          "title": "No Evidence Level Upgrade",
+          "type": "boolean"
+        },
+        "no_market_validation_claim": {
+          "const": true,
+          "default": true,
+          "title": "No Market Validation Claim",
+          "type": "boolean"
+        },
+        "no_purchase_validation_claim": {
+          "const": true,
+          "default": true,
+          "title": "No Purchase Validation Claim",
+          "type": "boolean"
+        },
+        "preserve_contradictions_and_limitations": {
+          "const": true,
+          "default": true,
+          "title": "Preserve Contradictions And Limitations",
+          "type": "boolean"
+        }
+      },
+      "title": "CreativeConstraints",
+      "type": "object"
+    },
+    "CustomerProfileLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "jobs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "pains": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pains",
+          "type": "array"
+        },
+        "gains": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Gains",
+          "type": "array"
+        },
+        "behavior": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Behavior",
+          "type": "array"
+        },
+        "language": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Language",
+          "type": "array"
+        },
+        "context": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Context",
+          "type": "array"
+        }
+      },
+      "title": "CustomerProfileLinks",
+      "type": "object"
+    },
+    "CustomerTruthZone": {
+      "additionalProperties": false,
+      "properties": {
+        "zone": {
+          "const": "A_CUSTOMER_TRUTH",
+          "default": "A_CUSTOMER_TRUTH",
+          "title": "Zone",
+          "type": "string"
+        },
+        "immutable": {
+          "const": true,
+          "default": true,
+          "title": "Immutable",
+          "type": "boolean"
+        },
+        "verified_insight": {
+          "$ref": "#/$defs/VerifiedInsight"
+        },
+        "language_bank": {
+          "$ref": "#/$defs/LanguageBank"
+        },
+        "representative_quotes": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Representative Quotes",
+          "type": "array"
+        },
+        "source_snapshots": {
+          "items": {
+            "$ref": "#/$defs/SignalSource"
+          },
+          "title": "Source Snapshots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "verified_insight",
+        "language_bank",
+        "representative_quotes",
+        "source_snapshots"
+      ],
+      "title": "CustomerTruthZone",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "signal",
+            "context"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "upstream_claim_id": {
+          "title": "Upstream Claim Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "source_hash": {
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "exclusiveMinimum": 0,
+          "title": "End",
+          "type": "integer"
+        },
+        "evidence_quote": {
+          "title": "Evidence Quote",
+          "type": "string"
+        },
+        "signal_path": {
+          "title": "Signal Path",
+          "type": "string"
+        },
+        "truth_type": {
+          "enum": [
+            "OBSERVED",
+            "DERIVED"
+          ],
+          "title": "Truth Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "origin",
+        "upstream_claim_id",
+        "comment_id",
+        "source_record_id",
+        "source_hash",
+        "start",
+        "end",
+        "evidence_quote",
+        "signal_path",
+        "truth_type"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "ExecutionZone": {
+      "additionalProperties": false,
+      "properties": {
+        "zone": {
+          "const": "C_CREATIVE_EXECUTION",
+          "default": "C_CREATIVE_EXECUTION",
+          "title": "Zone",
+          "type": "string"
+        },
+        "status": {
+          "const": "not_generated",
+          "default": "not_generated",
+          "title": "Status",
+          "type": "string"
+        },
+        "writer_may": {
+          "$ref": "#/$defs/WriterMay"
+        },
+        "constraints": {
+          "$ref": "#/$defs/CreativeConstraints"
+        }
+      },
+      "title": "ExecutionZone",
+      "type": "object"
+    },
+    "ExternalRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "strategy_field": {
+          "title": "Strategy Field",
+          "type": "string"
+        },
+        "claim_needed": {
+          "title": "Claim Needed",
+          "type": "string"
+        },
+        "purpose": {
+          "const": "verify_proposed_framing_before_publication",
+          "default": "verify_proposed_framing_before_publication",
+          "title": "Purpose",
+          "type": "string"
+        },
+        "status": {
+          "const": "required_before_publish",
+          "default": "required_before_publish",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_field",
+        "claim_needed"
+      ],
+      "title": "ExternalRequirement",
+      "type": "object"
+    },
+    "GroundedScene": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "source_wording",
+          "default": "source_wording",
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "truth_type": {
+          "enum": [
+            "OBSERVED",
+            "DERIVED"
+          ],
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/EvidenceRef"
+        }
+      },
+      "required": [
+        "text",
+        "truth_type",
+        "evidence_ref"
+      ],
+      "title": "GroundedScene",
+      "type": "object"
+    },
+    "HumanReview": {
+      "additionalProperties": false,
+      "properties": {
+        "review_event_id": {
+          "title": "Review Event Id",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "reviewed_at": {
+          "format": "date-time",
+          "title": "Reviewed At",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "edited_and_approved"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_event_id",
+        "reviewer_id",
+        "reviewed_at",
+        "decision",
+        "rationale"
+      ],
+      "title": "HumanReview",
+      "type": "object"
+    },
+    "HumanVerification": {
+      "additionalProperties": false,
+      "properties": {
+        "source_grounded": {
+          "const": true,
+          "default": true,
+          "title": "Source Grounded",
+          "type": "boolean"
+        },
+        "evidence_support_present": {
+          "const": true,
+          "default": true,
+          "title": "Evidence Support Present",
+          "type": "boolean"
+        },
+        "machine_review_passed": {
+          "const": true,
+          "default": true,
+          "title": "Machine Review Passed",
+          "type": "boolean"
+        },
+        "machine_review_scope": {
+          "const": "source_candidate_only",
+          "default": "source_candidate_only",
+          "title": "Machine Review Scope",
+          "type": "string"
+        },
+        "human_verified": {
+          "const": true,
+          "default": true,
+          "title": "Human Verified",
+          "type": "boolean"
+        },
+        "market_validated": {
+          "const": false,
+          "default": false,
+          "title": "Market Validated",
+          "type": "boolean"
+        },
+        "purchase_validated": {
+          "const": false,
+          "default": false,
+          "title": "Purchase Validated",
+          "type": "boolean"
+        }
+      },
+      "title": "HumanVerification",
+      "type": "object"
+    },
+    "InsightScope": {
+      "additionalProperties": false,
+      "properties": {
+        "population": {
+          "const": "cited_source_comments_only",
+          "default": "cited_source_comments_only",
+          "title": "Population",
+          "type": "string"
+        },
+        "relationship_scope": {
+          "enum": [
+            "within_comments",
+            "across_corpus"
+          ],
+          "title": "Relationship Scope",
+          "type": "string"
+        },
+        "source_comment_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Comment Ids",
+          "type": "array"
+        },
+        "shared_comment_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Shared Comment Ids",
+          "type": "array"
+        },
+        "audience_segment": {
+          "items": {
+            "$ref": "#/$defs/ContextVariant"
+          },
+          "title": "Audience Segment",
+          "type": "array"
+        },
+        "context": {
+          "items": {
+            "$ref": "#/$defs/ContextVariant"
+          },
+          "title": "Context",
+          "type": "array"
+        },
+        "situation": {
+          "items": {
+            "$ref": "#/$defs/ContextVariant"
+          },
+          "title": "Situation",
+          "type": "array"
+        },
+        "life_or_business_stage": {
+          "items": {
+            "$ref": "#/$defs/ContextVariant"
+          },
+          "title": "Life Or Business Stage",
+          "type": "array"
+        },
+        "user_buyer_distinction": {
+          "items": {
+            "$ref": "#/$defs/ContextVariant"
+          },
+          "title": "User Buyer Distinction",
+          "type": "array"
+        },
+        "missing_context_comments": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Context Comments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "relationship_scope",
+        "source_comment_ids",
+        "shared_comment_ids",
+        "missing_context_comments"
+      ],
+      "title": "InsightScope",
+      "type": "object"
+    },
+    "LanguageBank": {
+      "additionalProperties": false,
+      "properties": {
+        "exact_phrases": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Exact Phrases",
+          "type": "array"
+        },
+        "emotional_wording": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Emotional Wording",
+          "type": "array"
+        },
+        "repeated_expressions": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Repeated Expressions",
+          "type": "array"
+        },
+        "repetition_scope": {
+          "const": "within_source_comment_not_corpus_frequency",
+          "default": "within_source_comment_not_corpus_frequency",
+          "title": "Repetition Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "exact_phrases",
+        "emotional_wording",
+        "repeated_expressions"
+      ],
+      "title": "LanguageBank",
+      "type": "object"
+    },
+    "PacketAngle": {
+      "additionalProperties": false,
+      "properties": {
+        "angle_id": {
+          "title": "Angle Id",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "angle_type": {
+          "enum": [
+            "contrarian",
+            "diagnostic",
+            "how_to",
+            "mistake",
+            "myth_busting",
+            "question_answer",
+            "decision_framework",
+            "story",
+            "comparison",
+            "checklist",
+            "warning",
+            "case_lens",
+            "other"
+          ],
+          "title": "Angle Type",
+          "type": "string"
+        },
+        "core_argument": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "belief_before": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "belief_after": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "opening_direction": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "customer_value": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "angle_id",
+        "title",
+        "angle_type",
+        "core_argument",
+        "belief_before",
+        "belief_after",
+        "opening_direction",
+        "customer_value"
+      ],
+      "title": "PacketAngle",
+      "type": "object"
+    },
+    "PacketLineage": {
+      "additionalProperties": false,
+      "properties": {
+        "verified_insight_id": {
+          "title": "Verified Insight Id",
+          "type": "string"
+        },
+        "source_candidate_id": {
+          "title": "Source Candidate Id",
+          "type": "string"
+        },
+        "pattern_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pattern Ids",
+          "type": "array"
+        },
+        "comment_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Comment Ids",
+          "type": "array"
+        },
+        "source_hashes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Hashes",
+          "type": "array"
+        },
+        "content_opportunity_id": {
+          "title": "Content Opportunity Id",
+          "type": "string"
+        },
+        "topic_id": {
+          "title": "Topic Id",
+          "type": "string"
+        },
+        "angle_id": {
+          "title": "Angle Id",
+          "type": "string"
+        },
+        "governance_hash": {
+          "title": "Governance Hash",
+          "type": "string"
+        },
+        "verified_artifact_hash": {
+          "title": "Verified Artifact Hash",
+          "type": "string"
+        },
+        "selection_hash": {
+          "title": "Selection Hash",
+          "type": "string"
+        },
+        "selected_artifact_hash": {
+          "title": "Selected Artifact Hash",
+          "type": "string"
+        },
+        "content_tree_hash": {
+          "title": "Content Tree Hash",
+          "type": "string"
+        },
+        "verified_insight_hash": {
+          "title": "Verified Insight Hash",
+          "type": "string"
+        },
+        "opportunity_hash": {
+          "title": "Opportunity Hash",
+          "type": "string"
+        },
+        "topic_hash": {
+          "title": "Topic Hash",
+          "type": "string"
+        },
+        "angle_hash": {
+          "title": "Angle Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verified_insight_id",
+        "source_candidate_id",
+        "pattern_ids",
+        "comment_ids",
+        "source_hashes",
+        "content_opportunity_id",
+        "topic_id",
+        "angle_id",
+        "governance_hash",
+        "verified_artifact_hash",
+        "selection_hash",
+        "selected_artifact_hash",
+        "content_tree_hash",
+        "verified_insight_hash",
+        "opportunity_hash",
+        "topic_hash",
+        "angle_hash"
+      ],
+      "title": "PacketLineage",
+      "type": "object"
+    },
+    "PacketOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_opportunity_id": {
+          "title": "Content Opportunity Id",
+          "type": "string"
+        },
+        "statement": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "purpose": {
+          "enum": [
+            "educate",
+            "diagnose",
+            "reframe",
+            "answer_question",
+            "handle_objection",
+            "show_process",
+            "show_mistake",
+            "show_tradeoff",
+            "decision_support",
+            "story",
+            "social_proof",
+            "other"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "customer_value": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content_opportunity_id",
+        "statement",
+        "purpose",
+        "customer_value"
+      ],
+      "title": "PacketOpportunity",
+      "type": "object"
+    },
+    "PacketProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "project_goal": {
+          "default": "CONTENT",
+          "enum": [
+            "CONTENT",
+            "BOTH"
+          ],
+          "title": "Project Goal",
+          "type": "string"
+        },
+        "research_run_id": {
+          "title": "Research Run Id",
+          "type": "string"
+        },
+        "source_route_context": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Route Context",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "research_run_id",
+        "source_route_context"
+      ],
+      "title": "PacketProject",
+      "type": "object"
+    },
+    "PacketTopic": {
+      "additionalProperties": false,
+      "properties": {
+        "topic_id": {
+          "title": "Topic Id",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "description": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "customer_value": {
+          "$ref": "#/$defs/ProposedText"
+        },
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic_id",
+        "title",
+        "description",
+        "customer_value"
+      ],
+      "title": "PacketTopic",
+      "type": "object"
+    },
+    "PriorityDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "priority_status": {
+          "default": "unassessed",
+          "enum": [
+            "unassessed",
+            "monitor",
+            "priority_need"
+          ],
+          "title": "Priority Status",
+          "type": "string"
+        },
+        "assessment_origin": {
+          "const": "human_assessment",
+          "default": "human_assessment",
+          "title": "Assessment Origin",
+          "type": "string"
+        },
+        "important": {
+          "default": "unknown",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "title": "Important",
+          "type": "string"
+        },
+        "urgent": {
+          "default": "unknown",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "title": "Urgent",
+          "type": "string"
+        },
+        "frequent": {
+          "default": "unknown",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "title": "Frequent",
+          "type": "string"
+        },
+        "expensive": {
+          "default": "unknown",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "title": "Expensive",
+          "type": "string"
+        },
+        "emotional_intensity": {
+          "default": "unknown",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "title": "Emotional Intensity",
+          "type": "string"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 8000,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "title": "PriorityDecision",
+      "type": "object"
+    },
+    "ProposedScene": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "proposed_framing",
+          "default": "proposed_framing",
+          "title": "Kind",
+          "type": "string"
+        },
+        "framing": {
+          "$ref": "#/$defs/ProposedText"
+        }
+      },
+      "required": [
+        "framing"
+      ],
+      "title": "ProposedScene",
+      "type": "object"
+    },
+    "ProposedText": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 600,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "claim_kind": {
+          "enum": [
+            "general_explanatory",
+            "creative_framing"
+          ],
+          "title": "Claim Kind",
+          "type": "string"
+        },
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "needs_external_evidence": {
+          "const": true,
+          "default": true,
+          "title": "Needs External Evidence",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text",
+        "claim_kind"
+      ],
+      "title": "ProposedText",
+      "type": "object"
+    },
+    "SelectedAngle": {
+      "additionalProperties": false,
+      "properties": {
+        "angle_id": {
+          "title": "Angle Id",
+          "type": "string"
+        },
+        "angle_hash": {
+          "title": "Angle Hash",
+          "type": "string"
+        },
+        "tree_hash": {
+          "title": "Tree Hash",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "verified_insight_id": {
+          "title": "Verified Insight Id",
+          "type": "string"
+        },
+        "topic_id": {
+          "title": "Topic Id",
+          "type": "string"
+        },
+        "content_opportunity_id": {
+          "title": "Content Opportunity Id",
+          "type": "string"
+        },
+        "selection_event_id": {
+          "title": "Selection Event Id",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "selected_at": {
+          "format": "date-time",
+          "title": "Selected At",
+          "type": "string"
+        },
+        "selection_rationale": {
+          "title": "Selection Rationale",
+          "type": "string"
+        },
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "status": {
+          "const": "selected",
+          "default": "selected",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "angle_id",
+        "angle_hash",
+        "tree_hash",
+        "project_id",
+        "run_id",
+        "verified_insight_id",
+        "topic_id",
+        "content_opportunity_id",
+        "selection_event_id",
+        "reviewer_id",
+        "selected_at",
+        "selection_rationale"
+      ],
+      "title": "SelectedAngle",
+      "type": "object"
+    },
+    "SignalSource": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_id": {
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "likes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Likes"
+        },
+        "reply_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply Count"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At"
+        },
+        "video_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Video Url"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "metric_notes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Metric Notes",
+          "type": "object"
+        },
+        "source_record_id": {
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "snapshot_hash": {
+          "title": "Snapshot Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id",
+        "text",
+        "source_record_id",
+        "snapshot_hash"
+      ],
+      "title": "SignalSource",
+      "type": "object"
+    },
+    "StrategyZone": {
+      "additionalProperties": false,
+      "properties": {
+        "zone": {
+          "const": "B_SELECTED_STRATEGY",
+          "default": "B_SELECTED_STRATEGY",
+          "title": "Zone",
+          "type": "string"
+        },
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "opportunity": {
+          "$ref": "#/$defs/PacketOpportunity"
+        },
+        "topic": {
+          "$ref": "#/$defs/PacketTopic"
+        },
+        "angle": {
+          "$ref": "#/$defs/PacketAngle"
+        },
+        "value_scene": {
+          "$ref": "#/$defs/ValueScene"
+        },
+        "content_objective": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProposedText"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "opportunity",
+        "topic",
+        "angle",
+        "value_scene",
+        "content_objective"
+      ],
+      "title": "StrategyZone",
+      "type": "object"
+    },
+    "Support": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_count": {
+          "minimum": 0,
+          "title": "Comment Count",
+          "type": "integer"
+        },
+        "unique_authors": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unique Authors"
+        },
+        "known_author_count": {
+          "minimum": 0,
+          "title": "Known Author Count",
+          "type": "integer"
+        },
+        "unknown_author_comments": {
+          "minimum": 0,
+          "title": "Unknown Author Comments",
+          "type": "integer"
+        },
+        "source_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Count"
+        },
+        "known_source_count": {
+          "minimum": 0,
+          "title": "Known Source Count",
+          "type": "integer"
+        },
+        "unknown_source_comments": {
+          "minimum": 0,
+          "title": "Unknown Source Comments",
+          "type": "integer"
+        },
+        "total_likes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Likes"
+        },
+        "known_likes_sum": {
+          "minimum": 0,
+          "title": "Known Likes Sum",
+          "type": "integer"
+        },
+        "unknown_likes_comments": {
+          "minimum": 0,
+          "title": "Unknown Likes Comments",
+          "type": "integer"
+        },
+        "total_replies": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Replies"
+        },
+        "known_replies_sum": {
+          "minimum": 0,
+          "title": "Known Replies Sum",
+          "type": "integer"
+        },
+        "unknown_replies_comments": {
+          "minimum": 0,
+          "title": "Unknown Replies Comments",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comment_count",
+        "known_author_count",
+        "unknown_author_comments",
+        "known_source_count",
+        "unknown_source_comments",
+        "known_likes_sum",
+        "unknown_likes_comments",
+        "known_replies_sum",
+        "unknown_replies_comments"
+      ],
+      "title": "Support",
+      "type": "object"
+    },
+    "ValueScene": {
+      "additionalProperties": false,
+      "properties": {
+        "truth_type": {
+          "const": "PROPOSED",
+          "default": "PROPOSED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "need_moment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GroundedScene"
+            },
+            {
+              "$ref": "#/$defs/ProposedScene"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Need Moment"
+        },
+        "current_struggle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GroundedScene"
+            },
+            {
+              "$ref": "#/$defs/ProposedScene"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Struggle"
+        },
+        "desired_future": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GroundedScene"
+            },
+            {
+              "$ref": "#/$defs/ProposedScene"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Desired Future"
+        }
+      },
+      "title": "ValueScene",
+      "type": "object"
+    },
+    "Variation": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "truth_type": {
+          "const": "DERIVED",
+          "default": "DERIVED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "evidence_refs"
+      ],
+      "title": "Variation",
+      "type": "object"
+    },
+    "VerifiedInsight": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_profile_links": {
+          "$ref": "#/$defs/CustomerProfileLinks"
+        },
+        "scope": {
+          "$ref": "#/$defs/InsightScope"
+        },
+        "evidence_summary": {
+          "$ref": "#/$defs/Support"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "variations": {
+          "items": {
+            "$ref": "#/$defs/Variation"
+          },
+          "title": "Variations",
+          "type": "array"
+        },
+        "contradictions": {
+          "items": {
+            "$ref": "#/$defs/CounterEvidence"
+          },
+          "title": "Contradictions",
+          "type": "array"
+        },
+        "evidence_kind": {
+          "items": {
+            "const": "customer_speech",
+            "type": "string"
+          },
+          "title": "Evidence Kind",
+          "type": "array"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "verified_insight_id": {
+          "title": "Verified Insight Id",
+          "type": "string"
+        },
+        "source_candidate_id": {
+          "title": "Source Candidate Id",
+          "type": "string"
+        },
+        "source_candidate_hash": {
+          "title": "Source Candidate Hash",
+          "type": "string"
+        },
+        "source_insights_hash": {
+          "title": "Source Insights Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "supersedes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Supersedes"
+        },
+        "statement": {
+          "$ref": "#/$defs/VerifiedStatement"
+        },
+        "support_pattern_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Support Pattern Ids",
+          "type": "array"
+        },
+        "relationship_type": {
+          "title": "Relationship Type",
+          "type": "string"
+        },
+        "verification": {
+          "$ref": "#/$defs/HumanVerification"
+        },
+        "human_review": {
+          "$ref": "#/$defs/HumanReview"
+        },
+        "priority": {
+          "$ref": "#/$defs/PriorityDecision"
+        },
+        "status": {
+          "const": "verified",
+          "default": "verified",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_profile_links",
+        "scope",
+        "evidence_summary",
+        "evidence_refs",
+        "variations",
+        "contradictions",
+        "evidence_kind",
+        "limitations",
+        "verified_insight_id",
+        "source_candidate_id",
+        "source_candidate_hash",
+        "source_insights_hash",
+        "revision",
+        "supersedes",
+        "statement",
+        "support_pattern_ids",
+        "relationship_type",
+        "human_review",
+        "priority"
+      ],
+      "title": "VerifiedInsight",
+      "type": "object"
+    },
+    "VerifiedStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "truth_type": {
+          "const": "DERIVED",
+          "default": "DERIVED",
+          "title": "Truth Type",
+          "type": "string"
+        },
+        "statement_origin": {
+          "enum": [
+            "machine_approved",
+            "human_edited"
+          ],
+          "title": "Statement Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "statement_origin"
+      ],
+      "title": "VerifiedStatement",
+      "type": "object"
+    },
+    "WriterMay": {
+      "additionalProperties": false,
+      "properties": {
+        "create_hooks": {
+          "const": true,
+          "default": true,
+          "title": "Create Hooks",
+          "type": "boolean"
+        },
+        "create_titles": {
+          "const": true,
+          "default": true,
+          "title": "Create Titles",
+          "type": "boolean"
+        },
+        "create_structure": {
+          "const": true,
+          "default": true,
+          "title": "Create Structure",
+          "type": "boolean"
+        },
+        "create_analogies": {
+          "const": true,
+          "default": true,
+          "title": "Create Analogies",
+          "type": "boolean"
+        },
+        "create_metaphors": {
+          "const": true,
+          "default": true,
+          "title": "Create Metaphors",
+          "type": "boolean"
+        },
+        "create_clearly_labeled_illustrative_examples": {
+          "const": true,
+          "default": true,
+          "title": "Create Clearly Labeled Illustrative Examples",
+          "type": "boolean"
+        },
+        "choose_storytelling_format": {
+          "const": true,
+          "default": true,
+          "title": "Choose Storytelling Format",
+          "type": "boolean"
+        },
+        "adapt_brand_voice": {
+          "const": true,
+          "default": true,
+          "title": "Adapt Brand Voice",
+          "type": "boolean"
+        },
+        "improve_clarity": {
+          "const": true,
+          "default": true,
+          "title": "Improve Clarity",
+          "type": "boolean"
+        },
+        "generate_cta": {
+          "const": true,
+          "default": true,
+          "title": "Generate Cta",
+          "type": "boolean"
+        }
+      },
+      "title": "WriterMay",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "v2.content-intelligence-packet.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "packet_id": {
+      "pattern": "^CIP-[0-9a-f]{64}$",
+      "title": "Packet Id",
+      "type": "string"
+    },
+    "packet_revision": {
+      "minimum": 1,
+      "title": "Packet Revision",
+      "type": "integer"
+    },
+    "supersedes_packet_id": {
+      "anyOf": [
+        {
+          "pattern": "^CIP-[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Packet Id"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "producer": {
+      "const": "customer-intelligence:content-packet.1",
+      "default": "customer-intelligence:content-packet.1",
+      "title": "Producer",
+      "type": "string"
+    },
+    "project": {
+      "$ref": "#/$defs/PacketProject"
+    },
+    "customer_truth": {
+      "$ref": "#/$defs/CustomerTruthZone"
+    },
+    "content_strategy": {
+      "$ref": "#/$defs/StrategyZone"
+    },
+    "creative_execution": {
+      "$ref": "#/$defs/ExecutionZone"
+    },
+    "external_evidence_requirements": {
+      "items": {
+        "$ref": "#/$defs/ExternalRequirement"
+      },
+      "title": "External Evidence Requirements",
+      "type": "array"
+    },
+    "selection": {
+      "$ref": "#/$defs/SelectedAngle"
+    },
+    "lineage": {
+      "$ref": "#/$defs/PacketLineage"
+    }
+  },
+  "required": [
+    "schema_version",
+    "packet_id",
+    "packet_revision",
+    "created_at",
+    "project",
+    "customer_truth",
+    "content_strategy",
+    "external_evidence_requirements",
+    "selection",
+    "lineage"
+  ],
+  "title": "ContentIntelligencePacket",
+  "type": "object"
+}

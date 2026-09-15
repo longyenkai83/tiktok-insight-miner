@@ -1841,6 +1841,11 @@ def main() -> None:
             st.warning("👈 Nhập tên/mã ở sidebar trước khi tiếp tục.")
             return
 
+        if st.sidebar.checkbox("V2 — Packet Preview", value=False, key="v2_packet_preview"):
+            from tiktok_insight_miner.content_packet_ui import render_packet_preview
+            render_packet_preview(OUTPUT_ROOT)
+            return
+
         if st.sidebar.checkbox("V2 — Product Discovery", value=False, key="v2_product_discovery"):
             from tiktok_insight_miner.product_ui import render_product_discovery
             render_product_discovery(OUTPUT_ROOT, user)

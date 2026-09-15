@@ -1,30 +1,31 @@
 # V2 SOURCE-OF-TRUTH — read before code changes
 
-Read all fifteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
-[14-PRODUCT-DISCOVERY-ROUTE.md](docs/v2/14-PRODUCT-DISCOVERY-ROUTE.md) before code changes,
-especially architecture/product logic. Check PROJECT-STATE and DECISIONS. Strategyzer foundations,
-Business OS, Human Governance, Content Route and Product Discovery are architecture dependencies.
-If implementation conflicts with accepted decisions or Strategyzer foundations: **STOP and report**.
-Current explicit user authorization supersedes historical phase gates. Missing docs require reporting.
+Read all sixteen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through
+[15-CONTENT-INTELLIGENCE-PACKET.md](docs/v2/15-CONTENT-INTELLIGENCE-PACKET.md), plus
+[contracts/README.md](contracts/README.md), before architecture/product logic or code changes.
+Check PROJECT-STATE and DECISIONS. Strategyzer, Business OS, Human Governance, Content/Product
+routes and typed packet contract are architecture dependencies. If implementation conflicts
+with accepted decisions or Strategyzer foundations: **STOP and report**. Missing docs require
+reporting. Latest explicit user authorization supersedes historical phase gates.
 
-Current Phase = Phase 7 — Product Discovery Route
+Current Phase = Phase 8 — Content Intelligence Packet
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Core Customer Intelligence MVP = ACCEPTED
-Content Route = IMPLEMENTED
-Product Discovery Route = PENDING ARCHITECT REVIEW
+Content Route = ACCEPTED
+Product Discovery Route = ACCEPTED
+Direct Reelo Integration = NOT STARTED
 Next Phase = DO NOT START. No main merge.
 
-DEC-057 authorizes Phase 7 from 4b11e45c55a33030d030b14cfd06ce10f285730f.
-Only current human-verified Priority Needs enter Product Discovery. Product Opportunity and
-Value Map/experiment plans stay PROPOSED; assumptions HYPOTHESIS; customer evidence immutable.
-Customer Profile → Value Map, never invent a need for a desired product. No fake quotes,
-statistics, Jobs/Pains/Gains, purchase claims, source hashes or automatic evidence promotion.
-Human Explore/Reject/Defer is a testing choice, not validated product. Never manufacture
-human_attested=true, sample approvals or Priority Needs. Synthetic tests are not customer decisions.
-Validate current tree and current authoritative governance/product ledgers at every boundary.
-Content Route remains unchanged. No Content Packet/Reelo, external experiments, automatic
-Customer Profile update, new adapters/scheduler, package rename or next phase.
-Default legacy behavior stays unchanged. No private customer data or secrets in Git.
+DEC-062 authorizes packet-only Phase 8 from 78f47def5614723a1cb973d9c5ae6a5f9d3ca7a5.
+Require current verified insight + current human-selected angle and both authoritative ledgers.
+Zone A is immutable customer truth; Zone B selected strategy stays PROPOSED; Zone C grants
+presentation permissions only. No invented customer truth, quotes, stats or validation promotion.
+Packet is portable JSON, not Markdown/Drive/config. Snapshot PASS is not current authorization.
+Keep immutable files/revisions; never silently overwrite old packets or inherit stale approvals.
+No fabricated human_attested=true, real sample approvals/angles/Priority Needs. Synthetic fixture
+decisions are not customer decisions. Do not commit private customer data or secrets.
+No Reelo repo changes, Phase 9, Writer output, uploads, external experiments or profile mutation.
+Content/Product engines and default legacy behavior stay unchanged.
 
 Legacy project material below describes CURRENT STATE only, not the target V2 architecture.
 Do not use audit/V1 to override accepted V2 decisions or infer permission for another phase.

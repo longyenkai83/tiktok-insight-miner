@@ -1,0 +1,606 @@
+{
+  "schema_version": "v2.content-intelligence-packet.1",
+  "packet_id": "CIP-c21086e9e3ea6351b419358a3c41c4e81c2601e5af84b1dce012d4c64ae44a94",
+  "packet_revision": 1,
+  "supersedes_packet_id": null,
+  "created_at": "2026-09-15T00:00:00Z",
+  "producer": "customer-intelligence:content-packet.1",
+  "project": {
+    "project_id": "SYNTHETIC-CONTRACT-FIXTURE",
+    "project_goal": "CONTENT",
+    "research_run_id": "synthetic-packet-test",
+    "source_route_context": [
+      "synthetic_fixture"
+    ]
+  },
+  "customer_truth": {
+    "zone": "A_CUSTOMER_TRUTH",
+    "immutable": true,
+    "verified_insight": {
+      "customer_profile_links": {
+        "jobs": [
+          "PAT-aeef3a8edbf74979976ddb4a15c6ec69623cc0943ba4ac6d7139d42f6e5d9199"
+        ],
+        "pains": [
+          "PAT-e63b8292dc932c036bf1dfc547ae96e0266fb2bf2d1edc96129c39b01b0ed8e0"
+        ],
+        "gains": [],
+        "behavior": [],
+        "language": [
+          "PAT-17b16da501e2eede28dcfacf6303c0f9d81d59edb58efa62d316854a76785654"
+        ],
+        "context": []
+      },
+      "scope": {
+        "population": "cited_source_comments_only",
+        "relationship_scope": "within_comments",
+        "source_comment_ids": [
+          "SYNTHETIC-0",
+          "SYNTHETIC-1"
+        ],
+        "shared_comment_ids": [
+          "SYNTHETIC-0"
+        ],
+        "audience_segment": [],
+        "context": [],
+        "situation": [],
+        "life_or_business_stage": [],
+        "user_buyer_distinction": [],
+        "missing_context_comments": [
+          "SYNTHETIC-0",
+          "SYNTHETIC-1"
+        ]
+      },
+      "evidence_summary": {
+        "comment_count": 2,
+        "unique_authors": null,
+        "known_author_count": 0,
+        "unknown_author_comments": 2,
+        "source_count": null,
+        "known_source_count": 0,
+        "unknown_source_comments": 2,
+        "total_likes": null,
+        "known_likes_sum": 0,
+        "unknown_likes_comments": 2,
+        "total_replies": null,
+        "known_replies_sum": 0,
+        "unknown_replies_comments": 2
+      },
+      "evidence_refs": [
+        {
+          "evidence_id": "E-4aaf694f768fae844c218a6f22bb08573fc3ed4c7090a7c09b60e22239684357",
+          "origin": "signal",
+          "upstream_claim_id": "signal-89208301a4ede4d40ce43ff0e04a8c578fb8643c9d8eb16d9710c066fbfd7be6",
+          "comment_id": "SYNTHETIC-1",
+          "source_record_id": "source-b0348b4c6ae13793b747722d437b8b3e05d382e503e503e6f14732eccd802b0b",
+          "source_hash": "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2",
+          "start": 63,
+          "end": 87,
+          "evidence_quote": "rent feels like a weight",
+          "signal_path": "language.emotional_wording",
+          "truth_type": "OBSERVED"
+        },
+        {
+          "evidence_id": "E-5ef98b36ac14db9fc53010207b503e58dc5f44d737352dd77f457ba6fd1f6adf",
+          "origin": "signal",
+          "upstream_claim_id": "signal-c6542afdebd1a7695589f51ebc9212c2272c245ca2d379fe2f3ae1487dd59d40",
+          "comment_id": "SYNTHETIC-1",
+          "source_record_id": "source-b0348b4c6ae13793b747722d437b8b3e05d382e503e503e6f14732eccd802b0b",
+          "source_hash": "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2",
+          "start": 21,
+          "end": 41,
+          "evidence_quote": "I want stable income",
+          "signal_path": "jobs.functional",
+          "truth_type": "OBSERVED"
+        },
+        {
+          "evidence_id": "E-a0a4c22725fb51a019b38808111efcd7909d121a263ecdf66d45e6b6590b3e5e",
+          "origin": "signal",
+          "upstream_claim_id": "signal-965162f57d393f110fcdd0e38abcfee4c30a182acc2f3ac4c0104544a541c89c",
+          "comment_id": "SYNTHETIC-0",
+          "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+          "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+          "start": 43,
+          "end": 66,
+          "evidence_quote": "rent consumes my profit",
+          "signal_path": "pains.costs",
+          "truth_type": "OBSERVED"
+        },
+        {
+          "evidence_id": "E-b086e4e1476e2a904bd92274f1c2cf533c2b85cbfb2396cba3a3afe36355776d",
+          "origin": "signal",
+          "upstream_claim_id": "signal-1006de51f8f340d7ec331c57b05decd82ea90d566b915207eb734dfb67fd409f",
+          "comment_id": "SYNTHETIC-0",
+          "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+          "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+          "start": 21,
+          "end": 41,
+          "evidence_quote": "I want stable income",
+          "signal_path": "jobs.functional",
+          "truth_type": "OBSERVED"
+        },
+        {
+          "evidence_id": "E-c6b62b71237bbe2417e4e08e193607137f6121122680a9a8dfb0890670dca93a",
+          "origin": "signal",
+          "upstream_claim_id": "signal-7f62d493a354d5ca4835a7fb0f91f51b6672c1cde8716c60db8037c707d2d651",
+          "comment_id": "SYNTHETIC-0",
+          "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+          "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+          "start": 68,
+          "end": 92,
+          "evidence_quote": "rent feels like a weight",
+          "signal_path": "language.emotional_wording",
+          "truth_type": "OBSERVED"
+        }
+      ],
+      "variations": [],
+      "contradictions": [
+        {
+          "supporting_ref": {
+            "evidence_id": "E-a0a4c22725fb51a019b38808111efcd7909d121a263ecdf66d45e6b6590b3e5e",
+            "origin": "signal",
+            "upstream_claim_id": "signal-965162f57d393f110fcdd0e38abcfee4c30a182acc2f3ac4c0104544a541c89c",
+            "comment_id": "SYNTHETIC-0",
+            "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+            "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+            "start": 43,
+            "end": 66,
+            "evidence_quote": "rent consumes my profit",
+            "signal_path": "pains.costs",
+            "truth_type": "OBSERVED"
+          },
+          "counter_ref": {
+            "evidence_id": "E-fe24ba8d5ee3c960d289c7f4184df2cada4f88c99de014ba2c6faeb227cea33e",
+            "origin": "signal",
+            "upstream_claim_id": "signal-eb17f61d172c392281d220f31159860e221cdfb73650a26d3b823fa6f325d3aa",
+            "comment_id": "SYNTHETIC-1",
+            "source_record_id": "source-b0348b4c6ae13793b747722d437b8b3e05d382e503e503e6f14732eccd802b0b",
+            "source_hash": "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2",
+            "start": 43,
+            "end": 61,
+            "evidence_quote": "rent is manageable",
+            "signal_path": "pains.costs",
+            "truth_type": "OBSERVED"
+          },
+          "truth_type": "DERIVED",
+          "status": "possible_contradiction"
+        }
+      ],
+      "evidence_kind": [
+        "customer_speech"
+      ],
+      "limitations": [
+        "Scope is the cited source comments, not a population or market estimate.",
+        "Customer speech includes self-reported experience, not independently observed behavior or payment.",
+        "Machine semantic review is fallible; pending human review, not human/market/purchase validation.",
+        "Upstream patterns, context assignments and possible counter-relations remain candidates.",
+        "A selected pattern's members need not express every part of a cross-pattern statement.",
+        "Shared comments are explicit; do not infer within-person causality from separate speakers.",
+        "Possible counter-evidence is preserved; conflicting situations may explain the difference.",
+        "Candidate patterns, not Verified Insights or validated demand; frequency is sample support only.",
+        "Semantic relations are DERIVED judgments; exact provenance does not prove semantic correctness.",
+        "Singletons are retained as candidates, not evidence of recurrence.",
+        "Authors are distinct supplied platform/author identifiers, not verified people; aliases can collide.",
+        "Dedup uses source_record_id; reposts with different IDs cannot be reliably identified.",
+        "Missing context is unknown; context variants are not final segments.",
+        "Counter-evidence search is limited to accepted input claims; absent findings do not prove absence.",
+        "Labels are representative source wording, not a synthesis of all members; inspect variations."
+      ],
+      "verified_insight_id": "VER-0bb68000f41d68f5123573ba7bde511551443f8dacfec0a2527975f2447ef8d3",
+      "source_candidate_id": "INS-2cbbb9f703033c584f48d1559ad57ffe7a11063cdf61ac421606d216d659cf7f",
+      "source_candidate_hash": "9aad2122e232ce0e7d489c4c54a9c22252b8fc90f5d03effc355d42729865a6b",
+      "source_insights_hash": "100c16ca5e5b1c0992c87f6197c3d8a9df9f4b285a85f5ad73f53662f4398743",
+      "revision": 1,
+      "supersedes": null,
+      "statement": {
+        "text": "Trong phạm vi các bằng chứng được dẫn: The wish for income stability coexists with pressure on the profit retained after rent.",
+        "truth_type": "DERIVED",
+        "statement_origin": "machine_approved"
+      },
+      "support_pattern_ids": [
+        "PAT-17b16da501e2eede28dcfacf6303c0f9d81d59edb58efa62d316854a76785654",
+        "PAT-aeef3a8edbf74979976ddb4a15c6ec69623cc0943ba4ac6d7139d42f6e5d9199",
+        "PAT-e63b8292dc932c036bf1dfc547ae96e0266fb2bf2d1edc96129c39b01b0ed8e0"
+      ],
+      "relationship_type": "pattern_relationship",
+      "verification": {
+        "source_grounded": true,
+        "evidence_support_present": true,
+        "machine_review_passed": true,
+        "machine_review_scope": "source_candidate_only",
+        "human_verified": true,
+        "market_validated": false,
+        "purchase_validated": false
+      },
+      "human_review": {
+        "review_event_id": "REV-be3cfffed3d223ea5a19cfa20c301f82a6207a082c2d2077f051cb229438d52e",
+        "reviewer_id": "synthetic-reviewer",
+        "reviewed_at": "2026-09-15T07:22:02.517047Z",
+        "decision": "approved",
+        "rationale": "Faithful within this synthetic corpus."
+      },
+      "priority": {
+        "priority_status": "unassessed",
+        "assessment_origin": "human_assessment",
+        "important": "unknown",
+        "urgent": "unknown",
+        "frequent": "unknown",
+        "expensive": "unknown",
+        "emotional_intensity": "unknown",
+        "note": ""
+      },
+      "status": "verified"
+    },
+    "language_bank": {
+      "exact_phrases": [],
+      "emotional_wording": [
+        {
+          "evidence_id": "E-4aaf694f768fae844c218a6f22bb08573fc3ed4c7090a7c09b60e22239684357",
+          "origin": "signal",
+          "upstream_claim_id": "signal-89208301a4ede4d40ce43ff0e04a8c578fb8643c9d8eb16d9710c066fbfd7be6",
+          "comment_id": "SYNTHETIC-1",
+          "source_record_id": "source-b0348b4c6ae13793b747722d437b8b3e05d382e503e503e6f14732eccd802b0b",
+          "source_hash": "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2",
+          "start": 63,
+          "end": 87,
+          "evidence_quote": "rent feels like a weight",
+          "signal_path": "language.emotional_wording",
+          "truth_type": "OBSERVED"
+        },
+        {
+          "evidence_id": "E-c6b62b71237bbe2417e4e08e193607137f6121122680a9a8dfb0890670dca93a",
+          "origin": "signal",
+          "upstream_claim_id": "signal-7f62d493a354d5ca4835a7fb0f91f51b6672c1cde8716c60db8037c707d2d651",
+          "comment_id": "SYNTHETIC-0",
+          "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+          "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+          "start": 68,
+          "end": 92,
+          "evidence_quote": "rent feels like a weight",
+          "signal_path": "language.emotional_wording",
+          "truth_type": "OBSERVED"
+        }
+      ],
+      "repeated_expressions": [],
+      "repetition_scope": "within_source_comment_not_corpus_frequency"
+    },
+    "representative_quotes": [
+      {
+        "evidence_id": "E-4aaf694f768fae844c218a6f22bb08573fc3ed4c7090a7c09b60e22239684357",
+        "origin": "signal",
+        "upstream_claim_id": "signal-89208301a4ede4d40ce43ff0e04a8c578fb8643c9d8eb16d9710c066fbfd7be6",
+        "comment_id": "SYNTHETIC-1",
+        "source_record_id": "source-b0348b4c6ae13793b747722d437b8b3e05d382e503e503e6f14732eccd802b0b",
+        "source_hash": "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2",
+        "start": 63,
+        "end": 87,
+        "evidence_quote": "rent feels like a weight",
+        "signal_path": "language.emotional_wording",
+        "truth_type": "OBSERVED"
+      },
+      {
+        "evidence_id": "E-a0a4c22725fb51a019b38808111efcd7909d121a263ecdf66d45e6b6590b3e5e",
+        "origin": "signal",
+        "upstream_claim_id": "signal-965162f57d393f110fcdd0e38abcfee4c30a182acc2f3ac4c0104544a541c89c",
+        "comment_id": "SYNTHETIC-0",
+        "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+        "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+        "start": 43,
+        "end": 66,
+        "evidence_quote": "rent consumes my profit",
+        "signal_path": "pains.costs",
+        "truth_type": "OBSERVED"
+      }
+    ],
+    "source_snapshots": [
+      {
+        "comment_id": "SYNTHETIC-1",
+        "text": "SYNTHETIC TEST ONLY. I want stable income; rent is manageable; rent feels like a weight.",
+        "author": null,
+        "likes": null,
+        "reply_count": null,
+        "created_at": null,
+        "video_url": null,
+        "platform": "synthetic_fixture",
+        "metadata": {
+          "raw": {},
+          "input_metrics": {},
+          "source_fields": {}
+        },
+        "metric_notes": {
+          "likes": "missing",
+          "reply_count": "missing"
+        },
+        "source_record_id": "source-b0348b4c6ae13793b747722d437b8b3e05d382e503e503e6f14732eccd802b0b",
+        "snapshot_hash": "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2"
+      },
+      {
+        "comment_id": "SYNTHETIC-0",
+        "text": "SYNTHETIC TEST ONLY. I want stable income; rent consumes my profit; rent feels like a weight.",
+        "author": null,
+        "likes": null,
+        "reply_count": null,
+        "created_at": null,
+        "video_url": null,
+        "platform": "synthetic_fixture",
+        "metadata": {
+          "raw": {},
+          "input_metrics": {},
+          "source_fields": {}
+        },
+        "metric_notes": {
+          "likes": "missing",
+          "reply_count": "missing"
+        },
+        "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+        "snapshot_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5"
+      }
+    ]
+  },
+  "content_strategy": {
+    "zone": "B_SELECTED_STRATEGY",
+    "truth_type": "PROPOSED",
+    "opportunity": {
+      "content_opportunity_id": "CO-aa1ff9248e3721e2e536ee9ccd12f05ef1b2cf59e9565fe6f842f3004d2a0190",
+      "statement": {
+        "text": "Discuss the tension between rent and retained income.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "purpose": "decision_support",
+      "customer_value": {
+        "text": "Clarify a useful decision question.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "truth_type": "PROPOSED"
+    },
+    "topic": {
+      "topic_id": "TOP-6bef4ce9b805a6c802b49500ec024fd03a939056ee64f946df6fd6650bc7f73f",
+      "title": {
+        "text": "Understanding rent pressure",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "description": {
+        "text": "Cost pressure and retained income as a subject area.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "customer_value": {
+        "text": "Explore the choices without claiming a proven solution.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "truth_type": "PROPOSED"
+    },
+    "angle": {
+      "angle_id": "ANG-9a259125e8b89c5a6efce8f2035481dc899358848d4f346dd519e9273a945d82",
+      "title": {
+        "text": "Looking beyond the rent bill",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "angle_type": "comparison",
+      "core_argument": {
+        "text": "Compare the rent burden with what remains from income.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "belief_before": {
+        "text": "Focus on the rent bill in isolation.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "belief_after": {
+        "text": "Consider retained income alongside rent.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "opening_direction": {
+        "text": "Begin with a clearly hypothetical decision question.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "customer_value": {
+        "text": "A proposed way to think through the tension.",
+        "claim_kind": "general_explanatory",
+        "truth_type": "PROPOSED",
+        "needs_external_evidence": true
+      },
+      "truth_type": "PROPOSED"
+    },
+    "value_scene": {
+      "truth_type": "PROPOSED",
+      "need_moment": null,
+      "current_struggle": {
+        "kind": "source_wording",
+        "text": "rent consumes my profit",
+        "truth_type": "OBSERVED",
+        "evidence_ref": {
+          "evidence_id": "E-a0a4c22725fb51a019b38808111efcd7909d121a263ecdf66d45e6b6590b3e5e",
+          "origin": "signal",
+          "upstream_claim_id": "signal-965162f57d393f110fcdd0e38abcfee4c30a182acc2f3ac4c0104544a541c89c",
+          "comment_id": "SYNTHETIC-0",
+          "source_record_id": "source-dae286c2809af88e770e54d62da3fb08653a4f1c4daf612d46e7b5cb5dd60524",
+          "source_hash": "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+          "start": 43,
+          "end": 66,
+          "evidence_quote": "rent consumes my profit",
+          "signal_path": "pains.costs",
+          "truth_type": "OBSERVED"
+        }
+      },
+      "desired_future": {
+        "kind": "proposed_framing",
+        "framing": {
+          "text": "Imagine a more manageable future as illustrative framing.",
+          "claim_kind": "general_explanatory",
+          "truth_type": "PROPOSED",
+          "needs_external_evidence": true
+        }
+      }
+    },
+    "content_objective": null
+  },
+  "creative_execution": {
+    "zone": "C_CREATIVE_EXECUTION",
+    "status": "not_generated",
+    "writer_may": {
+      "create_hooks": true,
+      "create_titles": true,
+      "create_structure": true,
+      "create_analogies": true,
+      "create_metaphors": true,
+      "create_clearly_labeled_illustrative_examples": true,
+      "choose_storytelling_format": true,
+      "adapt_brand_voice": true,
+      "improve_clarity": true,
+      "generate_cta": true
+    },
+    "constraints": {
+      "no_fake_statistics": true,
+      "no_fake_case_studies": true,
+      "no_fake_customers": true,
+      "no_fake_quotes": true,
+      "no_fake_demographics": true,
+      "no_fake_research": true,
+      "preserve_customer_language": true,
+      "do_not_change_customer_truth": true,
+      "external_claims_require_evidence": true,
+      "no_evidence_level_upgrade": true,
+      "no_market_validation_claim": true,
+      "no_purchase_validation_claim": true,
+      "preserve_contradictions_and_limitations": true
+    }
+  },
+  "external_evidence_requirements": [
+    {
+      "strategy_field": "content_strategy.opportunity.statement",
+      "claim_needed": "Discuss the tension between rent and retained income.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.opportunity.customer_value",
+      "claim_needed": "Clarify a useful decision question.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.topic.title",
+      "claim_needed": "Understanding rent pressure",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.topic.description",
+      "claim_needed": "Cost pressure and retained income as a subject area.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.topic.customer_value",
+      "claim_needed": "Explore the choices without claiming a proven solution.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.angle.title",
+      "claim_needed": "Looking beyond the rent bill",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.angle.core_argument",
+      "claim_needed": "Compare the rent burden with what remains from income.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.angle.belief_before",
+      "claim_needed": "Focus on the rent bill in isolation.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.angle.belief_after",
+      "claim_needed": "Consider retained income alongside rent.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.angle.opening_direction",
+      "claim_needed": "Begin with a clearly hypothetical decision question.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.angle.customer_value",
+      "claim_needed": "A proposed way to think through the tension.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    },
+    {
+      "strategy_field": "content_strategy.value_scene.desired_future.framing",
+      "claim_needed": "Imagine a more manageable future as illustrative framing.",
+      "purpose": "verify_proposed_framing_before_publication",
+      "status": "required_before_publish"
+    }
+  ],
+  "selection": {
+    "angle_id": "ANG-9a259125e8b89c5a6efce8f2035481dc899358848d4f346dd519e9273a945d82",
+    "angle_hash": "5187ebfb36c0859d7b81eb8740276fa84334ea85221e9a942a160d1ad9732928",
+    "tree_hash": "d3d08cecd2b0ce5d2ee71152ce051183870a6f17f40527b6fbd538b272bc1a22",
+    "project_id": "SYNTHETIC-CONTRACT-FIXTURE",
+    "run_id": "synthetic-packet-test",
+    "verified_insight_id": "VER-0bb68000f41d68f5123573ba7bde511551443f8dacfec0a2527975f2447ef8d3",
+    "topic_id": "TOP-6bef4ce9b805a6c802b49500ec024fd03a939056ee64f946df6fd6650bc7f73f",
+    "content_opportunity_id": "CO-aa1ff9248e3721e2e536ee9ccd12f05ef1b2cf59e9565fe6f842f3004d2a0190",
+    "selection_event_id": "SEL-ed055076f03491c05f5fc0eeac1a08946cf84d74fd2691aefa0d8c7d9a3b1f2e",
+    "reviewer_id": "SYNTHETIC-HUMAN-NOT-REAL",
+    "selected_at": "2026-09-15T07:22:02.741249Z",
+    "selection_rationale": "Synthetic fixture for offline contract tests only.",
+    "truth_type": "PROPOSED",
+    "status": "selected"
+  },
+  "lineage": {
+    "verified_insight_id": "VER-0bb68000f41d68f5123573ba7bde511551443f8dacfec0a2527975f2447ef8d3",
+    "source_candidate_id": "INS-2cbbb9f703033c584f48d1559ad57ffe7a11063cdf61ac421606d216d659cf7f",
+    "pattern_ids": [
+      "PAT-17b16da501e2eede28dcfacf6303c0f9d81d59edb58efa62d316854a76785654",
+      "PAT-aeef3a8edbf74979976ddb4a15c6ec69623cc0943ba4ac6d7139d42f6e5d9199",
+      "PAT-e63b8292dc932c036bf1dfc547ae96e0266fb2bf2d1edc96129c39b01b0ed8e0"
+    ],
+    "comment_ids": [
+      "SYNTHETIC-0",
+      "SYNTHETIC-1"
+    ],
+    "source_hashes": [
+      "002663e4cff9bde08591551a6dc4e0abe01af1ba594ce1d4efa59872eabf47a5",
+      "88238f20f5058bf08072f0f082970d171dd7fcc023bda2686df9034d7612f0f2"
+    ],
+    "content_opportunity_id": "CO-aa1ff9248e3721e2e536ee9ccd12f05ef1b2cf59e9565fe6f842f3004d2a0190",
+    "topic_id": "TOP-6bef4ce9b805a6c802b49500ec024fd03a939056ee64f946df6fd6650bc7f73f",
+    "angle_id": "ANG-9a259125e8b89c5a6efce8f2035481dc899358848d4f346dd519e9273a945d82",
+    "governance_hash": "f4b877e0f909ced69014ea6a0f8ade0897c9abd9878c143c6a46149eeb4250dd",
+    "verified_artifact_hash": "b3754a3bf23293738f0fa47a3c2a388aeeeb5955185715ea67ff7d6a04d29c53",
+    "selection_hash": "eeb4185046da45ebb4edacac0f71889fef47d0734a5a25b2e6c3b40e7ea81258",
+    "selected_artifact_hash": "6cbd720d334414f610cc8ad166ff33738451d12080bb5d52780b34604b9ab1a6",
+    "content_tree_hash": "d3d08cecd2b0ce5d2ee71152ce051183870a6f17f40527b6fbd538b272bc1a22",
+    "verified_insight_hash": "94026495dc43c5b996193e1cbb7a177ad104d7eaafeea1e6d11da1da6eab598b",
+    "opportunity_hash": "06716c0c5ada2e029bb8269851867053bb98daddc9da7dcb52a93912143668e5",
+    "topic_hash": "c00034627728cc0e74d0d1c102a84d03fafa656087f2601af1b956ba575543a9",
+    "angle_hash": "5187ebfb36c0859d7b81eb8740276fa84334ea85221e9a942a160d1ad9732928"
+  }
+}

@@ -1,23 +1,24 @@
 # 03 — EVIDENCE RULES
 
-## Current authority — Phase 7 (DEC-057–061)
+## Current authority — Phase 8 (DEC-062–066)
 
-Current Phase = Phase 7 — Product Discovery Route
+Current Phase = Phase 8 — Content Intelligence Packet
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 Core Customer Intelligence MVP = ACCEPTED
-Content Route = IMPLEMENTED
-Product Discovery Route = PENDING ARCHITECT REVIEW
+Content Route = ACCEPTED
+Product Discovery Route = ACCEPTED
+Direct Reelo Integration = NOT STARTED
 Next Phase = DO NOT START
 
-Owner Phase 7 authorization from `4b11e45c55a33030d030b14cfd06ce10f285730f` opens only
-Priority Need → Product Opportunity → Possible Value Map → Assumptions → Experiment Plan
-→ Human Decision To Test on `v2-phase-7-product-discovery`. Earlier product-route prohibitions
-below are historical phase gates, superseded by this explicit request; accepted evidence,
-Strategyzer and B2C rules remain binding. Read all fifteen documents 00–14, including
-[14-PRODUCT-DISCOVERY-ROUTE.md](14-PRODUCT-DISCOVERY-ROUTE.md). No Content Packet,
-Reelo integration, external experiment execution, Customer Profile update or main merge.
+Owner Phase 8 request accepts Content/Product routes and authorizes only the typed packet
+from `78f47def5614723a1cb973d9c5ae6a5f9d3ca7a5` on `v2-phase-8-content-packet`.
+Earlier packet prohibitions/pending route acceptance below are historical, superseded by
+this explicit request. Evidence, Strategyzer, B2C and human-governance rules remain binding.
+Read docs 00–15 and [contracts/README](../../contracts/README.md), including
+[15-CONTENT-INTELLIGENCE-PACKET.md](15-CONTENT-INTELLIGENCE-PACKET.md).
+No Reelo repository changes, Phase 9, Writer generation, Drive upload or main merge.
 
-Comments remain need evidence level 1 regardless of count. New solution assumptions/experiments have current evidence level 0. Product/Value Map/progress/plan PROPOSED, assumptions HYPOTHESIS; demand/market/purchase/validated_product remain false. Numeric thresholds require PROPOSED_TEST_THRESHOLD, not invented market facts.
+Packet code verifies exact source spans/hashes and selected-language refs, preserves counter-evidence/limitations and rejects truth promotion. Snapshot validity is not current authorization: current governance/selection/tree inputs are mandatory for build/save/export. No fake external facts.
 
 ## Earlier phase documentation (historical gates)
 
