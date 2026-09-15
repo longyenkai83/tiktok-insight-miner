@@ -1,5 +1,19 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 - C5.3 permission boundary patch; native wait-ceiling blocker
+
+- Exact post-terminal output Read denial can become an audit note only after Python
+  validates correlated artifact and complete identity. Actual tool-call order required.
+  Earlier/other/mixed denials or malformed/identity failures block. No allowlist expansion.
+- Main told not to Read output; deterministic adapter remains completion authority.
+- Reelo 47 / Insight 489 full tests PASS. Offline C5.2 replay correctly classified, no row reset.
+- ONE C5.3 attempt: zero denials; Writer/Critic REVISE/rewrite started, native stopped at
+  print wind-down wait ceiling (explicit debug evidence). UNKNOWN retained, no retry.
+- Critic blocked shared-context and contradiction drift; no completed rewrite/Critic 2.
+- 16 assets and A/B unchanged; legacy/Q1/packet schema unchanged. Single local report.
+  STOP for Architect review; no merge/Notion/publication/next phase.
+
+
 ## 2026-09-15 - C5.2 bounded patch; BLOCKED at host permission review
 
 - V2-only PASS/REVISE + blocking_issues/notes; preserve raw reviews/findings; strict code gate.

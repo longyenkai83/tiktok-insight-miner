@@ -1,5 +1,38 @@
 # 08 — PROJECT STATE
 
+## Latest checkpoint - C5.3 BLOCKED at native print wait ceiling
+
+Current Phase = Phase 9 - Direct Reelo Integration
+C5.3 Status = BLOCKED - native print wind-down killed the Workflow during rewrite
+Q1 CLOSED/PASS. Phase 9 NOT ACCEPTED. Next Phase DO NOT START. No merge.
+
+Exact redundant post-terminal output Read denial is non-blocking only after independent
+Python artifact/schema/receipt/context/generation validation; bind denied tool ID to a
+unique Read call after correlated completion, exact output path/input. Audit note retained.
+All other denials block. Allowlists unchanged; main instructed not to Read task output.
+Recorded C5.2 replay passes this bounded classification, without changing its UNKNOWN row.
+
+Exactly ONE C5.3 attempt, same synthetic packet/context, 16 real read-only assets,
+medium effort / 900s existing bound / USD5 budget. No permission denials this time.
+Task wxrsbqzp4: Writer -> Critic REVISE -> rewrite started, no rewrite result/Critic 2.
+Native stopped after 622.92s overall; output file empty. Adapter UNKNOWN with
+workflow_stopped_completion_unknown, human approval PENDING, published false.
+NEW current-run debug evidence at 2026-09-15T15:08:36.148Z explicitly says print wind-down
+killed this background local_workflow at the wait ceiling, followed by Workflow aborted.
+This proves the current stop mechanism, not every historical timeout or a supported fix API.
+No Python 900s timeout, no second attempt and no historical execution mutation.
+
+Critic caught unsupported shared rental situation and flattening an in-source contradiction.
+truth_preserved/context_scope_preserved false; selected intent/creator truth true. Semantic
+quality is not accepted; a partial draft cannot substitute for terminal completion.
+Full tests: Insight 489 PASS (51.23s), Reelo 47 PASS (1.72s). Legacy Writer/Critic/Q1 and
+Phase 8 schema unchanged. Context A/B unchanged; 16/16 assets unchanged. No Notion/publish.
+Single local REPORT-C5.3.md contains exact blocker, tests and redacted partial diagnostic
+draft. No final accepted draft. Codex STOP; Owner forwards report for Architect review.
+
+## Historical C5.2 checkpoint
+
+
 ## Latest checkpoint - C5.2 BLOCKED, owner-authorized single attempt complete
 
 Current Phase = Phase 9 - Direct Reelo Integration

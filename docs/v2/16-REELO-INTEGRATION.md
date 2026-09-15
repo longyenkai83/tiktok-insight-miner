@@ -110,3 +110,14 @@ records workflow_stopped_completion_unknown and retains UNKNOWN/no automatic ret
 Public stream lifecycle metadata and local native debug logs improve diagnosis, never
 replace the task-correlated structured output contract. No undocumented API or timeout
 increase is introduced. One controlled real-assets attempt is authorized before STOP/report.
+
+## C5.3 — exact redundant output-read classification
+
+Only the post-terminal Read of the exact correlated output_file may be non-blocking after
+Python independently reads/validates the artifact and checks the entire receipt/context/
+generation identity. Denied tool ID must match a unique Read call after the terminal event;
+aggregate denial-report order alone is insufficient. Record an audit note, never widen the
+host allowlist. Every other denial or validation failure remains blocking. Main/model Read
+is unnecessary and not authoritative. Q1 and the creative/packet schemas are unchanged.
+Owner authorizes one final controlled attempt, no retry or merge. Human quality review and
+Architect integrity review remain separate from technical completion.
