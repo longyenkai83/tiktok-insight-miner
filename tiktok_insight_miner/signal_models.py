@@ -114,6 +114,17 @@ class SignalSource(StrictModel):
         return self
 
 
+def validate_source_span(source: SignalSource, source_record_id: str, snapshot_hash: str,
+                         start: int, end: int, evidence_quote: str) -> None:
+    """Shared persisted-claim provenance check for signals and customer context."""
+    if source_record_id != source.source_record_id or snapshot_hash != source.snapshot_hash:
+        raise ValueError("broken source reference")
+    if not (0 <= start < end <= len(source.text)):
+        raise ValueError("invalid source span")
+    if source.text[start:end] != evidence_quote:
+        raise ValueError("quote does not match source span")
+
+
 class ValidationIssue(StrictModel):
     code: str
     comment_id: str | None = None
@@ -136,13 +147,9 @@ class CommentSignals(StrictModel):
         if len(set(ids)) != len(ids):
             raise ValueError("duplicate signal IDs")
         for signal in self.signals:
-            if (signal.source_record_id != self.source.source_record_id
-                    or signal.source_snapshot_hash != self.source.snapshot_hash):
-                raise ValueError("broken source reference")
-            if not (0 <= signal.start < signal.end <= len(self.source.text)):
-                raise ValueError("invalid source span")
-            if self.source.text[signal.start:signal.end] != signal.evidence_quote:
-                raise ValueError("quote does not match source span")
+            validate_source_span(self.source, signal.source_record_id,
+                                 signal.source_snapshot_hash, signal.start, signal.end,
+                                 signal.evidence_quote)
             if signal.category == "language" and signal.claim != signal.evidence_quote:
                 raise ValueError("language phrase must be literal")
         if self.extraction_status == "ok" and (not self.signals or self.issues):

@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 2 Customer Context
+
+- Cập nhật official architecture trước implementation: shared evidence-backed Customer Intelligence Engine + Content Research / Product Discovery; DEC-024–032, evidence-first product rules, B2C-first. Router/UI/downstream vẫn chỉ là thiết kế.
+- Thêm context models/extractor và CLI extract-context: input signals.json v2.signals.1, output contexts.json v2.contexts.1, đúng năm field per-comment, zero context hợp lệ, OBSERVED/DERIVED và claim code-generated từ source span.
+- Reuse Phase 1 source/quote/hash/issue primitives; tách validate_source_span dùng chung không thay Phase 1 schema hoặc default legacy behavior.
+- 48 tests mới; full suite 178 passed. Mẫu cùng 50 comment: 28 ok / 19 no_context / 3 partial / 0 error; 47 accepted / 4 rejected (ungrounded_quote).
+- Review 10 ví dụ và private sample chỉ lưu local, không commit; metrics/path tại PROJECT-STATE.
+- Current Phase = Phase 2 — Customer Context; IMPLEMENTED — PENDING ARCHITECT REVIEW; Next Phase = DO NOT START. Không mở Phase 3.
+
 ## 2026-09-15 — Phase 1.1 Signal Extraction Quality Patch
 
 - Bỏ model-generated claim khỏi candidate transport; code tạo claim nguyên văn sau source-span validation.

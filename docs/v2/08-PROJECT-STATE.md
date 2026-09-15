@@ -1,61 +1,55 @@
 # 08 — PROJECT STATE
 
-Current Phase = Phase 1 — Signal Extraction
+Current Phase = Phase 2 — Customer Context
 
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 
 Next Phase = DO NOT START
 
-Do not start Phase 2. Wait for architecture review.
+Do not start Phase 3. Wait for architecture review.
 
 ## Phạm vi đã thực hiện
 
-- Base `v2-phase-0@dd5c945`; branch `v2-phase-1-signal-extraction`; được cho phép bằng yêu cầu trực tiếp của chủ dự án (DEC-021).
-- signal_models.py + signal_extractor.py: raw Comment → typed multi-signal artifact, quote/ID hậu kiểm, source snapshot/provenance, per-item rejection, status/issues và model resolution riêng.
-- CLI `tim extract-signals -i path/to/raw_comments.json [-o path/to/signals.json] [--model MODEL] [--batch-size 10]`. Mặc định signals.json nằm cạnh input. Exit 0 khi complete, exit 2 khi artifact có partial/error/global issue; input/output lỗi exit 1. Không ghi đè chính raw input.
-- Default legacy runtime behavior changed: **NO**. Legacy classifier, run, bank/selection, report/brief, selected_angles và Reelo không đổi. Chỉ có execution path opt-in mới.
-- Audience/context segmentation, Pattern, Insight, Topic, Angle, Packet, Writer integration, Unified Agent: **NOT IMPLEMENTED** trong Phase 1. Không mở Phase 2.
+- Base branch v2-phase-1-signal-extraction, commit 241fa436b962341df60034a105f6878fd7fa03ac. Branch bàn giao: v2-phase-2-customer-context. Authorization trực tiếp ghi tại DEC-032.
+- Kiến trúc shared Customer Intelligence Engine + Content Research / Product Discovery và DEC-024–032 đã cập nhật trước implementation. Router/UI/mode execution vẫn chỉ là tài liệu, chưa triển khai.
+- customer_context_models.py + customer_context_extractor.py: signals.json v2.signals.1 → contexts.json v2.contexts.1, đúng năm field B2C, zero/multiple per-comment candidates, OBSERVED/DERIVED, code-generated exact claim, source/hash/span/issue trace.
+- Dùng chung quote_span, source hash model, truth type/issue structure và validate_source_span với Phase 1. Input Phase 1 revalidate trước API; giữ upstream status/issues, không sửa signals.json.
+- CLI độc lập: `tim extract-context -i signals.json -o contexts.json [--model MODEL] [--batch-size 10]`. Bỏ -o thì xuất cạnh input. Exit 0 complete, 2 khi context có partial/error/global issue; 1 khi lỗi input/output. Không ghi đè input.
+- Default legacy runtime behavior changed: **NO**. Phase 1, classifier/run, bank/selection, strategy/Reelo và legacy outputs giữ nguyên hành vi. Không clustering/final segment/frequency/insight/content/product generation/Value Map/experiment/router.
 
-## Kiểm chứng
+## Tests và kiểm chứng
 
-- Phase 1.1 quality patch trên base `8a63f6fbeff25bb9a24a5c33033ff7bc9e279058`, cùng nhánh Phase 1. Candidate không sinh claim; code tạo claim từ exact source span đã hợp lệ. Không nới grounding.
-- Full suite: `python -m pytest tests -q -p no:cacheprovider` → **130 passed in 1.55s**, Python 3.13.15 / pytest 8.4.2 (2026-09-15).
-- 40 cases mới so với baseline 90: 39 cho extractor/CLI/provenance/serialization/error handling và 1 regression classifier. Tất cả dùng fixture tổng hợp/mock; không test nào gọi API thật. 90 existing tests vẫn pass.
-- Kiểm `extract-signals --help`, diff whitespace, link tài liệu và phạm vi legacy không đổi.
+- `python -m pytest tests -q -p no:cacheprovider` → **178 passed in 1.42s**, Python 3.13.15 / pytest 8.4.2.
+- 48 offline cases mới cho năm field, multi/zero/ambiguous, unsupported demographics/quotes/IDs/truth types/B2B fields, serialization/hash/spans, API errors, CLI và Phase 1 compatibility. Toàn bộ 130 tests từ base vẫn pass; không live API trong test suite.
+- Kiểm source snapshot equality, exact accepted claims, local-only artifact 10 ví dụ và diff/docs links. Không đưa secret hoặc private sample vào commit.
 
-### Mẫu thật trước/sau — 50 comment giống nhau
+## Real-data review — cùng 50 source comments của Phase 1.1
 
-Before lấy từ artifact Phase 1 gốc; After chạy mới với đúng source snapshots, thứ tự, model đã resolve và batch size 10. Không lấy mẫu khác hoặc chạy lại baseline để thay số cũ. Model generation có thể biến thiên; không coi số accepted là thước đo đúng ngữ nghĩa hay đặt ngưỡng thành công.
+Input là signals-after.json đã lưu từ Phase 1.1, giữ đúng 50 source snapshot/thứ tự. Dùng cùng resolved model, batch size 10; không lấy comment mới, không gọi lại signal extraction.
 
-| Metric | Before | After |
+Processed **50**; **ok=28, no_context=19, partial=3, error=0**. **47 accepted claims, 4 rejected claims**.
+
+| Field | Accepted | Rejected |
 |---|---:|---:|
-| ok | 1 | 42 |
-| no_signal | 5 | 4 |
-| partial | 44 | 4 |
-| error | 0 | 0 |
-| claims accepted | 1 | 92 |
-| claims rejected | 82 | 4 |
+| audience_segment | 8 | 1 |
+| context | 4 | 0 |
+| situation | 28 | 3 |
+| life_or_business_stage | 7 | 0 |
+| user_buyer_distinction | 0 | 0 |
 
-| Rejection code | Before | After |
-|---|---:|---:|
-| invalid_claim | 82 | 0 |
-| ungrounded_quote | 0 | 4 |
+Rejection code: ungrounded_quote=4. Unassigned rejected=0. Unknown context không bị ép điền, user_buyer_distinction rỗng khi không có bằng chứng phù hợp. Không đặt numeric pass threshold; số accepted không chứng minh field assignment đúng ngữ nghĩa.
 
-Không có issue code khác trong hai lần chạy. Bốn quote lỗi vẫn bị từ chối; không sửa cho qua validator. Rejected counts đếm item có item_index; accepted counts đếm signals đã qua validation.
+Artifact chỉ lưu cục bộ, không commit:
 
-Artifact riêng tư, không commit:
+`D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase2-worktree/output/phase2-context-review/phase2-context-review.md`
 
-- Before: `output/phase1-real-review/signals.json` (giữ nguyên).
-- After/metrics: `output/phase1-quality-review/signals-after.json`, `metrics.json` cùng thư mục.
-- Review 10 comment: `D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase1-worktree/output/phase1-quality-review/phase1-quality-review.md`.
+Cùng thư mục có contexts.json và metrics.json. Report chứa 10 ví dụ, source comment, field, exact quote, truth type và accepted/rejected reason. Chọn theo status/field coverage rồi input order cho review định tính, không tuyên bố đại diện thống kê.
 
-10 comment được chọn có thứ tự theo status transition, coverage category rồi thứ tự input, phục vụ review định tính; không tuyên bố đại diện thống kê. Report giữ source comment, category/subcategory, exact evidence quote, truth_type và issue codes trước/sau. Repeated expressions chỉ trong một comment; corpus-level repetition thuộc Pattern phase sau.
+## Giới hạn / việc cần review
 
-## Giới hạn cần architect review
+- Context field assignment vẫn là candidate per comment. Grounding bảo đảm quote/claim/source khớp, không tự chứng minh semantic entailment, self-report hay sarcasm được model hiểu đúng.
+- Claim giữ nguyên source wording; ví dụ normalized audience label ở specification chưa được tạo bằng paraphrase. Không có final segment/corpus classification.
+- Phase 1 partial/error được giữ làm upstream provenance; Phase 2 có thể đọc source hợp lệ của record đó, không biến lỗi upstream thành thành công.
+- Source raw metadata/missing metrics giữ nguyên từ Phase 1; không phục hồi dữ liệu adapter cũ đã mất. Không selective retry claim lỗi.
 
-- Claim extractive, chưa hỗ trợ paraphrase tự do; category/subcategory có thể DERIVED. Không coi substring check là chứng minh mọi phân loại ngữ nghĩa đều đúng.
-- Legacy zero thiếu raw proof chuyển null có ghi chú; không khôi phục được thông tin nguồn đã bị adapter trước đây bỏ mất.
-- CLI không retry chọn lọc ID/claim lỗi; artifact giữ partial/error để người vận hành review/rerun. Không tự đổi nhãn hoặc lấp bằng config.
-- Artifact có source text/metadata riêng tư: chỉ lưu local, không commit. Bộ fixture test là tổng hợp.
-
-STOP. Wait for architecture review. Next Phase = DO NOT START.
+STOP. Next Phase = DO NOT START. Không bắt đầu Phase 3.

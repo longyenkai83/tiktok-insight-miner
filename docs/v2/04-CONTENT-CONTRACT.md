@@ -6,22 +6,11 @@ Insight → Reelo bắt buộc dùng typed Content Intelligence Packet. Content 
 
 Contract dữ liệu nằm tại [02-DATA-SCHEMA.md](02-DATA-SCHEMA.md); provenance theo [03-EVIDENCE-RULES.md](03-EVIDENCE-RULES.md). Markdown là view cho người đọc, không là schema trao đổi chuẩn. Không coi `selected_angles.json`, brief Markdown hay pack Drive hiện tại là packet V2 chỉ bằng cách đổi tên.
 
-## Hợp đồng qua các tầng
+## Vị trí trong kiến trúc hai mode
 
-| Bên giao → bên nhận | Điều kiện |
-|---|---|
-| Source → Audience / Role / Context | Có snapshot, locator, thời điểm; thuộc tính thiếu không tự điền bằng persona |
-| Audience / Role / Context → Customer Signals | Customer Identity B2C có nhãn và provenance; `user_buyer_distinction` (optional) chỉ khi cần, không dùng giả thuyết như fact |
-| Customer Signals → Pattern | 0..n signal/comment; grouping truy được nguồn và không đếm signal thành người |
-| Pattern → Evidence | Giữ inclusion/exclusion và scope; xác minh quote/metadata, thu thập cả phản chứng |
-| Evidence → Insight | Claim có support đúng nghĩa, derivation, scope và limitations; giả thuyết tách riêng |
-| Insight → Topic → Angle | Dùng insight đủ điều kiện; proposal tham chiếu claim, không thêm sự thật mới |
-| Angle → Human Selection | Người duyệt đúng phiên bản Angle và nền bằng chứng; máy chỉ gợi ý |
-| Human Selection → Packet | APPROVED còn hiệu lực, snapshot đầy đủ, refs phân giải được |
-| Packet → Reelo Writer | Kiểm type/version/eligibility trước tạo draft; không fallback sang legacy pack |
-| Reelo Writer → Unified Agent | Trả draft, packet_ref, claim_usage và findings; Agent giữ trạng thái review, không tự publish |
+Theo DEC-024/025, shared engine chạy Source → Normalized Evidence → Signal Extraction → Customer Context → Pattern Engine → Evidence Engine → Verified Insight → Priority Need. Content contract áp dụng cho nhánh Verified Insight → Content Opportunity → Topic → Angle → Human Selection → Packet → Reelo Writer.
 
-Các tầng được dùng evidence/context từ tầng trước qua refs rõ ràng và snapshot đã kiểm, không bắt buộc chỉ nhìn một object liền trước. Cấm đọc nguồn phụ ngầm để bổ sung customer facts.
+Product Discovery dùng cùng evidence-backed engine nhưng có chuỗi Opportunity Area/Value Map/Assumptions/Experiments/Evidence/Decision riêng. Không dùng Writer hoặc human content selection để xác nhận product demand. Chi tiết ở 01/07; cả hai downstream mode chưa triển khai trong Phase 2.
 
 ## Content Intelligence Packet: điều kiện bàn giao
 

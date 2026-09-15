@@ -1,5 +1,13 @@
 # 03 — EVIDENCE RULES
 
+## Phase 2 — cùng quy tắc nguồn, thêm context candidates
+
+Chỉ OBSERVED/DERIVED; model trả field + quote/confidence/truth type theo comment ID, code tạo claim từ exact source span. Source hash/span và helper validation được dùng chung với Phase 1, kiểm cả khi deserialize contexts.json. Không tạo tuổi/giới/thu nhập/địa lý/nghề/gia đình/ownership/purchase stage/motivation không có trong nguồn. Video topic/author metadata không được dùng suy audience. Field lạ/B2B/free-form claim bị schema từ chối; quote không có trong nguồn bị loại riêng có issue/index/field.
+
+Field assignment vẫn là candidate per comment và cần review ngữ nghĩa: substring đúng không chứng minh câu đùa, giả định hay lời kể về người khác mô tả chính tác giả. Prompt yêu cầu giữ phủ định/uncertainty và đủ context, không ép classification. Không coi `audience_segment` là cluster của nhiều comment; Phase 3 chưa mở.
+
+Product Opportunity là PROPOSED; xác thực demand cần Assumption → Experiment → Evidence → Decision trong phase tương lai. Không tự nâng customer truth vì có ý tưởng sản phẩm, Value Map, confidence hoặc approval.
+
 ## Phase 1 — hậu kiểm đã triển khai
 
 `signal_extractor.validate_batch()` xử lý JSON theo từng item sau structured output bằng JSON Schema sinh từ Pydantic. Dùng `messages.create(output_config=...)` thay `messages.parse()` để một claim sai kiểu không làm mất toàn batch trước khi salvage. Chỉ log issue code, ID/index và token/cache counters, không log lời khách hay exception body/API key.

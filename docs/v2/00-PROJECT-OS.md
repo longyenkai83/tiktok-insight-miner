@@ -2,15 +2,15 @@
 
 ## Trạng thái và quyền thực thi
 
-Current Phase = Phase 1 — Signal Extraction
+Current Phase = Phase 2 — Customer Context
 
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 
 Next Phase = DO NOT START
 
-Do not start Phase 2. Wait for architecture review.
+Do not start Phase 3. Wait for architecture review.
 
-Bộ tài liệu này là source-of-truth cho V2. Yêu cầu trực tiếp “PHASE 1 — SIGNAL EXTRACTION”, base `dd5c945`, đã cho phép triển khai riêng Source → Signals (DEC-021). Phase 1 hiện chờ architect review; các tầng sau vẫn là thiết kế, chưa triển khai. Không đổi default legacy behavior; không bắt đầu Phase 2.
+Yêu cầu trực tiếp Phase 2 của chủ dự án cho phép Customer Context từ signals.json trên base `241fa43` (DEC-032). Kiến trúc hai mode dưới đây được khóa trước implementation; các tầng sau Customer Context chưa được triển khai. Legacy default giữ nguyên. Không mở Phase 3.
 
 ## Nguồn và thứ tự ưu tiên
 
@@ -30,26 +30,26 @@ Snapshot mã nguồn của baseline:
 
 ## Mục tiêu
 
-Chuyển tiếng nói khách hàng thành insight có bằng chứng, rồi thành quyết định nội dung do con người chọn. Writer sáng tạo cách nói, không sáng tạo customer truth. V2 là B2C-first. Customer Profile tổ chức theo Jobs / Pains / Gains + Context; Customer Identity tập trung audience_segment, context, situation và `life_or_business_stage` khi liên quan. Chỉ phân biệt `user_buyer_distinction` (optional) khi use case B2C thực sự cần. Một comment có thể mang nhiều customer signals hoặc không có signal phù hợp.
+Chuyển tiếng nói khách hàng thành insight có bằng chứng phục vụ Content Research và Product Discovery. Writer sáng tạo cách nói, không sáng tạo customer truth. V2 là B2C-first. Customer Profile tổ chức theo Jobs / Pains / Gains + Context; Customer Identity tập trung audience_segment, context, situation và `life_or_business_stage` khi liên quan. Chỉ phân biệt `user_buyer_distinction` (optional) khi use case B2C thực sự cần. Một comment có thể mang nhiều customer signals hoặc không có signal phù hợp.
 
 Kiến trúc đích bắt buộc:
 
 ```text
-Source
-→ Audience / Role / Context
-→ Customer Signals
-→ Pattern
-→ Evidence
-→ Insight
-→ Topic
-→ Angle
-→ Human Selection
-→ Content Intelligence Packet
-→ Reelo Writer
-→ Unified Agent
+Shared Customer Intelligence Engine:
+Source → Normalized Evidence → Signal Extraction → Customer Context
+→ Pattern Engine → Evidence Engine → Verified Insight → Priority Need
+
+A. CONTENT RESEARCH MODE:
+Verified Insight → Content Opportunity → Topic → Angle → Human Selection
+→ Content Intelligence Packet → Reelo Writer
+
+B. PRODUCT DISCOVERY MODE:
+Verified Insight → Priority Need → Opportunity Area → Possible Value Map
+  (Products & Services / Pain Relievers / Gain Creators)
+→ Assumptions → Experiments → Evidence → Decision → Validated Product
 ```
 
-Unified Agent là lớp điều phối toàn bộ chuỗi; vị trí cuối sơ đồ mô tả đích tích hợp, không cho phép bỏ bước hoặc tự thay thế Human Selection.
+Project goal tương lai: `CONTENT`, `PRODUCT_DISCOVERY`, `BOTH`. Chưa triển khai router/UI này trong Phase 2. Cả hai mode dùng cùng bằng chứng; AI không được tạo customer demand. Product Opportunity là PROPOSED, chỉ được xác thực qua Assumption → Experiment → Evidence → Decision. V2 vẫn B2C-first.
 
 ## Truth types
 

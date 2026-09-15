@@ -1,5 +1,29 @@
 # 02 — DATA SCHEMA
 
+## Phase 2 — per-comment Customer Context
+
+Input duy nhất của CLI là `signals.json` schema `v2.signals.1`, được load và revalidate trước API. Output `contexts.json` schema `v2.contexts.1` không sửa hoặc thay thế signals.json. CustomerContext chưa phải cluster, final segment, customer profile toàn corpus hoặc Verified Insight.
+
+Transport: `results[{comment_id, contexts[{field, evidence_quote, truth_type, confidence}]}]`. Model không sinh claim. `field` chỉ có audience_segment, context, situation, life_or_business_stage, user_buyer_distinction; chỉ OBSERVED/DERIVED, confidence high/medium/low. Code tạo final claim từ exact validated source span, không thêm demographics/meaning bằng paraphrase.
+
+Envelope: schema_version, generated_at UTC, model, prompt_version=phase2.context.1, derivation_method=source_span_context_assignment, input_schema_version, input_signals_hash, upstream_issues, records và validation_issues. input_signals_hash là SHA-256 của input model JSON canonical (sort keys), phục vụ đối chiếu artifact Phase 1, không là chữ ký xác thực.
+
+Record: comment_id, source (SignalSource nguyên snapshot Phase 1), source_hash, upstream_status/upstream_issues, customer_identity, extraction_status, validation_issues. `customer_identity` luôn có đúng năm arrays theo field đã khóa; unknown là array rỗng, user_buyer_distinction không cần thì rỗng. Mỗi ContextClaim có field, claim_id, claim, evidence_quote, truth_type, confidence, comment_id, source_record_id, source_snapshot_hash, start/end. Claim ID xác định bởi snapshot hash + field + span; không reset theo category.
+
+Claim và evidence_quote bằng chính source.text[start:end]. Chỉ chuẩn hóa whitespace để tìm span; giữ exact source wording trong output, không chữa quote bịa. Helper `quote_span` và `validate_source_span`, SignalSource/hash, StrictModel/TruthType/ValidationIssue được reuse từ Phase 1; không thay schema hoặc luật Phase 1. `ContextIssue` mở rộng issue bằng field nullable để đếm rejection theo field; field lạ không được tự map sang field hợp lệ.
+
+Status: ok có claims không có lỗi; no_context là extraction hợp lệ rỗng; partial có item lỗi (kể cả không còn claim); error là record/batch không dùng được. Missing/duplicate model IDs tạo error cho source tương ứng; unknown IDs bị loại và ghi envelope issue. Item lỗi bị loại riêng, giữ item tốt. API/refusal/truncated/JSON lỗi tạo error records, authentication failure dừng request kế tiếp. Empty signals envelope không gọi API.
+
+Phase 2 xử lý mọi source snapshot hợp lệ trong signals.json, kể cả record Phase 1 no_signal/partial/error: context là phép đọc source riêng, không dùng tín hiệu lỗi để suy fact. Upstream status/issues giữ nguyên, không ngầm đổi Phase 1 thành thành công. Model chỉ nhận comment ID và source text, không video topic, metadata tác giả, config hay claim của comment khác.
+
+CLI: `tim extract-context -i signals.json [-o contexts.json] [--model MODEL] [--batch-size 10]`. Model resolution explicit → CONTEXT_MODEL → ANTHROPIC_MODEL → existing default claude-opus-4-7. Output mặc định cạnh input. Exit 0 complete, 2 khi context có partial/error/global issue, 1 input/output lỗi. Không ghi đè input.
+
+Generic Customer Identity/Profile/Pattern và các downstream types phía dưới vẫn là thiết kế. Ví dụ normalized audience label ở task chỉ là conceptual; implementation Phase 2 giữ nguyên evidence wording làm claim, field assignment là phép DERIVED khi thích hợp. Không thêm free-form label vì quote đúng không chứng minh label đó đúng.
+
+## Downstream design — chưa triển khai
+
+Theo kiến trúc khóa DEC-024–032, Verified Insight/Jobs/Pains/Gains có evidence là nguồn của Priority Need, Content Opportunity hoặc Opportunity Area. Product Opportunity/Possible Value Map là PROPOSED, không validated demand. Chỉ có validation qua Assumption → Experiment → Evidence → Decision; không suy nhu cầu từ solution/config. Đây là định nghĩa thiết kế, không schema executable, router hay generator trong Phase 2.
+
 ## Phase 1 — schema đã triển khai, chờ architect review
 
 `signal_models.py` định nghĩa `SignalsEnvelope` với `schema_version="v2.signals.1"`, `generated_at` UTC, model đã resolve, `prompt_version="phase1.extractive.2"` từ Phase 1.1, `derivation_method="source_span_categorization"`, records[] và issues[]. Reader vẫn nhận prompt version `phase1.extractive.1` của artifact cũ. Không phụ thuộc classified.json.

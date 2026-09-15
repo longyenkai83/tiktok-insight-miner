@@ -12,45 +12,45 @@ Theo baseline định danh tại [00-PROJECT-OS.md](00-PROJECT-OS.md):
 
 Đây là gap cần thiết kế giải quyết trong tương lai, không phải lỗi được phép sửa ở Phase 0. Tài liệu không chứng nhận hành vi production ngoài snapshot audit.
 
-## TARGET — kiến trúc được yêu cầu
+## TARGET — locked architecture, DEC-024–032
 
 ```text
-Source → Audience / Role / Context → Customer Signals → Pattern → Evidence
-→ Insight → Topic → Angle → Human Selection → Content Intelligence Packet
-→ Reelo Writer → Unified Agent
+Shared Customer Intelligence Engine:
+Source → Normalized Evidence → Signal Extraction → Customer Context
+→ Pattern Engine → Evidence Engine → Verified Insight → Priority Need
+
+A. CONTENT RESEARCH MODE:
+Verified Insight → Content Opportunity → Topic → Angle → Human Selection
+→ Content Intelligence Packet → Reelo Writer
+
+B. PRODUCT DISCOVERY MODE:
+Verified Insight → Priority Need → Opportunity Area → Possible Value Map
+  (Products & Services / Pain Relievers / Gain Creators)
+→ Assumptions → Experiments → Evidence → Decision → Validated Product
 ```
 
-| Tầng | Trách nhiệm và đầu ra | Ranh giới |
-|---|---|---|
-| Source | Snapshot comment và nguồn gốc ổn định | Không suy ra persona hoặc ý định mua từ danh tính |
-| Audience / Role / Context | Customer Identity B2C: audience_segment, context, situation, `life_or_business_stage` khi liên quan; `user_buyer_distinction` (optional) chỉ khi cần | Chưa biết thì unknown; phân biệt lời tự nhận và suy luận |
-| Customer Signals | Tách nhiều biểu hiện Jobs/Pains/Gains, bối cảnh, hành vi, ngôn ngữ | Không ép một comment vào một bucket duy nhất |
-| Pattern | Nhóm signal có quan hệ và ghi phạm vi mẫu, số nguồn phân biệt | Không coi lượt like hoặc nhiều signal cùng comment là nhiều người đồng ý |
-| Evidence | Đóng gói bằng chứng hỗ trợ/phản bác, quote và nguồn | Không tạo bằng chứng mới để khớp kết luận |
-| Insight | Diễn giải có giới hạn và truy vết; tách giả thuyết cần kiểm chứng | Không trộn đề xuất offer hoặc meta-pain thành observed truth |
-| Topic | Đề xuất chủ đề từ insight đủ điều kiện | Không bỏ qua Insight để đi từ config tới nội dung |
-| Angle | Đề xuất góc tiếp cận cho Topic, tham chiếu claim được dùng | Chưa phải bài viết hoàn chỉnh, không thêm customer truth |
-| Human Selection | Người thật duyệt Angle và phiên bản nền tảng bằng chứng | Máy được gợi ý, không được tự ghi phê duyệt của người |
-| Content Intelligence Packet | Hợp đồng có kiểu, có version, đủ ngữ cảnh và bằng chứng | Không dùng pack Markdown tự do hoặc selected_angles làm schema chuẩn |
-| Reelo Writer | Tạo nội dung theo packet và trả trace claim | Tự do diễn đạt trong giới hạn claim; không tự bịa quote/số/case |
-| Unified Agent | Điều phối, quản lý trạng thái, dừng ở gate và ghi lineage | Không tự lấp dữ liệu thiếu hoặc vượt quyền human review |
+## Lõi dùng chung
 
-## Dòng bằng chứng và Customer Profile
+Normalized Evidence giữ source snapshot, metadata, hash và text để kiểm provenance; không biến lời tự nhận thành fact ngoài đời. Signal Extraction giữ nhiều Jobs/Pains/Gains/Behavior/Language signals trên một comment. Customer Context bổ sung candidates theo đúng năm field đã chốt, vẫn ở cấp comment. Pattern Engine mới chịu trách nhiệm clustering, final segments và tần suất xuyên corpus (Phase 3, chưa bắt đầu).
 
-Source reference phải được gắn ngay khi ghi nhận Audience/Role/Context và Signals. Evidence layer nằm sau Pattern là bước tổng hợp và kiểm chứng bằng chứng, không có nghĩa tới đó mới lưu provenance. Đường truy vết tối thiểu của insight DERIVED:
+Evidence Engine giữ support/phản chứng/scope để đi tới Verified Insight. Verified không có nghĩa model tự cho confidence cao là đúng. Priority Need phải xuất phát từ Jobs/Pains/Gains/Verified Insights có evidence, không từ offer/config tự suy nhu cầu. Chi tiết ranking và tiêu chí verification là thiết kế phase sau, chưa thực thi.
 
-`Insight → Evidence → SourceRecord → external source comment`.
+## Hai mode downstream
 
-Pattern và Signal là các nút giải thích trung gian, cũng phải phân giải tới cùng source snapshot. Một Insight có thể chứa nhiều claim khác truth type; không được dùng nhãn của cả object che sự khác biệt này.
+Content Research: Content Opportunity dẫn tới Topic/Angle, Human Selection và typed Content Intelligence Packet cho Reelo Writer. Writer sáng tạo diễn đạt, không tạo customer truth. Không dùng legacy selected_angles làm schema V2.
 
-V2 là B2C-first. Customer Profile là view tổng hợp Jobs / Pains / Gains + Context từ các claim có nhãn. Customer Identity tập trung `audience_segment`, `context`, `situation`, `life_or_business_stage` khi liên quan. Business stage chỉ mô tả hoàn cảnh của người tiêu dùng, không mở rộng sang mô hình mua hàng tổ chức. Phân biệt `user_buyer_distinction` (optional) chỉ khi use case B2C thực sự cần và có nguồn phù hợp; không tạo taxonomy vai trò mặc định.
+Product Discovery: Opportunity Area và Possible Value Map là đề xuất (PROPOSED), không phải validated demand. Value Map có Products & Services, Pain Relievers, Gain Creators. Mọi candidate cần Assumption → Experiment → Evidence → Decision trước khi gọi Validated Product. Evidence thí nghiệm giữ provenance riêng, không biến proposal thành lời khách quan sát được. Không coi phê duyệt một ý tưởng là bằng chứng nhu cầu.
 
-Trong tên tầng Audience / Role / Context, Role chỉ có nghĩa phân biệt `user_buyer_distinction` (optional) tùy chọn như trên. Target không có economic buyer, decision committee, channel partner, recommender, saboteur hoặc customer ecosystem logic dành cho B2B. Chỉ bổ sung độ phức tạp B2B khi chủ dự án phê duyệt rõ ràng sau này (DEC-019).
+Product bao gồm miễn phí hoặc trả phí: tool, checklist, template, calculator, lead magnet, workshop, service, feature, resource hoặc commercial product. V2 B2C-first; không B2B stakeholder graph/buying committee.
 
-Phân loại ý nghĩa signal thường là DERIVED; phần text nguyên văn tự nó là OBSERVED. Giả thuyết thiếu bằng chứng được giữ riêng để nghiên cứu, không đi vào customer facts của Writer.
+Project goal có thể là CONTENT / PRODUCT_DISCOVERY / BOTH trong tương lai. Router/UI/unified agent chỉ là kiến trúc tài liệu, không được cài trong Phase 2.
 
-## Ranh giới triển khai
+## Phạm vi Phase 2
 
-V2 là thiết kế độc lập với tên file, regex, enum, model, UI và score của V1. Không mặc định kế thừa `ContentAngle`, `selected_angles`, auto-top, số từ trong hook, layout Drive hoặc production fallback. Mọi adapter/migration cần mapping mất mát, version và review riêng.
+`signals.json (v2.signals.1) → contexts.json (v2.contexts.1)`, độc lập CLI. Customer Identity chỉ có audience_segment, context, situation, life_or_business_stage, user_buyer_distinction (optional). Không có final segment/corpus clustering. Cùng source có thể có zero/multiple context candidates. Unknown hợp lệ, không infer identity từ topic video hoặc metadata tác giả.
 
-Lựa chọn database hay file, API hay artifact, thuật toán clustering/ranking, model, CLI và UI chưa được chốt. Không triển khai adapter, schema executable, validator, prompt, migration hoặc feature flag trong Phase 0. [05-ROADMAP.md](05-ROADMAP.md) chỉ mô tả hướng đi sau review.
+Reuse source snapshot/hash, source-span validation, truth type OBSERVED/DERIVED và issues của Phase 1. Model trả field/evidence_quote/truth_type/confidence theo comment ID; code tạo claim từ exact validated source span. Không paraphrase demographics, không sinh HYPOTHESIS/PROPOSED, content hay product opportunity trong Phase 2.
+
+## Phân biệt CURRENT STATE và thiết kế đích
+
+Audit baseline mô tả legacy, không chứng nhận kiến trúc mới đã chạy. Kiến trúc tuyến tính cũ DEC-011 được thay bởi DEC-024/025 theo yêu cầu trực tiếp; giữ lịch sử trong DECISIONS/CHANGELOG. Phase 1 chạy độc lập; Phase 2 chỉ thêm context. Mọi tầng sau đó cần phạm vi review riêng.

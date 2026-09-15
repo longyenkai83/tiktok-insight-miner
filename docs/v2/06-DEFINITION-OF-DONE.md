@@ -1,5 +1,16 @@
 # 06 — DEFINITION OF DONE
 
+## Phase 2 — điều kiện bàn giao cho architect review
+
+- Official architecture có shared engine và hai mode Content Research/Product Discovery; đủ DEC-024–032 và evidence-first product rules.
+- signals.json v2.signals.1 làm input trực tiếp, contexts.json v2.contexts.1 có đúng năm B2C identity fields; zero context hợp lệ.
+- Mọi claim có source comment ID/hash/span/quote/confidence/truth type; quote kiểm bằng code, claim tạo từ nguồn. Chỉ OBSERVED/DERIVED.
+- Unknown/missing/duplicate result IDs có lỗi rõ; một item lỗi không làm mất item tốt; không fabricated demographics/context.
+- Không clustering/final segment/pattern frequency/insight/content/product generation/router; không bắt đầu Phase 3.
+- Offline tests cho năm field, multiple/zero/ambiguous, grounding/IDs/truth types, serialization và Phase 1/legacy compatibility; full suite xanh.
+- Mẫu 50 comment cùng Phase 1 khi có data/credentials, metrics theo field, local review 10 ví dụ; không commit private data, không đặt pass threshold.
+- Cập nhật docs/state, commit/push nhánh Phase 2; IMPLEMENTED — PENDING ARCHITECT REVIEW, Next Phase = DO NOT START.
+
 ## Phase 1 — sẵn sàng cho architect review
 
 - Raw Comment/raw_comments.json chạy trực tiếp qua CLI extract-signals và xuất signals.json có version/provenance.
