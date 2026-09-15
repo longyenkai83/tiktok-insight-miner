@@ -1,5 +1,44 @@
 # 01 — ARCHITECTURE
 
+## Phase 4 — Evidence + Insight Candidates
+
+`patterns.json → revalidate Phase 1–3 provenance → closed-pattern-ID synthesis → code guards → separate semantic review → code-built evidence bundle → insights.json`.
+Independent build-insights CLI. No change to legacy run or Phase 1–3 behavior.
+
+Evidence Engine resolves patterns to exact refs and deterministic support, profile links,
+scope, variants and possible counter-evidence. No model-created quotes, members or metrics.
+Insight Engine synthesizes a DERIVED relationship/tension rather than renaming a label.
+Single-pattern and cross-pattern candidates are allowed; different speakers do not imply
+co-occurring traits, causality or hidden motivation within one person.
+
+Source-grounded means valid provenance. Evidence-backed means supported derivation within
+cited corpus after structural/lexical checks and a separate fallible semantic review.
+Neither is human-verified, market-validated or purchase-validated. The historical
+“Verified Insight” target stage is not an automatic Phase 4 certification: current output
+is pending_human_review with the latter three flags fixed false. Human consequential
+approval and stronger evidence remain future gates. No final priority ranking.
+
+## Business OS and future integration — ACCEPTED design, not runtime
+
+Customer Intelligence is the first sensing/understanding layer of an AI-native Business OS;
+see [11-BUSINESS-OS-NORTH-STAR.md](11-BUSINESS-OS-NORTH-STAR.md). Reusable core and portable,
+platform-neutral contracts support internal use → proven workflow → standardize → productize
+→ distribute. Human Governor approves consequential decisions; mechanical low-risk steps
+do not each require approval. No multi-tenancy or package rename in Phase 4.
+
+Source adapters (TikTok, Facebook Page comments/inbox, Group/comments, manual paste,
+CSV/Excel, future YouTube/others) → Normalized Evidence → shared engine. Continuous/daily
+owned-source ingestion is separate from periodic/manual analysis. Future store is idempotent,
+durable-ID-first with hash protection, NEW/PROCESSING/PROCESSED/FAILED/IGNORED and batch trace.
+Do not implement that state management or YouTube now.
+
+Future direct Reelo route: Verified Insight → Content Opportunity → Human Selection → typed
+Content Intelligence Packet → direct ingestion → Writer → Critic → Output. This condensed
+transport route retains existing Topic/Angle gates. Drive is legacy compatibility/backup,
+not primary V2 transport; brief.md is not a contract. Preserve /nap-insight dedupe,
+supersession, provenance and human approval for conflicting knowledge replacement.
+No Reelo API/adapter implementation in Phase 4.
+
 ## Phase 3 — implemented, pending architect review
 
 `signals.json + contexts.json → closed claim catalog → similarity relations → deterministic complete-link groups → patterns.json`.

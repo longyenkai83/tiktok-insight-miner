@@ -1,10 +1,10 @@
 # V2 SOURCE-OF-TRUTH — bắt buộc trước khi sửa code
 
-Mọi coding agent **bắt buộc đọc đủ mười một file từ [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) đến [10-STRATEGYZER-FOUNDATIONS.md](docs/v2/10-STRATEGYZER-FOUNDATIONS.md) trước khi sửa code, đặc biệt trước architecture/product-logic changes**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
+Mọi coding agent **bắt buộc đọc đủ mười hai file từ [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) đến [11-BUSINESS-OS-NORTH-STAR.md](docs/v2/11-BUSINESS-OS-NORTH-STAR.md) trước khi sửa code, đặc biệt trước architecture/product-logic changes**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
 
-Strategyzer foundations là explicit architecture dependency. **If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.** Không âm thầm diễn giải lại quyết định/nguyên tắc để hợp thức hóa implementation.
+Strategyzer foundations và Business OS north star là explicit architecture dependencies; đọc đủ docs/v2/00–11. **If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.** Không âm thầm diễn giải lại quyết định/nguyên tắc để hợp thức hóa implementation.
 
-Current Phase = Phase 3 — Pattern Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép Phase 3 qua DEC-033 trên base 62b03a2. Chỉ candidate patterns, language bank, context variants và possible contradictions; không final segmentation/Verified Insight/content/product generation/router. Giữ Phase 1/2 và default legacy compatibility. **Do not start Phase 4. Wait for architecture review.**
+Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ evidence-backed Insight Candidates pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
 
 Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Test xanh hoặc push code không tự mở phase kế tiếp.
 

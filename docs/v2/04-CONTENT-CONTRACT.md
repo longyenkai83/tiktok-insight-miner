@@ -1,5 +1,14 @@
 # 04 — CONTENT CONTRACT
 
+## Phase 4 architecture memory — future direct transport
+
+DEC-039 selects typed direct Reelo ingestion/API or equivalent structured handoff.
+Drive remains legacy compatibility/backup, not the primary V2 bridge. Retain this
+contract's Topic/Angle/Human Selection and allowed-claim gates, dedupe/supersession/
+provenance and human approval for replacing contradictory customer knowledge.
+No Reelo integration is implemented in Phase 4; insights.json is not itself a Content
+Intelligence Packet and pending_human_review candidates are not Writer-ready facts.
+
 ## Quy tắc đã chốt và phạm vi đề xuất
 
 Insight → Reelo bắt buộc dùng typed Content Intelligence Packet. Content chỉ được tạo sau Insight; Angle/Topic là các đề xuất biên tập sau Insight, Human Selection nằm sau Angle. Writer được sáng tạo cách diễn đạt, không sáng tạo customer truth. Đây là nguyên tắc ACCEPTED; cấu trúc serialize, lỗi và kết quả cụ thể dưới đây là PROPOSED cho review, chưa được cài vào runtime.

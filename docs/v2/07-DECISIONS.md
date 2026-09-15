@@ -85,6 +85,41 @@ threshold, importance score, automatic verification or final segmentation.
 These implementation choices resolve only the Phase 3 slice of DEC-016/017;
 semantic quality remains subject to review.
 
+## Phase 4 — ACCEPTED scope and product decisions
+
+- DEC-035: The owner's direct instruction to execute the Phase 4 file authorizes
+  `v2-phase-4-evidence-insight` from `6b743fd3c21cee57c5cb8b4846d82dfed5582ca0`.
+  Supersedes the Phase 4 gate in DEC-033; does not approve every Phase 3 semantic
+  finding. Implement Evidence + Insight Candidates, not Phase 5 or downstream modes.
+- DEC-036: Customer Intelligence is the first layer of a productizable Business OS.
+  Agents execute; evidence informs; the human Governor approves consequential
+  decisions. Typed contracts/provenance/status/state/IDs connect specialist agents.
+  [North star](11-BUSINESS-OS-NORTH-STAR.md) is an explicit architecture dependency.
+- DEC-037: Source architecture is platform-neutral: adapters → Normalized Evidence
+  → shared engine. Preserve legacy package naming; no YouTube/multi-tenancy now.
+- DEC-038: Continuous ingestion and periodic/manual analysis are separate.
+  Future source state NEW/PROCESSING/PROCESSED/FAILED/IGNORED is idempotent,
+  durable-ID-first, hash-protected and batch-traceable. No ingestion-state runtime now.
+- DEC-039: Drive is not the primary V2 Reelo bridge. Prefer typed direct packet/API
+  or equivalent structured handoff; retain dedupe/supersession/provenance and human
+  approval for conflicting knowledge replacement. Keep existing Topic/Angle gates;
+  no Reelo implementation in Phase 4, no brief.md contract.
+- DEC-040: Source-grounded, evidence-backed, human-verified, market-validated and
+  purchase-validated are separate properties. Phase 4 emits DERIVED customer
+  understanding pending human review. Text describing behavior/payment is still
+  customer_speech; no automatic evidence promotion, demand claim or importance score.
+
+## DEC-041 — Phase 4 validation choices — PENDING ARCHITECT REVIEW
+
+Closed pattern-ID synthesis transport; code constructs all refs, metrics, scope,
+profile links and preserves variants/counters. Deterministic checks reject broken
+IDs/relationships, numeric/generalized/demographic/solution leakage and shallow
+label copies. A separate semantic review pass must support each candidate against
+its supplied evidence before acceptance; machine review is not human verification.
+Replay validates persisted code-derived fields. Semantic entailment is not provable
+by substring/regex checks alone; limitations and rejected candidates remain visible.
+Conservative lexical guards and bounded provider limits require quality review.
+
 ## Chưa quyết định — không được coi là quyền triển khai
 
 | ID | Trạng thái | Nội dung cần review |

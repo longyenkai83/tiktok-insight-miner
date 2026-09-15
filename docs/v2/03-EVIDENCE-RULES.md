@@ -1,5 +1,33 @@
 # 03 — EVIDENCE RULES
 
+## Phase 4 — evidence-backed does not mean human/market/purchase validated
+
+Revalidate complete Phase 3 snapshot before synthesis. Unknown/duplicate pattern IDs,
+orphan candidates, broken hashes/refs or impossible category/path relationships cannot enter
+accepted output. Code builds exact refs/metrics/profile links/scope; model cannot supply
+replacement quotes, comments or numbers. Preserve upstream failures separately from new issues.
+
+Code rejects numeric assertions in candidate prose (including percentages), known population/
+demand generalizations, unprovided demographic/name indicators, solution/content proposals,
+quoted prose (including paired single quotes) and exact label/source copies. These EN/VI lexical gates are conservative and may
+over-reject; they are not a complete natural-language proof. Existing sourced solution use
+may be described as customer experience, never turned into a recommendation or Value Map.
+
+A separate semantic review must assess each exact candidate against all selected source
+wording/context/counters. All support/usefulness/scope/no-causality/no-demographic/no-solution/
+no-market-leak checks must pass; missing/stale/changed-support reviews reject. Semantic review
+is machine judgment, not replacement for evidence or human judgment. Unsupported hidden
+psychology and claims about the same people from disjoint speakers must be rejected.
+
+Even accepted output is scoped to cited comments, DERIVED and pending_human_review.
+Comments/inbox/interview text, including self-reported buying, are customer_speech; human,
+market and purchase flags remain false. No frequency → demand, confidence percentage or
+importance score. Keep possible contradictions and context variants; do not use review
+approval to erase inconvenient evidence. Stronger future evidence requires typed provenance.
+
+Manual review explicitly checks OVERCLAIM, SHALLOW, FALSE CAUSALITY, CONTEXT LEAK,
+SOLUTION LEAK and GOOD INSIGHT. No numeric pass threshold and no automatic Phase 5 gate.
+
 ## Phase 3 — membership, support và giới hạn ngữ nghĩa
 
 Input phải khớp artifact hash và từng joined source hash, không tự chữa mismatch. Một context thiếu không chặn signals; orphan context không được tạo pattern. Input partial/error và validation issues được giữ trong snapshot/envelope, không biến lỗi extraction thành bằng chứng hoàn chỉnh.

@@ -1,63 +1,72 @@
 # 08 — PROJECT STATE
 
-Current Phase = Phase 3 — Pattern Engine
+Current Phase = Phase 4 — Evidence + Insight Engine
 
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 
 Next Phase = DO NOT START
 
-Do not start Phase 4. Wait for architecture review.
+Do not start Phase 5. Wait for architecture review.
 
 ## Phạm vi đã thực hiện
 
-- Base `v2-phase-2-customer-context@62b03a26e4c48b971b209d6f55eccdd025ec0ff0`; branch `v2-phase-3-pattern-engine`, authorization DEC-033; implementation DEC-034 chờ review.
-- signals.json v2.signals.1 + contexts.json v2.contexts.1 → patterns.json v2.patterns.1. Reuse source/hash/span validators, revalidate artifact compatibility, giữ upstream issues. Không thay extraction Phase 1/2.
-- Closed catalog + category/field-bounded semantic relation adapter + deterministic complete-link grouping; global possible-counter-evidence pass; extractive DERIVED labels, context/wording variants, exact language bank và deterministic support với missing coverage.
-- Serialization replay kiểm membership/quote/hash/support/labels. Chỉ candidate; không final segmentation, Verified Insight, demand, opportunity, content, topic, angle, Reelo, router hoặc Phase 4.
-- CLI độc lập: `tim build-patterns --signals signals.json --contexts contexts.json -o patterns.json [--model MODEL] [--exact-only]`.
-- Default legacy runtime behavior changed: **NO**. Không sửa classifier/run, signal/context extraction, dependencies, default configs, bank/selection hoặc Reelo. Runtime mới chỉ qua command/API Pattern riêng.
-- Strategyzer foundations tiếp tục là explicit architecture dependency; agents phải đọc đủ 00–10 và STOP/report nếu xung đột accepted decisions/foundations.
+- Base `v2-phase-3-pattern-engine@6b743fd3c21cee57c5cb8b4846d82dfed5582ca0`; branch `v2-phase-4-evidence-insight`. Authorization DEC-035; architecture DEC-036–040, implementation DEC-041 pending review.
+- Thêm Evidence models/engine và Insight models/engine/validator; `patterns.json v2.patterns.1 → insights.json v2.insights.1`, CLI build-insights độc lập.
+- Revalidate source/hash/refs, code-built evidence/profile links/scope/support/variants/counters, closed pattern-ID transport, deterministic guards, separate semantic review and per-statement-part pattern mapping with code offsets. Output replay validation; conservative dedupe.
+- Insight Statement DERIVED, pending_human_review. Source-grounded/evidence-backed là đánh giá trong workflow; human_verified, market_validated, purchase_validated luôn false. Text kể chuyện mua/hành vi vẫn là customer_speech.
+- Không priority score, Content/Product Opportunity, Topic/Angle/hook/script, Value Map, offer, experiment, Reelo integration, ingestion state, YouTube, multi-tenancy hoặc rename legacy package.
+- Default legacy runtime behavior changed: **NO**. Phase 1–3 modules/behaviors, dependencies và legacy run giữ nguyên; runtime mới chỉ qua command/API Insight riêng.
 
-## Tests và kiểm chứng
+## Architecture memory
 
-- `python -m pytest tests -q -p no:cacheprovider` -> **225 passed in 1.41s** (Python 3.13.15 / pytest 8.4.2).
-- **47 new offline cases**; all 178 tests from the Phase 2 base remain green. No live AI dependency in tests.
+- [11-BUSINESS-OS-NORTH-STAR.md](11-BUSINESS-OS-NORTH-STAR.md): Customer Intelligence là lớp đầu của AI-native Business OS; agents execute, evidence informs, human Governor approves consequential decisions.
+- Productization/distribution, reusable core/configurable layers, portable platform-neutral typed contracts/provenance/state/IDs là target; không triển khai multi-tenancy.
+- Multi-source adapters → Normalized Evidence → shared engine. Continuous/daily ingestion tách khỏi periodic/manual analysis; future source store idempotent/durable-ID-first/hash-protected, status và batch trace, retry FAILED. YouTube là backlog.
+- Direct typed Reelo packet/API hoặc structured handoff là target, Drive chỉ legacy compatibility/backup; giữ Topic/Angle/Human Selection, dedupe/supersession/provenance/conflict approval. Chưa tích hợp runtime.
+- Strategyzer và Business OS north star là architecture dependencies. AGENTS/CLAUDE yêu cầu đọc đủ 00–11 và STOP/report nếu conflict; Human Governor không phải gate cho từng thao tác cơ học ít rủi ro.
 
-- Offline fixtures/mocks: semantic grouping và separation, complete-link chống chain merge, context variants, corpus language, author/comment dedup, metrics null/known zero, provenance/serialization/tamper, invalid members/relations/truth types, API errors/transport scoping, CLI và compatibility.
-- Full source snapshots cùng 50 comments đã đối chiếu; không re-extract hoặc scrape. Save/load replay kiểm deterministic artifact.
-- Diff runtime chỉ thêm ba modules Pattern và command/parser riêng; Phase 1/2 và default legacy code không đổi. Không private sample/secret vào commit.
+## Tests
+
+`python -m pytest tests -q -p no:cacheprovider` → **297 passed in 2.17s** (Python 3.13.15 / pytest 8.4.2).
+
+**72 new offline cases**, toàn bộ 225 tests từ base vẫn xanh. Bao gồm single/cross-pattern, closed IDs, source/metric/tamper, scope, negative demographics/numbers/solutions/truth flags, counter/variation preservation, semantic review failures, part support mapping, dedupe, API/CLI và compatibility. Không live AI dependency trong tests.
 
 ## Real-data review — same 50 saved comments
 
-Model semantic: `claude-opus-4-7`; adapter `phase3.relations.3`. Semantic status = complete; 154 accepted relations; không relation rejection mới. Tám `ungrounded_quote` issues của input được giữ riêng theo phase: Phase 1 = 4, Phase 2 = 4. CLI sẽ trả exit 2 để làm rõ upstream issues, dù semantic pass complete.
+Model `claude-opus-4-7`, transport `phase4.synthesis_review.2`. Input 85 patterns nguyên trạng từ Phase 3; source snapshots không đổi. Semantic synthesis/review completed; CLI exit 2 vì có rejection/upstream issues.
 
 | Metric | Count |
 |---|---:|
-| Patterns | 85 |
-| Singleton patterns | 64 |
-| Patterns with 2+ comments | 21 |
-| Patterns with 3+ comments | 10 |
-| Patterns with possible contradictions | 15 |
-| Patterns with wording variations | 28 |
-| Exact language-bank phrases | 17 |
-| Exact phrases repeated across comments | 0 |
+| Patterns input | 85 |
+| Candidates proposed | 24 |
+| Insight candidates accepted by machine checks | 12 |
+| Single-pattern insights | 0 |
+| Cross-pattern insights | 12 |
+| With possible contradictions | 8 |
+| With cited narrow-context fields | 12 |
+| Rejected candidates | 12 |
+| Deduplicated candidates | 0 |
 
-Top 10 support counts: **7, 5, 4, 4, 4, 4, 3, 3, 3, 3**. Labels, original quotes, contexts, counter-refs và 10 representative patterns nằm trong local review; không copy customer data vào docs/Git. Pattern count có thể lớn hơn comment count vì multi-signal, nhiều category/context fields và singleton candidates. Không có numeric success threshold.
+New issue counts: impossible_relationship=8; invalid_review_support=1; semantic_overclaim=1; invalid_part_support=1; unsupported_demographic=1. Upstream ungrounded_quote=8 (Phase 1=4, Phase 2=4).
 
-Local artifact:
+Narrow-context count chỉ nói có context field được dẫn, không chứng nhận final segment hoặc statement đã giữ scope hoàn hảo. Cả 12 candidates có across_corpus scope, không có comment chung cho toàn bộ selected pattern set. Không suy cùng người/cùng causal sequence từ tổng số nguồn. Không có numeric pass threshold; single-pattern support được kiểm offline, không bịa ví dụ thật.
 
-`D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase3-worktree/output/phase3-pattern-review/phase3-pattern-review.md`
+Local-only artifact:
 
-Cùng folder có patterns.json, metrics.json, semantic response và diagnostic runs. Tất cả thuộc ignored output/. File bàn giao có 10 representative patterns, mỗi pattern ít nhất ba source comments, và manual findings.
+`D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase4-worktree/output/phase4-insight-review/phase4-insight-review.md`
 
-## Known issues / cần architect review
+Gồm 10 representative candidates có ít nhất ba source comments, 3–5 exact quotes mỗi candidate, links/scope/summary/variants/counters/kind/limits/flags, statement-part refs và manual findings. Hai accepted cases hẹp hơn được ghi bổ sung. Cùng folder có insights.json, metrics.json và model transports. Tất cả ignored; không commit private data.
 
-- Semantic relations vẫn do model đánh giá: có nhóm context/problem quá rộng và các nhóm nhỏ có thể bị tách do thiếu complete-link pairs. Test provenance không chứng minh grouping đúng.
-- Extractive shortest-quote label không thêm facts nhưng có thể quá ngắn, không đại diện hết members; cần đọc variations/full source trước diễn giải.
-- Một số upstream spans là advice/promotion/đoạn câu ngắn, không self-report chắc chắn. Giữ nguyên và ghi review; không tự sửa Phase 1/2 hoặc suy author identity.
-- Counter-evidence là possible relationship giữa những nguồn/situations khác nhau, chưa xác minh mâu thuẫn thực. Context variants chưa là final segment.
-- Author identifiers có thể là aliases; không bảo đảm số người thật. Dedup theo source_record_id, chưa phát hiện repost khác ID. Missing metadata không được khôi phục.
-- Semantic adapter giới hạn 200 accepted claims / 180,000 ký tự transport; vượt giới hạn hoặc API lỗi xuất exact baseline có error/exit 2, không silently truncate. Corpus lớn hơn cần review partition/scaling policy.
-- Không blocker kỹ thuật để bàn giao review. Những giới hạn chất lượng trên không phải quyết định chấp nhận kiến trúc hoặc quyền mở Phase 4.
+## Known issues / architect review bắt buộc
+
+- **Manual inspection phát hiện OVERCLAIM, FALSE CAUSALITY và CONTEXT LEAK vẫn qua semantic reviewer.** Ví dụ ở mức loại lỗi: suy động cơ tự bảo vệ/đặc điểm bẩm sinh; ghép trải nghiệm khác người thành cohort; coi lời nhắm audience trong promotion/advice là self-report. Không coi machine acceptance/evidence_backed flag là semantic guarantee hoặc customer truth đã duyệt.
+- Một số statements còn SHALLOW hoặc dùng từ phổ quát/mức độ mạnh hơn evidence. Per-part mappings kiểm ID/range/coverage, không tự chứng minh entailment. Grounding và máy review không thay human judgment.
+- Tám relationship mismatch bị chặn; model có thể chọn relation label không khớp các category/path thực sự được chọn. Code không tự đổi label để salvage. Guards EN/VI có thể over-reject hoặc bỏ sót cách diễn đạt khác; số liệu trong generated prose bị chặn bảo thủ dù nguồn có số.
+- Deterministic dedupe chỉ xử lý normalized near-identical wording + same support/type. Paraphrase cùng ý nhưng khác wording/support có thể còn trùng; không merge chỉ vì giống keywords.
+- Scope/support kế thừa hạn chế Phase 3 và nguồn: aliases không chứng minh số người thật; repost khác ID chưa dedup; thiếu metric là unknown. Counter-evidence là possible relation, không proof đối phương sai.
+- EvidenceKind enum chuẩn bị future evidence nhưng runtime hiện chỉ customer_speech; flags human/market/purchase chưa thể bật bằng tự thuật hoặc model approval.
+- Limits: 200 patterns, 300,000 characters/request, review batches six; vượt giới hạn/API/truncation lỗi hiện rõ, không truncate ngầm. Không triển khai scaling/ingestion ở đây.
+
+Không blocker kỹ thuật cho bàn giao nhánh review. Các lỗi chất lượng ngữ nghĩa nêu trên cần kiến trúc sư đánh giá trước khi chấp nhận hoặc mở phase tiếp theo.
 
 STOP. Next Phase = DO NOT START.

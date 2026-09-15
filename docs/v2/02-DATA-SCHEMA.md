@@ -1,5 +1,76 @@
 # 02 — DATA SCHEMA
 
+## Phase 4 — executable `v2.insights.1`
+
+Strict envelope: schema_version, generated_at UTC, method=closed_patterns_semantic_review.1,
+producer/model/prompt version, input_patterns_hash and embedded v2.patterns.1 snapshot,
+synthesis_status complete/error, insights, candidate outcomes, upstream_issues and new
+validation_issues. Full artifact is private/local; never commit source snapshots.
+
+Transport: candidates[{insight_candidate_id, support_pattern_ids, relationship_type,
+concise_statement}]. No model quotes/comments/metrics/demographics/truth override fields.
+Short pattern IDs are exact-mapped in synthesis and review transports; unknown IDs rejected,
+never fuzzy repaired. Invalid item rejected separately; valid items survive. Duplicate
+candidate IDs reject all affected candidates; duplicate support IDs reject the candidate.
+
+Relationship types: single_pattern; job_pain; pain_behavior; pain_gain; situation_pain;
+stage_decision; current_solution_frustration; language_behavior; pattern_relationship.
+Code checks category/path compatibility. Pattern_relationship covers a supported form not
+captured by the specific examples, not permission for unconstrained speculation.
+
+Separate semantic review binds candidate ID/hash and unchanged support IDs to supported,
+adds_understanding, scope_preserved, no_unsupported_causality, no_demographic_leak,
+no_solution_leak, no_market_generalization and reason_code. Every check must pass. Code splits statement parts at sentence/semicolon boundaries;
+review returns one closed pattern-ID mapping per part. Missing/duplicate/unprovided part
+or pattern mappings reject. Final statement_support uses code-computed Unicode offsets
+and validated pattern IDs for each part, including the scope-prefix offset.
+Missing/duplicate/unknown/invalid review cannot approve a candidate. A saved review is a
+machine assessment, not a human signature or objective entailment proof.
+
+Insight: deterministic insight_id; statement{text,truth_type=DERIVED}; relationship_type;
+support_pattern_ids; customer_profile_links (jobs/pains/gains/behavior/language/context →
+existing pattern IDs only); scope; evidence_summary; exact evidence_refs; variations;
+possible contradictions; verification; evidence_kind; limitations; pending_human_review;
+semantic_review, statement_support and validation_issues. Code adds a cited-evidence scope prefix to statement.
+All evidence fields are assembled from selected input patterns, not model output.
+
+Scope: population=cited_source_comments_only, source_comment_ids, shared_comment_ids,
+relationship_scope=within_comments/across_corpus, five B2C context arrays and missing context.
+Shared means intersection of supporting patterns' comment sets; it does not mean every
+member expresses the whole relationship. No intersection forbids within-person inference;
+scope explicitly limits interpretation to corpus comparison. Context variants remain separate.
+
+evidence_summary reuses Phase 3 Support: distinct source comments/authors/videos, totals null
+when any source metric is unknown, known sums and missing coverage. A source present in
+several patterns contributes once. Counter-evidence does not inflate supporting count unless
+its source is also explicitly in another selected support pattern; such tension stays visible.
+
+EvidenceKind vocabulary: customer_speech/customer_behavior/commitment/payment/market_behavior.
+Current v2.patterns.1 sources only support customer_speech, including text self-reporting
+behavior or payment. No promotion from platform/name/keywords. Future stronger evidence needs
+typed observations and a separately reviewed adapter/schema; enum existence is not proof.
+
+Verification is source_grounded=true, evidence_backed=true only for accepted candidates;
+human_verified=false, market_validated=false, purchase_validated=false are enforced literals.
+Outcome status accepted/rejected/deduplicated preserves candidate, issues and review binding;
+deduplicated items reference the kept insight. Rejected malformed transport is not imported
+as customer truth. Reader revalidates nested provenance and replays deterministic fields,
+statement construction, review binding, code guards and dedupe. Hashes are not signatures.
+
+Dedupe requires identical sorted support IDs, relationship type and ordered normalized
+statement tokens (Unicode NFKC, case/whitespace/punctuation). Different wording order,
+negation or scope is not merged merely for sharing keywords; semantic paraphrase dedupe is
+not implemented. Numeric assertions are conservatively rejected from generated prose;
+measured numbers remain in code-generated evidence_summary and exact source context.
+
+CLI: `tim build-insights --patterns patterns.json [-o insights.json] [--model MODEL]`.
+Model explicit → INSIGHT_MODEL → ANTHROPIC_MODEL → existing default. Output defaults beside
+input; no input overwrite. Exit 0 completed/no issues; 2 rejected candidates, upstream/new
+issues or provider failure; 1 malformed input/output. Complete refers to finished processing,
+not universal candidate acceptance. Empty valid results are allowed, not filled to a quota.
+Provider limits: 200 patterns, 300,000 characters per request; explicit error, no truncation.
+Semantic review batches of six; limits are transport bounds, not numeric quality thresholds.
+
 ## Phase 3 — executable schema `v2.patterns.1`
 
 `pattern_models.py` là contract strict, extra fields bị từ chối. Input Phase 1/2 không đổi schema hoặc extraction behavior.

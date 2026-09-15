@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 4 Evidence + Insight Engine / Business OS memory
+
+- DEC-035 mở Phase 4 trên base 6b743fd; DEC-036–040 ghi Business OS, human Governor, productization, platform-neutral sources, future incremental ingestion và direct typed Reelo handoff. Thêm 11-BUSINESS-OS-NORTH-STAR; agents đọc 00–11. Không triển khai future integrations.
+- Thêm five Evidence/Insight modules và CLI build-insights độc lập, schema v2.insights.1. Closed pattern IDs, code-derived evidence/metrics/profile/scope, per-part support mapping, separate semantic review, replay validation và conservative dedupe. Chỉ DERIVED candidates pending_human_review, không human/market/purchase validation.
+- Full suite: 297 passed, 72 new offline cases; Phase 1–3 và default legacy runtime không đổi.
+- Same 50-comment input: 85 patterns → 24 proposals → 12 machine-accepted / 12 rejected; 0 single-pattern / 12 cross-pattern, 8 with possible contradictions, 12 with context fields. Giữ 8 upstream quote issues; no numeric pass threshold.
+- Local-only review 10 representatives và supplemental cases ghi cả OVERCLAIM/CONTEXT LEAK/causality misses của máy reviewer. Source grounding không chứng minh semantic entailment; không coi đây là customer truth đã duyệt.
+- State Phase 4 — IMPLEMENTED — PENDING ARCHITECT REVIEW; Next Phase DO NOT START. Không mở Phase 5, không merge main, không private sample vào Git.
+
 ## 2026-09-15 — Phase 3 Pattern Engine, pending architect review
 
 - DEC-033 cho phép Phase 3 trên base 62b03a2; DEC-034 ghi lựa chọn implementation cần review. Final segmentation giữ ở downstream; không mở Phase 4.

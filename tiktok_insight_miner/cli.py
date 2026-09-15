@@ -153,6 +153,25 @@ def cmd_fb_fetch(args: argparse.Namespace) -> None:
     print("👉 Bước tiếp: tim classify -i <file này> -o classified.json")
 
 
+def cmd_build_insights(args: argparse.Namespace) -> None:
+    """Independent Phase 4 command. Legacy run is unchanged."""
+    from tiktok_insight_miner.pattern_engine import load_patterns_json
+    from tiktok_insight_miner.insight_engine import AnthropicInsights, build_insights, save_insights_json
+    source = Path(args.patterns)
+    output = Path(args.output) if args.output else source.with_name("insights.json")
+    if source.resolve() == output.resolve():
+        sys.exit("Output must not overwrite patterns input")
+    try:
+        result = build_insights(load_patterns_json(source), provider=AnthropicInsights(model=args.model))
+        save_insights_json(result, output)
+    except (OSError, ValueError) as exc:
+        sys.exit(f"Insight input/output error: {type(exc).__name__}")
+    rejected = sum(o.status == "rejected" for o in result.outcomes)
+    print(f"Insights: {len(result.insights)}; rejected={rejected}; synthesis={result.synthesis_status} -> {output}")
+    if rejected or result.validation_issues or result.upstream_issues or result.synthesis_status == "error":
+        sys.exit(2)
+
+
 def cmd_build_patterns(args: argparse.Namespace) -> None:
     """Independent Phase 3 command; semantic mode is explicit in the artifact."""
     from tiktok_insight_miner.signal_extractor import load_signals_json
@@ -847,6 +866,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_fb.add_argument("--probe", action="store_true", help="Chỉ in response thô mẫu để đối chiếu field, không ghi file")
     p_fb.add_argument("-o", "--output", type=str, default="output/fb_raw_comments.json", help="File JSON đầu ra")
     p_fb.set_defaults(func=cmd_fb_fetch)
+
+    p_insights = sub.add_parser("build-insights", help="V2: evidence-backed Insight Candidates")
+    p_insights.add_argument("--patterns", required=True)
+    p_insights.add_argument("-o", "--output")
+    p_insights.add_argument("--model")
+    p_insights.set_defaults(func=cmd_build_insights)
 
     p_patterns = sub.add_parser("build-patterns", help="V2: candidate patterns from signals and contexts")
     p_patterns.add_argument("--signals", required=True)

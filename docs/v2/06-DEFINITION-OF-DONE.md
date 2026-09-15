@@ -1,5 +1,28 @@
 # 06 — DEFINITION OF DONE
 
+## Phase 4 — ready for architect review only
+
+- Business OS north-star memory and DEC-035–041 recorded; agents read 00–11.
+- patterns.json feeds independent Evidence/Insight Engine and emits v2.insights.1.
+- Single/cross-pattern candidates express a supported relationship/tension; no renamed-label
+  shortcut. Pattern-ID-only synthesis, code-built refs/metrics/profile/scope, separate review.
+- Provenance, exact quotes, context variants, possible contradictions and unknown metrics
+  remain intact. No invented demographics/numbers/causality/customer demand.
+- DERIVED, pending_human_review, source-grounded/evidence-backed separated from human/market/
+  purchase flags false. Current speech never auto-promoted to purchase evidence.
+- No priority score, content/product opportunity, topic/angle/hook, Value Map, experiment,
+  Reelo integration, ingestion state, YouTube, multi-tenancy or default legacy change.
+- Offline cases cover positive/negative validation, semantic-review failures, dedupe,
+  tamper/serialization and Phase 1–3/legacy compatibility; full tests pass.
+- Same 50-comment sample when available; report metrics and local-only 10 representative
+  insights with manual overclaim/shallow/causality/context/solution/usefulness inspection.
+  Fewer real examples must be reported honestly, not invented to meet a quota.
+- Docs/state updated, no private data/secrets committed, commit/push Phase 4 branch,
+  no merge main. IMPLEMENTED — PENDING ARCHITECT REVIEW; Next Phase = DO NOT START.
+
+Earlier phase sections below are historical delivery scopes, superseded by DEC-035 for
+Phase 4 authorization, not declarations that earlier semantic findings are now validated.
+
 ## Phase 3 — điều kiện bàn giao cho architect review
 
 - Signals + compatible contexts tạo patterns.json v2.patterns.1; missing context hợp lệ, orphan không tự tạo pattern.

@@ -64,6 +64,8 @@ Product Opportunity là **PROPOSED**, không phải validated demand. Chuỗi n�
 
 ## Cách dùng và phase gate
 
-Trước thay đổi architecture/product logic, đọc đủ `docs/v2/00`–`10`, đối chiếu quyết định, bằng chứng và phạm vi được phép. Nếu implementation mâu thuẫn accepted decisions hoặc Strategyzer foundations: **STOP and report**; không âm thầm diễn giải lại nền tảng để hợp thức hóa code.
+Trước thay đổi architecture/product logic, đọc đủ `docs/v2/00`–`11`, đối chiếu quyết định, bằng chứng và phạm vi được phép. Nếu implementation mâu thuẫn accepted decisions hoặc Strategyzer foundations: **STOP and report**; không âm thầm diễn giải lại nền tảng để hợp thức hóa code.
 
-Current Phase = Phase 3 — Pattern Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép Phase 3 qua DEC-033 trên base 62b03a2. Chỉ candidate patterns, language bank, context variants và possible contradictions; không final segmentation/Verified Insight/content/product generation/router. Giữ Phase 1/2 và default legacy compatibility. **Do not start Phase 4. Wait for architecture review.**
+Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ evidence-backed Insight Candidates pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
+
+Business OS north star bổ sung kiến trúc dài hạn tại [11](11-BUSINESS-OS-NORTH-STAR.md), không thay nền tảng Strategyzer. Phase 4 giữ Customer Profile side; evidence-backed candidate không tự là human/market/purchase validated.
