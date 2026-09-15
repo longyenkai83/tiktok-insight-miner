@@ -18,13 +18,38 @@ Do not start Phase 2. Wait for architecture review.
 
 ## Kiểm chứng
 
-- Full suite: `python -m pytest tests -q -p no:cacheprovider` → **127 passed in 1.21s**, Python 3.13.15 / pytest 8.4.2 (2026-09-15).
-- 37 test cases mới: 36 cho extractor/CLI/provenance/serialization/error handling và 1 regression classifier. Tất cả dùng fixture tổng hợp/mock; không test nào gọi API thật. 90 existing tests vẫn pass.
+- Phase 1.1 quality patch trên base `8a63f6fbeff25bb9a24a5c33033ff7bc9e279058`, cùng nhánh Phase 1. Candidate không sinh claim; code tạo claim từ exact source span đã hợp lệ. Không nới grounding.
+- Full suite: `python -m pytest tests -q -p no:cacheprovider` → **130 passed in 1.55s**, Python 3.13.15 / pytest 8.4.2 (2026-09-15).
+- 40 cases mới so với baseline 90: 39 cho extractor/CLI/provenance/serialization/error handling và 1 regression classifier. Tất cả dùng fixture tổng hợp/mock; không test nào gọi API thật. 90 existing tests vẫn pass.
 - Kiểm `extract-signals --help`, diff whitespace, link tài liệu và phạm vi legacy không đổi.
 
-- Mẫu thật cục bộ: **50 processed; ok=1, no_signal=5, partial=44, error=0; 82 claims rejected**.
-- Artifact không commit: `D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase1-worktree/output/phase1-real-review/signals.json`.
-- Tỷ lệ partial cao cần architect review; không tự sửa claim bị loại thành accepted và không coi kết quả này là duyệt chất lượng extraction.
+### Mẫu thật trước/sau — 50 comment giống nhau
+
+Before lấy từ artifact Phase 1 gốc; After chạy mới với đúng source snapshots, thứ tự, model đã resolve và batch size 10. Không lấy mẫu khác hoặc chạy lại baseline để thay số cũ. Model generation có thể biến thiên; không coi số accepted là thước đo đúng ngữ nghĩa hay đặt ngưỡng thành công.
+
+| Metric | Before | After |
+|---|---:|---:|
+| ok | 1 | 42 |
+| no_signal | 5 | 4 |
+| partial | 44 | 4 |
+| error | 0 | 0 |
+| claims accepted | 1 | 92 |
+| claims rejected | 82 | 4 |
+
+| Rejection code | Before | After |
+|---|---:|---:|
+| invalid_claim | 82 | 0 |
+| ungrounded_quote | 0 | 4 |
+
+Không có issue code khác trong hai lần chạy. Bốn quote lỗi vẫn bị từ chối; không sửa cho qua validator. Rejected counts đếm item có item_index; accepted counts đếm signals đã qua validation.
+
+Artifact riêng tư, không commit:
+
+- Before: `output/phase1-real-review/signals.json` (giữ nguyên).
+- After/metrics: `output/phase1-quality-review/signals-after.json`, `metrics.json` cùng thư mục.
+- Review 10 comment: `D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase1-worktree/output/phase1-quality-review/phase1-quality-review.md`.
+
+10 comment được chọn có thứ tự theo status transition, coverage category rồi thứ tự input, phục vụ review định tính; không tuyên bố đại diện thống kê. Report giữ source comment, category/subcategory, exact evidence quote, truth_type và issue codes trước/sau. Repeated expressions chỉ trong một comment; corpus-level repetition thuộc Pattern phase sau.
 
 ## Giới hạn cần architect review
 

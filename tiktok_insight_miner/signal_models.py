@@ -43,7 +43,6 @@ class CandidateSignal(StrictModel):
     """Transport schema; application validation still checks each item separately."""
     category: Category
     subcategory: str
-    claim: str
     truth_type: TruthType
     evidence_quote: str
     confidence: Literal["high", "medium", "low"]
@@ -52,12 +51,8 @@ class CandidateSignal(StrictModel):
     def valid_claim(self) -> CandidateSignal:
         if self.subcategory not in TAXONOMY[self.category]:
             raise ValueError("unknown subcategory")
-        if not normalize_whitespace(self.claim) or not normalize_whitespace(self.evidence_quote):
-            raise ValueError("empty claim/quote")
-        # Conservative extraction: categorization may be DERIVED, but free-form
-        # paraphrases cannot pass a substring test as proof of semantic entailment.
-        if normalize_whitespace(self.claim) != normalize_whitespace(self.evidence_quote):
-            raise ValueError("claim must retain the quoted wording; no added facts")
+        if not normalize_whitespace(self.evidence_quote):
+            raise ValueError("empty quote")
         if self.category == "language" and self.truth_type != "OBSERVED":
             raise ValueError("literal language must be OBSERVED")
         return self
@@ -73,11 +68,20 @@ class CandidateBatch(StrictModel):
 
 
 class Signal(CandidateSignal):
+    claim: str
     signal_id: str
     source_record_id: str
     source_snapshot_hash: str
     start: int = Field(ge=0)
     end: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def valid_saved_claim(self) -> Signal:
+        # Keep reading Phase 1 artifacts whose semantic claim normalized whitespace.
+        # New claims are constructed from the exact validated span in code.
+        if normalize_whitespace(self.claim) != normalize_whitespace(self.evidence_quote):
+            raise ValueError("claim must retain the quoted wording; no added facts")
+        return self
 
 
 class SignalSource(StrictModel):
@@ -156,7 +160,7 @@ class SignalsEnvelope(StrictModel):
     schema_version: Literal["v2.signals.1"] = "v2.signals.1"
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     model: str
-    prompt_version: Literal["phase1.extractive.1"] = "phase1.extractive.1"
+    prompt_version: Literal["phase1.extractive.1", "phase1.extractive.2"] = "phase1.extractive.2"
     derivation_method: Literal["source_span_categorization"] = "source_span_categorization"
     records: list[CommentSignals] = Field(default_factory=list)
     issues: list[ValidationIssue] = Field(default_factory=list)

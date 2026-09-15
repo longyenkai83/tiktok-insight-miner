@@ -33,12 +33,13 @@ signals. Jokes, tags, noise and ambiguity do not require a semantic signal.
 OBSERVED means explicitly stated in the wording, not independently verified truth.
 DERIVED means interpretation in categorization, still citing an exact source phrase.
 HYPOTHESIS and PROPOSED are forbidden. Exact customer language must be copied literally.
-For this conservative Phase 1 contract, claim AND evidence_quote must contain the
-same exact source wording. Do not paraphrase: classification into category/subcategory
-is the normalization. Never add facts to a claim with a merely related valid quote.
+Return evidence_quote copied from this comment. Do not generate a claim field.
+Code creates the final claim only after validating the quote against its source span.
+Do not paraphrase or repair quotes: classification into category/subcategory is the
+normalization. Never add facts or copy evidence from a different comment.
 LANGUAGE must be OBSERVED. repeated_expressions requires the phrase to occur at least
 twice within THIS comment; never infer repetition across comments.
-Return category, subcategory, claim, truth_type, evidence_quote, confidence high/medium/low
+Return category, subcategory, truth_type, evidence_quote, confidence high/medium/low
 for each signal, and an empty signals array if none. Use only this taxonomy:
 """ + json.dumps(TAXONOMY)
 
@@ -171,7 +172,7 @@ def validate_batch(sources: list[SignalSource], payload: Any) -> tuple[list[Comm
                     continue
                 start, end = span
                 exact = source.text[start:end]
-                if candidate.category == "language" and (candidate.claim != exact or candidate.evidence_quote != exact):
+                if candidate.category == "language" and candidate.evidence_quote != exact:
                     local.append(_issue("nonliteral_language", cid, index))
                     continue
                 if candidate.category == "language" and candidate.subcategory == "repeated_expressions" and source.text.count(exact) < 2:
@@ -183,7 +184,7 @@ def validate_batch(sources: list[SignalSource], payload: Any) -> tuple[list[Comm
                     continue
                 seen.add(key)
                 fingerprint = json.dumps([source.snapshot_hash, *key], ensure_ascii=False)
-                signals.append(Signal(**{**candidate.model_dump(), "evidence_quote": exact},
+                signals.append(Signal(**{**candidate.model_dump(), "evidence_quote": exact}, claim=exact,
                     signal_id="signal-" + hashlib.sha256(fingerprint.encode()).hexdigest(),
                     source_record_id=source.source_record_id, source_snapshot_hash=source.snapshot_hash,
                     start=start, end=end))

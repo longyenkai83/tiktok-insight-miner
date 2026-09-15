@@ -44,6 +44,10 @@ Yêu cầu trực tiếp “PHASE 1 — SIGNAL EXTRACTION” của chủ dự á
 
 Flat typed signal list; LANGUAGE cũng mang claim/quote/provenance. Hậu kiểm từng item sau structured JSON, lưu source hash/spans. Claim extractive giữ lời quote để không chấp nhận paraphrase thêm facts chỉ vì quote có thật; DERIVED là interpretation khi categorization. Đây là lựa chọn implementation bảo thủ cần review, không tuyên bố kiến trúc sư đã duyệt chi tiết. Giới hạn và khác ví dụ conceptual ghi tại 02/03. Không mở Phase 2.
 
+## DEC-023 — Phase 1.1 transport không sinh claim — ACCEPTED scope, pending architect review
+
+Theo yêu cầu trực tiếp Phase 1.1, candidate chỉ trả category/subcategory/evidence_quote/truth_type/confidence. Code tạo final claim từ exact validated source span; không chữa quote sai hoặc nhận paraphrase. Giữ source spans/hashes, OBSERVED/DERIVED, status/issues, multi/zero-signal và legacy compatibility. Thay phần model-generated claim trong implementation DEC-022; không thay quy tắc grounding. Chạy lại đúng mẫu 50 source snapshot và review định tính cục bộ, không đặt ngưỡng thành công số học. repeated_expressions chỉ là lặp trong một comment; corpus repetition để Pattern phase. Không mở Phase 2.
+
 ## Chưa quyết định — không được coi là quyền triển khai
 
 | ID | Trạng thái | Nội dung cần review |

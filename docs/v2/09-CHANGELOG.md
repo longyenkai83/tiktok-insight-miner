@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 1.1 Signal Extraction Quality Patch
+
+- Bỏ model-generated claim khỏi candidate transport; code tạo claim nguyên văn sau source-span validation.
+- Giữ validation quote/ID, source hash/span, truth types, multi/zero-signal và legacy default. Không sửa quote không hợp lệ để tăng acceptance.
+- Output schema vẫn v2.signals.1; prompt version phase1.extractive.2; reader đọc được artifact phase1.extractive.1.
+- Full suite: 130 passed. Thêm test transport không có claim, exact code-generated claim, artifact cũ và không suy repetition xuyên comment.
+- Chạy lại cùng 50 source snapshots/model/thứ tự; metrics trước/sau và artifact 10 comment cục bộ ghi tại PROJECT-STATE. Không commit dữ liệu khách hàng.
+- Giữ Phase 1 — PENDING ARCHITECT REVIEW. Không đặt ngưỡng thành công, không mở Phase 2.
+
 ## 2026-09-15 — Phase 1 Signal Extraction, pending architect review
 
 - Thêm V2 models/extractor và CLI opt-in extract-signals, không cần classified.json.

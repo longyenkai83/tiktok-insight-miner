@@ -19,7 +19,7 @@ from tiktok_insight_miner.signal_models import CandidateSignal, SignalsEnvelope,
 
 
 def claim(text, category="pains", subcategory="costs", **kwargs):
-    return dict(category=category, subcategory=subcategory, claim=text,
+    return dict(category=category, subcategory=subcategory,
                 truth_type="OBSERVED", evidence_quote=text, confidence="high", **kwargs)
 
 
@@ -130,6 +130,7 @@ def test_unicode_whitespace_spans_keep_original_and_derived():
     rows, _ = validate_batch([s], payload("c1", [item]))
     signal = rows[0].signals[0]
     assert signal.evidence_quote == "Phí\t giao\n hàng quá cao"
+    assert signal.claim == signal.evidence_quote
     assert s.text[signal.start:signal.end] == signal.evidence_quote
     assert signal.start == 2
     assert signal.truth_type == "DERIVED"
@@ -299,3 +300,39 @@ def test_duplicate_signal_is_not_counted_twice():
     records, _ = validate_batch([s], payload("c1", [claim(s.text), claim(s.text)]))
     assert len(records[0].signals) == 1
     assert records[0].issues[0].code == "duplicate_signal"
+
+
+def test_transport_has_no_claim_and_code_creates_exact_claim():
+    from tiktok_insight_miner.signal_models import CandidateBatch
+    schema = CandidateBatch.model_json_schema()["$defs"]["CandidateSignal"]
+    assert "claim" not in schema["properties"]
+    s = source()
+    item = claim(s.text)
+    assert "claim" not in item
+    records, _ = validate_batch([s], payload("c1", [item]))
+    signal = records[0].signals[0]
+    assert signal.claim == s.text[signal.start:signal.end] == signal.evidence_quote
+    assert records[0].extraction_status == "ok"
+
+
+def test_old_artifact_shape_and_prompt_version_still_load(tmp_path):
+    s = source("Phí\t giao hàng quá cao")
+    result = extract_signals([s], client=api(response(payload("c1", [claim(s.text)]))))
+    data = result.model_dump(mode="json")
+    data["prompt_version"] = "phase1.extractive.1"
+    data["records"][0]["signals"][0]["claim"] = "Phí giao hàng quá cao"
+    path = tmp_path / "old-signals.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert load_signals_json(path).prompt_version == "phase1.extractive.1"
+    data["records"][0]["signals"][0]["claim"] = "Invented meaning"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValidationError):
+        load_signals_json(path)
+
+
+def test_no_corpus_repetition_inference():
+    sources = [source("khó quá", cid=cid) for cid in ("a", "b")]
+    data = {"results": [{"comment_id": s.comment_id, "signals": [
+        claim(s.text, "language", "repeated_expressions")]} for s in sources]}
+    records, _ = validate_batch(sources, data)
+    assert all(not r.signals and r.issues[0].code == "not_repeated_in_source" for r in records)

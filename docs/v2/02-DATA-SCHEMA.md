@@ -2,7 +2,7 @@
 
 ## Phase 1 — schema đã triển khai, chờ architect review
 
-`signal_models.py` định nghĩa `SignalsEnvelope` với `schema_version="v2.signals.1"`, `generated_at` UTC, model đã resolve, `prompt_version="phase1.extractive.1"`, `derivation_method="source_span_categorization"`, records[] và issues[]. Không phụ thuộc classified.json.
+`signal_models.py` định nghĩa `SignalsEnvelope` với `schema_version="v2.signals.1"`, `generated_at` UTC, model đã resolve, `prompt_version="phase1.extractive.2"` từ Phase 1.1, `derivation_method="source_span_categorization"`, records[] và issues[]. Reader vẫn nhận prompt version `phase1.extractive.1` của artifact cũ. Không phụ thuộc classified.json.
 
 Mỗi record gồm comment_id, source, signals[] và extraction_status (ok/no_signal/partial/error), issues[]. Mỗi signal có category/subcategory, claim, truth_type **chỉ OBSERVED hoặc DERIVED**, evidence_quote, confidence high/medium/low, signal_id, source_record_id, source_snapshot_hash, start/end. Offset nửa mở theo Unicode code point trong source.text gốc. LANGUAGE cũng dùng record có kiểu để giữ cùng provenance, không chỉ chuỗi rời.
 
@@ -18,7 +18,9 @@ Taxonomy thực thi:
 
 Khác ví dụ conceptual: dùng danh sách signal phẳng có category/subcategory thay các mảng lồng nhau; mảng rỗng nghĩa không tìm thấy signal. Không thêm AudienceContext/CustomerIdentity hoặc CONTEXT category trong Phase 1. Segmentation thuộc Phase 2. Generic schema phía dưới vẫn là thiết kế tương lai; không yêu cầu HYPOTHESIS, audience_context_ref, Pattern hoặc Insight để chạy Phase 1.
 
-Lựa chọn triển khai bảo thủ, chờ review: claim giữ cùng lời nguồn với evidence_quote (cho phép chuẩn hóa whitespace ở semantic claim). DERIVED biểu diễn phép diễn giải khi gán category/subcategory, không sinh paraphrase tự do. Ví dụ claim được viết lại trong yêu cầu conceptual sẽ bị từ chối nếu thêm/đổi lời nguồn; không tự thay claim lỗi thành claim hợp lệ. Đây là giới hạn có chủ đích để quote hợp lệ không che một kết luận bịa demographics/motivation/context. LANGUAGE giữ nguyên tuyệt đối cả whitespace của đoạn nguồn.
+Phase 1.1: candidate transport chỉ có category, subcategory, evidence_quote, truth_type, confidence. Model không sinh claim. Sau khi quote qua source-span validation, CODE tạo `claim = source.text[start:end]` và giữ exact evidence_quote. Quote bịa/paraphrase không được sửa cho khớp nguồn; field claim do model gửi ngoài contract bị từ chối, không được âm thầm thay bằng quote.
+
+DERIVED biểu diễn phép diễn giải khi gán category/subcategory, không sinh paraphrase tự do. Output signals.json giữ các field cũ, source hashes/spans và version schema; reader vẫn chấp nhận semantic claim của artifact cũ chỉ khác quote về whitespace. LANGUAGE giữ nguyên tuyệt đối cả whitespace của đoạn nguồn. `language/repeated_expressions` chỉ kiểm lặp trong một comment; lặp xuyên comment/corpus thuộc Pattern phase tương lai, không được suy ra trong Phase 1.
 
 Source giữ comment_id, text, author, likes/reply_count nullable, created_at/video_url/platform khi có, metadata gốc và metric_notes. Hash SHA-256 bao phủ source snapshot; source ID lấy từ platform/URL/comment ID. Signal ID xác định bởi snapshot, category/subcategory và span. Model chỉ nhận ID + toàn bộ text, không nhận metadata riêng tư, persona/config hay sản phẩm. Không truncate text.
 

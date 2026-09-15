@@ -7,9 +7,9 @@
 - Unknown model ID: loại record lạ, ghi envelope issue; missing ID: giữ source với status error; duplicate ID: không chọn tùy tiện một bản, trả error cho ID đó.
 - Input ID trùng hoặc không có locator hợp lệ: từ chối input trước API, không tạo ID giả.
 - Quote phải có trong source sau duy nhất whitespace normalization, phân biệt hoa/thường, dấu và punctuation. Lưu lại exact source span; không gộp quote của nhiều comment.
-- Claim giữ đúng lời quote theo contract extractive; trường demographic/context lạ hoặc claim thêm ý bị loại. HYPOTHESIS/PROPOSED không qua schema Phase 1.
+- Phase 1.1 không yêu cầu model sinh claim. Code chỉ tạo claim từ exact source span sau khi evidence_quote đã hợp lệ; không sửa quote bịa/paraphrase. Trường claim/demographic/context ngoài transport bị loại. HYPOTHESIS/PROPOSED không qua schema Phase 1.
 - Claim lỗi loại riêng và có issue/index; comment có lỗi item là partial kể cả không còn claim, không đánh nhầm no_signal. no_signal chỉ là response hợp lệ với signals rỗng. Record/batch không dùng được là error.
-- LANGUAGE phải OBSERVED và literal; repeated_expressions chỉ hợp lệ khi lặp ít nhất hai lần trong chính comment, không tổng hợp xuyên comment.
+- LANGUAGE phải OBSERVED và literal; repeated_expressions chỉ hợp lệ khi lặp ít nhất hai lần trong chính comment. Đây không phải corpus-level repetition; lặp xuyên comment thuộc Pattern phase sau, chưa triển khai.
 - API/refusal/truncated/JSON lỗi tạo error records để không mất nguồn. Authentication error dừng các request còn lại; artifact vẫn giữ đủ source cùng lỗi. Không biến API failure thành empty success.
 
 Giới hạn: code bảo đảm nguồn text/ID/shape và ngăn claim thêm lời, không chứng minh nhãn category hay cách hiểu sarcasm của model luôn đúng. Confidence là mức tự đánh giá, không là bằng chứng. Cần architect review chất lượng trước giai đoạn sau; semantic entailment/paraphrase tự do chưa triển khai.
