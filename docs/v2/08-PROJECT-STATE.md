@@ -1,6 +1,34 @@
 # 08 — PROJECT STATE
 
-## Latest checkpoint — Integrated Creative Planner + one gate (new prompt named C5.6)
+## Latest checkpoint — C5.9 PLAN_READY_FOR_OWNER_REVIEW
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = PLAN_READY_FOR_OWNER_REVIEW — awaiting actual owner Creative Plan decision.
+Phase 9 NOT ACCEPTED. No merge. Next Phase = DO NOT START.
+Canonical C5.8 = integrated Planner implementation (source report was REPORT-C5.6.md).
+Planner architecture ARCHITECTURALLY ACCEPTED; this checkpoint changes findings semantics only.
+
+Reelo-local plan blockers, limitations, advisories and publication requirements are separate.
+Unsafe hook/title alternatives have enforced eligibility; recommendations/outline must be safe.
+DIRECT/ADJACENT source support and NONE/ILLUSTRATIVE_AI semantics are explicit. Historical
+unclassified issues fail closed; no automatic conversion of prior state or owner approval.
+
+Existing native proposal was source-reviewed offline into a NEW local derived projection:
+zero plan blockers, three selectable hooks and three selectable titles; unsafe options retained
+with reasons. Outline creator inference removed; adjacent Story and external knowledge bounded.
+All 12 packet publication requirements remain unresolved. No changed packet/Zone A/B or assets.
+Historical native application UNKNOWN remains unchanged; the derived projection is not a new
+native result. Zero new Planner/Writer/Critic/rewrite/Notion/publish calls in C5.9.
+
+Full Reelo suite: 194 PASS (8.20s). Full Insight suite: 489 PASS (55.73s).
+Local REPORT-C5.9.md contains the one owner gate, findings, provenance and test evidence.
+Next actor: Anh Tuan APPROVE / EDIT + APPROVE / REJECT / DEFER the proposed expression.
+No Writer until actual owner approval and the existing current packet/source checks pass.
+No automatic next phase; final article quality and final approval are not yet assessed.
+
+## Historical C5.8 checkpoint (before C5.9)
+
+## Integrated Planner checkpoint — Integrated Creative Planner + one gate (new prompt named C5.6)
 
 Current Phase = Phase 9 — Direct Reelo Integration
 Status = IMPLEMENTED — BLOCKED AT CONTROLLED PLANNER ACCEPTANCE

@@ -1,5 +1,17 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — C5.9 findings semantics + owner plan review
+
+- Canonical C5.8 names the integrated Planner implementation; architecture accepted, Phase9 not accepted.
+- Reelo-only plan findings split into blockers, limitations, advisories and publication requirements.
+- Candidate eligibility rejects unsafe selections while safe alternatives remain available; unsafe outline/recommendation blocks review.
+- Explicit DIRECT/ADJACENT support and NONE/ILLUSTRATIVE_AI use; no creator/customer truth downgrade.
+- Existing native output revalidated into a new derived local review projection; historical UNKNOWN untouched.
+- 21 assets and Phase8 packet unchanged; no Planner rerun, Writer/Critic/rewrite, Notion or publication.
+- Reelo 194 PASS; Insight 489 PASS. PLAN_READY_FOR_OWNER_REVIEW, actual owner decision pending.
+- Insight runtime unchanged. No merge, Source Router, Unified Web or next phase.
+
+
 ## 2026-09-16 — Integrated Creative Planner / one human gate (new C5.6 scope)
 
 - Owner-approved Option B after C5.7: typed internal PROPOSED creative plan, source origins,
