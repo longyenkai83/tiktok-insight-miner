@@ -141,3 +141,20 @@ legacy refactor, Phase8 schema change, Source Router, Unified Web or merge. Exis
 live-host fixture is adapted to return the controlled response for each bound stage; it is not
 creative-quality evidence. C5.4 permits exactly one real-assets controlled acceptance after full
 suites pass; its local REPORT-C5.4.md is the sole owner-mediated review handoff.
+
+## C5.5 — typed hard-boundary Critic findings
+
+V2 Critic output now requires findings with category/severity/message/evidence_refs/affected_text.
+Code forces REVISE for unsupported_identity, scope_broadening, unsupported_causality,
+quote_integrity, creator_truth_drift, external_fact_unsupported, market_validation_inflation,
+purchase_validation_inflation and contradiction_loss, regardless of reported PASS/advisory.
+Raw output is retained; normalized findings/severity/blocking_issues are workflow authority.
+Creative_quality/voice/format/other follow current rubric and declared severity; malformed
+transport fails closed. Notes are advisory, not a hiding place for unresolved truth defects.
+
+Anonymous comments do not establish a count/identity of people; separate sources do not
+establish shared context or why experiences differ. Critic must emit detected defects under
+the appropriate typed category. No regex semantic detection, second Critic or extra review LLM.
+Finding detection remains fallible; deterministic category enforcement is not proof of prose
+truth when the model omits or mislabels a finding. Final owner quality review remains required.
+C5.4 stage orchestration/permission/provenance/Q1 stay closed. No merge or new phase.

@@ -1,6 +1,23 @@
 # 09 — CHANGELOG
 
 
+## 2026-09-15 — C5.5 typed Critic findings; READY FOR OWNER QUALITY REVIEW
+
+- V2 findings now require category/severity/message/evidence_refs/affected_text; nine hard
+  categories always force blocking/REVISE. Preserve raw and reported severity for audit.
+- Notes advisory only; detected hard defects must be findings. No semantic keyword checker,
+  second Critic, new LLM layer, host/permission/Q1 change, legacy refactor or Phase8 change.
+- Full pre-live suites: Reelo 129 PASS / Insight 489 PASS. Exact C5.4 controlled cases,
+  all hard categories/severities, malformed findings, harmless notes and one-rewrite limit.
+- ONE live: Writer -> typed Critic1 REVISE (unsupported_identity, scope_broadening) -> Rewrite
+  -> Critic2 PASS. Final DRAFT_READY, zero hard findings/blockers; 3 advisories / 7 notes remain.
+  Stage times 288.564 / 192.042 / 174.838 / 201.849 seconds; wall 863.161 seconds.
+- Four identical contexts, 16 assets unchanged, no runtime edits during live, no denial/retry/
+  Notion/publish/source writeback. Two immutable drafts. No private data committed.
+- REPORT-C5.5.md sole owner-mediated handoff. C5 READY FOR OWNER QUALITY REVIEW, not ACCEPTED.
+  STOP for owner/Architect; no merge or new scope. Semantic detection remains fallible.
+
+
 ## 2026-09-15 — C5.4 stage-wise host orchestration; semantic quality blocker
 
 - Replace only V2's long Workflow chain with four explicit local-code transitions, one host

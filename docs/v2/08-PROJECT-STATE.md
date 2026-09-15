@@ -1,6 +1,44 @@
 # 08 — PROJECT STATE
 
 
+## Latest checkpoint — C5.5 READY FOR OWNER QUALITY REVIEW
+
+Current Phase = Phase 9 — Direct Reelo Integration
+C5 Status = C5 READY FOR OWNER QUALITY REVIEW
+Phase 9 NOT ACCEPTED. human_approval PENDING. Next Phase DO NOT START. No merge.
+
+V2 Critic now emits typed findings (category/severity/message/evidence_refs/affected_text).
+Nine hard truth/scope categories deterministically force REVISE, even with reported PASS,
+advisory severity, empty blocking_issues and true booleans. Raw output is preserved; normalized
+severity/blocking_issues drive the unchanged C5.4 state machine. No extra Critic, LLM layer,
+semantic regex or generic framework. Host lifecycle, permission, Q1 and provenance remain closed.
+
+Full tests before live: Reelo 129 PASS (4.57s), Insight 489 PASS (57.96s).
+ONE controlled live acceptance: same synthetic approved packet + 16 real read-only assets.
+Writer 288.564s -> Critic1 REVISE 192.042s -> Rewrite 174.838s -> Critic2 PASS 201.849s.
+Wall 863.161s. Four independently correlated completed host stages, exactly one rewrite.
+Generation GEN-6235eb1f694f41ee82584f9b0eb30493. Final DRAFT_READY/PASS, zero hard findings,
+zero blocking issues, all seven truth checks true and eight title checks true.
+
+Critic1 typed two hard findings: unsupported_identity (anonymous comments framed as distinct
+people) and scope_broadening (Zone B's proposed belief_before presented as observed source
+behavior). Both raw severities were blocking; advisory-downgrade enforcement is proven offline.
+Rewrite removed the people count and attributed the speculative framing explicitly to the
+writer, not the commenters. Critic2 retains three advisory findings (voice, other, format)
+and seven notes. Owner should review repeated contrast, one sentence's clarity and header format.
+
+Four context snapshots identical, packet unchanged, 16/16 asset hashes unchanged; runtime code
+unchanged during acceptance. Two immutable draft versions, no retry, denial, Notion, publication,
+source writeback, historical execution mutation or self-acceptance. Source truth is synthetic;
+this is not proof of real customer demand or publication approval. External requirements remain.
+
+Sole handoff: local REPORT-C5.5.md, including draft with private Story passage redacted.
+Full original stays in LOCALAPPDATA for anh Tuan. Next actors: owner quality review and Architect
+review through anh Tuan. Codex STOP at C5.5; no Phase 10, Source Router or Unified Web.
+
+## Historical checkpoints (C5.4 and earlier)
+
+
 ## Latest checkpoint — C5.4 technical DRAFT_READY; quality BLOCKED
 
 Current Phase = Phase 9 — Direct Reelo Integration
