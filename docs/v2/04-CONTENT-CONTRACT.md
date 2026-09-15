@@ -1,5 +1,12 @@
 # 04 — CONTENT CONTRACT
 
+## Phase 4.1 — future Human Governor prerequisite
+
+The shared engine emits Insight Candidates. Phase 5 Human Approval must first produce a
+human-verified insight before Content Research/Topic/Angle/Human Selection/typed packet.
+Machine acceptance cannot replace this semantic gate or the later Angle selection gate.
+See Source/Downstream Router paths in [11](11-BUSINESS-OS-NORTH-STAR.md). No handoff runtime here.
+
 ## Phase 4 architecture memory — future direct transport
 
 DEC-039 selects typed direct Reelo ingestion/API or equivalent structured handoff.
@@ -17,7 +24,7 @@ Contract dữ liệu nằm tại [02-DATA-SCHEMA.md](02-DATA-SCHEMA.md); provena
 
 ## Vị trí trong kiến trúc hai mode
 
-Theo DEC-024/025, shared engine chạy Source → Normalized Evidence → Signal Extraction → Customer Context → Pattern Engine → Evidence Engine → Verified Insight → Priority Need. Content contract áp dụng cho nhánh Verified Insight → Content Opportunity → Topic → Angle → Human Selection → Packet → Reelo Writer.
+Theo DEC-024/025, shared engine chạy Source → Normalized Evidence → Signal Extraction → Customer Context → Pattern Engine → Evidence Engine → Insight Candidate → Phase 5 Human Approval → Verified Insight. Content contract áp dụng cho nhánh Verified Insight → Content Opportunity → Topic → Angle → Human Selection → Packet → Reelo Writer.
 
 Product Discovery dùng cùng evidence-backed engine nhưng có chuỗi Opportunity Area/Value Map/Assumptions/Experiments/Evidence/Decision riêng. Không dùng Writer hoặc human content selection để xác nhận product demand. Chi tiết ở 01/07; cả hai downstream mode chưa triển khai trong Phase 2.
 

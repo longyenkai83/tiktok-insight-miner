@@ -1,6 +1,31 @@
 # 03 — EVIDENCE RULES
 
-## Phase 4 — evidence-backed does not mean human/market/purchase validated
+## Phase 4.1 — accepted state semantics (DEC-042)
+
+Phase 4 produces **INSIGHT CANDIDATES**, never Verified Insights. Automated acceptance
+is `machine_accepted`; every emitted candidate remains `pending_human_review`.
+`source_grounded` validates structural provenance; `evidence_support_present` means
+attached supporting evidence exists; `machine_review_passed` records fallible automated
+review. None certifies semantic truth. `evidence_backed` is removed from the executable
+verification model. Human/market/purchase flags remain false.
+
+**Phase 5 Human Approval is the first explicit Human Governor gate and the authoritative
+semantic gate.** Only that future human process may produce a Verified Insight and set
+human_verified=true. Future decisions: approved / edited_and_approved / rejected.
+Human approval does not itself prove purchase, market demand, or turn DERIVED into OBSERVED.
+Do not implement Phase 5 now. Keep current closed IDs, part support, semantic review,
+causality/scope/demographic/solution/market checks; no extra multi-reviewer architecture.
+Completion does not require perfect AI. Known semantic misses remain review inputs.
+
+## Review sources — accepted evidence rule (DEC-046)
+
+A negative review is valuable customer evidence, but a 1–2 star review is NOT automatically
+purchase evidence. Never infer payment from rating alone, review text alone or platform name.
+Current public text remains primarily customer_speech. If a source provides a reliable explicit
+verified_purchase field, a future adapter may represent it separately with provenance and scope;
+it must not automatically validate every claim or the market. No adapter implementation now.
+
+## Phase 4 — attached evidence and machine review do not mean verified truth
 
 Revalidate complete Phase 3 snapshot before synthesis. Unknown/duplicate pattern IDs,
 orphan candidates, broken hashes/refs or impossible category/path relationships cannot enter

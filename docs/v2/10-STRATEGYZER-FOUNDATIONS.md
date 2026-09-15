@@ -1,5 +1,17 @@
 # 10 — STRATEGYZER FOUNDATIONS
 
+## Phase 4.1 application — V2 DECISION and DERIVED IMPLEMENTATION RULE
+
+V2 DECISION (DEC-042/046): attached support and machine review do not create Verified Insight.
+Only future Phase 5 Human Approval is the authoritative semantic gate. Negative reviews remain
+valuable customer speech; rating/text/platform alone never prove purchase. Reliable explicit
+verified_purchase metadata must be represented separately by a future adapter.
+
+DERIVED IMPLEMENTATION RULE: preserve independent source_grounded, evidence_support_present,
+machine_review_passed, human_verified, market_validated and purchase_validated semantics.
+Keep all customer claims scoped and traceable through both routers; profile merge/supersession
+needs human approval. These are V2 applications, not new Strategyzer SOURCE PRINCIPLES.
+
 Strategyzer foundations là **explicit architecture dependency** của V2. Đây là bản ghi nhớ vận hành từ các nền tảng đã được chủ dự án cung cấp và phê duyệt trong yêu cầu Phase 2.1; không phải bản chép hoặc trích nguyên văn toàn bộ knowledge base 14 bài học.
 
 ## Phân biệt nguồn, quyết định và quy tắc triển khai
@@ -66,6 +78,6 @@ Product Opportunity là **PROPOSED**, không phải validated demand. Chuỗi n�
 
 Trước thay đổi architecture/product logic, đọc đủ `docs/v2/00`–`11`, đối chiếu quyết định, bằng chứng và phạm vi được phép. Nếu implementation mâu thuẫn accepted decisions hoặc Strategyzer foundations: **STOP and report**; không âm thầm diễn giải lại nền tảng để hợp thức hóa code.
 
-Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ evidence-backed Insight Candidates pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
+Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ evidence-linked Insight Candidates pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
 
-Business OS north star bổ sung kiến trúc dài hạn tại [11](11-BUSINESS-OS-NORTH-STAR.md), không thay nền tảng Strategyzer. Phase 4 giữ Customer Profile side; evidence-backed candidate không tự là human/market/purchase validated.
+Business OS north star bổ sung kiến trúc dài hạn tại [11](11-BUSINESS-OS-NORTH-STAR.md), không thay nền tảng Strategyzer. Phase 4 giữ Customer Profile side; evidence-linked candidate không tự là human/market/purchase validated.

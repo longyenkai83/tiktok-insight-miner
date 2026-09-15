@@ -1,5 +1,27 @@
 # 00 — PROJECT OS
 
+## Phase 4.1 — accepted state semantics (DEC-042)
+
+Phase 4 produces **INSIGHT CANDIDATES**, never Verified Insights. Automated acceptance
+is `machine_accepted`; every emitted candidate remains `pending_human_review`.
+`source_grounded` validates structural provenance; `evidence_support_present` means
+attached supporting evidence exists; `machine_review_passed` records fallible automated
+review. None certifies semantic truth. `evidence_backed` is removed from the executable
+verification model. Human/market/purchase flags remain false.
+
+**Phase 5 Human Approval is the first explicit Human Governor gate and the authoritative
+semantic gate.** Only that future human process may produce a Verified Insight and set
+human_verified=true. Future decisions: approved / edited_and_approved / rejected.
+Human approval does not itself prove purchase, market demand, or turn DERIVED into OBSERVED.
+Do not implement Phase 5 now. Keep current closed IDs, part support, semantic review,
+causality/scope/demographic/solution/market checks; no extra multi-reviewer architecture.
+Completion does not require perfect AI. Known semantic misses remain review inputs.
+
+The owner's Phase 4.1 request authorizes this patch on
+v2-phase-4-evidence-insight@960225de80d4dc8c5ee58ebd98679f004ae803ea.
+Source Router and Downstream Router are accepted future design (DEC-043–047),
+not permission to implement adapters, scheduler, state store or downstream processing.
+
 ## Trạng thái và quyền thực thi
 
 Current Phase = Phase 4 — Evidence + Insight Engine
@@ -37,14 +59,14 @@ Kiến trúc đích bắt buộc:
 ```text
 Shared Customer Intelligence Engine:
 Source → Normalized Evidence → Signal Extraction → Customer Context
-→ Pattern Engine → Evidence Engine → Verified Insight → Priority Need
+→ Pattern Engine → Evidence Engine → Insight Candidate → Phase 5 Human Approval → Verified Insight
 
 A. CONTENT RESEARCH MODE:
 Verified Insight → Content Opportunity → Topic → Angle → Human Selection
 → Content Intelligence Packet → Reelo Writer
 
 B. PRODUCT DISCOVERY MODE:
-Verified Insight → Priority Need → Opportunity Area → Possible Value Map
+Verified Insight → Priority Need → Product Opportunity → Possible Value Map
   (Products & Services / Pain Relievers / Gain Creators)
 → Assumptions → Experiments → Evidence → Decision → Validated Product
 ```

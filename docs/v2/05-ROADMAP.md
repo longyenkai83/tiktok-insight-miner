@@ -1,5 +1,14 @@
 # 05 — ROADMAP
 
+## Phase 4.1 scope and future routes
+
+Implement state semantics/schema only; retain current semantic reviewer. Phase 5 is future
+Human Approval, not a prerequisite to completing this patch and not authorized by passing tests.
+Source Router's five independently activated routes, scheduler, adapters, source state store,
+and Downstream Router's Content Research/Product Discovery/Customer Profile Update routes
+remain future work. Ingestion and analysis frequencies are independent. See [11](11-BUSINESS-OS-NORTH-STAR.md).
+Priority Need, final segmentation/ranking and downstream generators need separate scope review.
+
 Current Phase = Phase 4 — Evidence + Insight Engine
 
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
@@ -14,8 +23,8 @@ Phase 4 được cho phép trực tiếp qua DEC-035. Không mở Phase 5. DEC-0
 | 1 / 1.1 | Source → multi-signals, strict grounding, independent CLI | Đã triển khai |
 | 2 / 2.1 | Context candidates, năm field B2C, Strategyzer memory | Đã triển khai |
 | 3 | Candidate Pattern Engine, context/wording variants, corpus language, possible contradictions | Đã triển khai, semantic limitations được giữ |
-| 4 | Evidence Engine → evidence-backed Insight Candidates, pending human review | CURRENT |
-| Sau Phase 4 | Human consequential verification, Priority Need, final segmentation/ranking | DO NOT START |
+| 4 / 4.1 | Evidence Engine → Insight Candidates, explicit machine state, pending human review | CURRENT |
+| 5 | Human Approval: authoritative semantic gate, first explicit Human Governor gate | DO NOT START |
 | Content downstream | Content Opportunity → Topic → Angle → Human Selection → Packet → Reelo Writer | Thiết kế, chưa triển khai |
 | Product downstream | Opportunity Area → Possible Value Map → Assumptions → Experiments → Evidence → Decision → Validated Product | Thiết kế, chưa triển khai |
 | Orchestration | CONTENT / PRODUCT_DISCOVERY / BOTH goal router và UI | Thiết kế, chưa triển khai |

@@ -1,5 +1,29 @@
 # 01 — ARCHITECTURE
 
+## Phase 4.1 — accepted state semantics (DEC-042)
+
+Phase 4 produces **INSIGHT CANDIDATES**, never Verified Insights. Automated acceptance
+is `machine_accepted`; every emitted candidate remains `pending_human_review`.
+`source_grounded` validates structural provenance; `evidence_support_present` means
+attached supporting evidence exists; `machine_review_passed` records fallible automated
+review. None certifies semantic truth. `evidence_backed` is removed from the executable
+verification model. Human/market/purchase flags remain false.
+
+**Phase 5 Human Approval is the first explicit Human Governor gate and the authoritative
+semantic gate.** Only that future human process may produce a Verified Insight and set
+human_verified=true. Future decisions: approved / edited_and_approved / rejected.
+Human approval does not itself prove purchase, market demand, or turn DERIVED into OBSERVED.
+Do not implement Phase 5 now. Keep current closed IDs, part support, semantic review,
+causality/scope/demographic/solution/market checks; no extra multi-reviewer architecture.
+Completion does not require perfect AI. Known semantic misses remain review inputs.
+
+Future Source Router activates only needed routes: Social Listening, Owned Customer Voice,
+Review Mining, Forum/Community/Public Discussion, Manual Research. Each route may be
+enabled/disabled, run manually or scheduled independently. All converge to Normalized
+Evidence → Signal → Context → Pattern → Insight Candidate; never one intelligence engine
+per platform. Full route catalog and downstream paths: [11](11-BUSINESS-OS-NORTH-STAR.md).
+Normalized adapter fields and null semantics: [02](02-DATA-SCHEMA.md).
+
 ## Phase 4 — Evidence + Insight Candidates
 
 `patterns.json → revalidate Phase 1–3 provenance → closed-pattern-ID synthesis → code guards → separate semantic review → code-built evidence bundle → insights.json`.
@@ -11,12 +35,11 @@ Insight Engine synthesizes a DERIVED relationship/tension rather than renaming a
 Single-pattern and cross-pattern candidates are allowed; different speakers do not imply
 co-occurring traits, causality or hidden motivation within one person.
 
-Source-grounded means valid provenance. Evidence-backed means supported derivation within
-cited corpus after structural/lexical checks and a separate fallible semantic review.
-Neither is human-verified, market-validated or purchase-validated. The historical
-“Verified Insight” target stage is not an automatic Phase 4 certification: current output
-is pending_human_review with the latter three flags fixed false. Human consequential
-approval and stronger evidence remain future gates. No final priority ranking.
+Source-grounded means structurally valid provenance, not correct interpretation.
+Evidence support present means evidence is attached, not proven semantic support.
+Machine review passed records an automated assessment, not human approval.
+Output is Insight Candidates pending_human_review; human/market/purchase flags are false.
+Verified Insight exists only after future Phase 5 Human Approval. No final priority ranking.
 
 ## Business OS and future integration — ACCEPTED design, not runtime
 
@@ -70,14 +93,14 @@ Theo baseline định danh tại [00-PROJECT-OS.md](00-PROJECT-OS.md):
 ```text
 Shared Customer Intelligence Engine:
 Source → Normalized Evidence → Signal Extraction → Customer Context
-→ Pattern Engine → Evidence Engine → Verified Insight → Priority Need
+→ Pattern Engine → Evidence Engine → Insight Candidate → Phase 5 Human Approval → Verified Insight
 
 A. CONTENT RESEARCH MODE:
 Verified Insight → Content Opportunity → Topic → Angle → Human Selection
 → Content Intelligence Packet → Reelo Writer
 
 B. PRODUCT DISCOVERY MODE:
-Verified Insight → Priority Need → Opportunity Area → Possible Value Map
+Verified Insight → Priority Need → Product Opportunity → Possible Value Map
   (Products & Services / Pain Relievers / Gain Creators)
 → Assumptions → Experiments → Evidence → Decision → Validated Product
 ```

@@ -150,7 +150,7 @@ def test_scope_preserved_unknown_metrics_not_zero():
 def test_verification_and_evidence_kind_do_not_promote_speech():
     p = patterns_fixture()
     i = build_insights(p, provider=FakeProvider([candidate(p)])).insights[0]
-    assert i.verification.source_grounded and i.verification.evidence_backed
+    assert i.verification.source_grounded and i.verification.evidence_support_present
     assert not i.verification.human_verified and not i.verification.market_validated and not i.verification.purchase_validated
     assert i.status == "pending_human_review" and i.evidence_kind == ["customer_speech"]
     assert {k.value for k in EvidenceKind} == {"customer_speech", "customer_behavior", "commitment", "payment", "market_behavior"}
@@ -173,7 +173,7 @@ def test_same_keywords_do_not_dedupe_but_near_identical_format_does():
     c = candidate(p, "Rent pressure is present alongside a stated wish for income stability.", insight_candidate_id="i3")
     r = build_insights(p, provider=FakeProvider([a, b, c]))
     assert len(r.insights) == 2
-    assert [o.status for o in r.outcomes] == ["accepted", "deduplicated", "accepted"]
+    assert [o.status for o in r.outcomes] == ["machine_accepted", "deduplicated", "machine_accepted"]
     assert r.outcomes[1].duplicate_of == r.insights[0].insight_id
 
 
@@ -213,6 +213,7 @@ def test_serialization_roundtrip(tmp_path):
     path = tmp_path / "insights.json"
     save_insights_json(r, path)
     assert load_insights_json(path) == r
+    assert json.loads(path.read_text(encoding="utf-8"))["schema_version"] == "v2.insights.2"
 
 
 def test_broken_pattern_provenance_rejected_before_provider():
@@ -261,7 +262,7 @@ def test_api_errors_visible_without_private_exception_body(where):
     assert "private api secret" not in r.model_dump_json()
 
 
-def test_cli_independent_and_overwrite_guard(tmp_path, monkeypatch):
+def test_cli_independent_and_overwrite_guard(tmp_path, monkeypatch, capsys):
     from tiktok_insight_miner.cli import main
     p = patterns_fixture()
     source = tmp_path / "patterns.json"
@@ -269,6 +270,7 @@ def test_cli_independent_and_overwrite_guard(tmp_path, monkeypatch):
     monkeypatch.setattr(AnthropicInsights, "propose", lambda self, catalog: {"candidates": []})
     monkeypatch.setattr("sys.argv", ["tim", "build-insights", "--patterns", str(source)])
     main()
+    assert "Insight candidates: machine_accepted=0; pending_human_review=0" in capsys.readouterr().out
     assert load_insights_json(tmp_path / "insights.json").synthesis_status == "complete"
     monkeypatch.setattr("sys.argv", ["tim", "build-insights", "--patterns", str(source), "-o", str(source)])
     with pytest.raises(SystemExit, match="overwrite"): main()
@@ -382,7 +384,7 @@ def test_mixed_invalid_and_valid_candidate_keeps_valid_result():
     p = patterns_fixture()
     c = candidate(p)
     r = build_insights(p, provider=FakeProvider([{"invented": "data"}, c]))
-    assert len(r.insights) == 1 and [o.status for o in r.outcomes] == ["rejected", "accepted"]
+    assert len(r.insights) == 1 and [o.status for o in r.outcomes] == ["rejected", "machine_accepted"]
 
 
 def test_vietnamese_lowercase_letters_are_not_mistaken_for_proper_names():
@@ -416,3 +418,72 @@ def test_invalid_statement_part_support_rejected(mode):
     provider.review = review
     r = build_insights(p, provider=provider)
     assert not r.insights and r.outcomes[0].validation_issues[0].code == "invalid_part_support"
+
+
+@pytest.mark.parametrize("mode", ["pass", "fail", "missing", "stale", "bad_support", "bad_part", "precheck", "dedupe"])
+def test_machine_review_state_matches_usable_review(mode):
+    p = patterns_fixture()
+    c = candidate(p)
+    provider = FakeProvider([c])
+    if mode == "fail": provider.verdict_changes = {"supported": False, "reason_code": "overclaim"}
+    if mode == "missing": provider.review = lambda items: {"reviews": []}
+    if mode == "stale": provider.verdict_changes = {"insight_candidate_id": "unknown"}
+    if mode == "bad_support": provider.verdict_changes = {"support_pattern_ids": ["unknown"]}
+    if mode == "bad_part": provider.verdict_changes = {"part_support": []}
+    if mode == "precheck": c["support_pattern_ids"] = ["unknown"]
+    if mode == "dedupe": provider.candidates.append({**c, "insight_candidate_id": "i2"})
+    r = build_insights(p, provider=provider)
+    passed = mode in ("pass", "dedupe")
+    assert all(o.machine_review_passed is passed for o in r.outcomes)
+    assert all(i.verification.machine_review_passed and i.status == "pending_human_review" for i in r.insights)
+    assert InsightsEnvelope.model_validate_json(r.model_dump_json()) == r
+    data = r.model_dump(mode="json")
+    data["outcomes"][0]["machine_review_passed"] = not passed
+    with pytest.raises(ValidationError, match="machine_review_passed"):
+        InsightsEnvelope.model_validate(data)
+
+
+@pytest.mark.parametrize("change", ["no_refs", "source_false", "support_false", "machine_false", "legacy_field", "approved", "edited_and_approved", "rejected", "old_accepted"])
+def test_candidate_support_and_pending_state_cannot_be_forged(change):
+    p = patterns_fixture()
+    data = build_insights(p, provider=FakeProvider([candidate(p)])).model_dump(mode="json")
+    i = data["insights"][0]
+    if change == "no_refs": i["evidence_refs"] = []
+    if change == "source_false": i["verification"]["source_grounded"] = False
+    if change == "support_false": i["verification"]["evidence_support_present"] = False
+    if change == "machine_false": i["verification"]["machine_review_passed"] = False
+    if change == "legacy_field": i["verification"]["evidence_backed"] = True
+    if change in ("approved", "edited_and_approved", "rejected"): i["status"] = change
+    if change == "old_accepted": data["outcomes"][0]["status"] = "accepted"
+    with pytest.raises(ValidationError): InsightsEnvelope.model_validate(data)
+
+
+def test_attached_evidence_does_not_certify_semantic_truth():
+    p = patterns_fixture()
+    # Deliberately fallible reviewer: plausible structural support cannot verify psychology.
+    c = candidate(p, "The rent burden conceals a private fear of failure.")
+    r = build_insights(p, provider=FakeProvider([c]))
+    i = r.insights[0]
+    assert i.evidence_refs and i.verification.evidence_support_present
+    assert i.verification.machine_review_passed
+    assert not any((i.verification.human_verified, i.verification.market_validated, i.verification.purchase_validated))
+    assert i.status == "pending_human_review"
+
+
+@pytest.mark.parametrize("version", ["v2.insights.1", "v2.insights.99"])
+def test_old_or_unknown_insight_schema_has_clear_version_error(version, tmp_path):
+    p = patterns_fixture()
+    data = build_insights(p, provider=FakeProvider([candidate(p)])).model_dump(mode="json")
+    data["schema_version"] = version
+    for i in data["insights"]:
+        i["verification"].pop("evidence_support_present")
+        i["verification"].pop("machine_review_passed")
+        i["verification"]["evidence_backed"] = True
+    data["outcomes"][0]["status"] = "accepted"
+    data["outcomes"][0].pop("machine_review_passed")
+    path = tmp_path / "old-insights.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    before = path.read_bytes()
+    with pytest.raises(ValidationError, match="Unsupported insight schema version; expected v2.insights.2"):
+        load_insights_json(path)
+    assert path.read_bytes() == before

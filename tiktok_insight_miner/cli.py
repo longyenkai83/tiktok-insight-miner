@@ -167,7 +167,8 @@ def cmd_build_insights(args: argparse.Namespace) -> None:
     except (OSError, ValueError) as exc:
         sys.exit(f"Insight input/output error: {type(exc).__name__}")
     rejected = sum(o.status == "rejected" for o in result.outcomes)
-    print(f"Insights: {len(result.insights)}; rejected={rejected}; synthesis={result.synthesis_status} -> {output}")
+    print(f"Insight candidates: machine_accepted={len(result.insights)}; pending_human_review={len(result.insights)}; "
+          f"rejected={rejected}; synthesis={result.synthesis_status} -> {output}")
     if rejected or result.validation_issues or result.upstream_issues or result.synthesis_status == "error":
         sys.exit(2)
 
@@ -867,7 +868,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_fb.add_argument("-o", "--output", type=str, default="output/fb_raw_comments.json", help="File JSON đầu ra")
     p_fb.set_defaults(func=cmd_fb_fetch)
 
-    p_insights = sub.add_parser("build-insights", help="V2: evidence-backed Insight Candidates")
+    p_insights = sub.add_parser("build-insights", help="V2: Insight Candidates pending human review")
     p_insights.add_argument("--patterns", required=True)
     p_insights.add_argument("-o", "--output")
     p_insights.add_argument("--model")

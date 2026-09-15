@@ -8,12 +8,66 @@ Next Phase = DO NOT START
 
 Do not start Phase 5. Wait for architecture review.
 
+## Phase 4.1 — state semantics and router memory
+
+Base: v2-phase-4-evidence-insight@960225de80d4dc8c5ee58ebd98679f004ae803ea; same branch.
+Authorization/accepted decisions DEC-042–047. Current phase/status/next-phase gate above stay unchanged.
+
+- Schema v2.insights.2 removes evidence_backed; source_grounded means structural provenance,
+  evidence_support_present means attached evidence, machine_review_passed means usable automated
+  review passed. Emitted Insight Candidates remain pending_human_review; outcome machine_accepted.
+- Negative/missing/invalid/not-run reviews give machine_review_passed=false on outcomes. This
+  boolean is replay-validated, including deduplicated candidates; reasons remain in review/issues.
+- Old v2.insights.1 artifacts are explicitly rejected with a version error; no silent migration.
+  Rebuild into a separate file from original patterns and saved model transports. Old files retained.
+- Existing guards, model transport, prompts and separate semantic reviewer unchanged. No additional
+  multi-reviewer system, acceptance-rate goal, router/scheduler/adapters/state store or Phase 5 runtime.
+- Phase 5 Human Approval is the first explicit Human Governor and authoritative semantic gate.
+  Machine acceptance never creates Verified Insight; human approval does not prove market/purchase.
+- Both routers, normalized adapter fields, unknown/null rules, review evidence rule, incremental
+  lifecycle, platform-neutral naming and direct typed Reelo handoff recorded in docs 00–11.
+- Default legacy runtime changed: **NO**. Only opt-in Phase 4 artifact/state contract changed.
+
+### Phase 4.1 validation
+
+`python -m pytest tests -q -p no:cacheprovider` → **317 passed in 2.22s**.
+20 new offline cases plus updated Phase 4 assertions; all 297 previous tests remain green.
+No live API tests. Coverage includes non-promotable flags, outcome review state, support/provenance,
+schema roundtrip, old-version rejection and pending-only state; automated review can still be wrong.
+
+Same 50 comments / 85 patterns, replayed through the engine with saved Phase 4 proposals and reviews,
+**no new API calls**. Input snapshot/hash, statements, evidence, scope, review decisions and issue codes
+match the Phase 4 baseline exactly; only schema/state semantics changed.
+
+| State check | Count |
+|---|---:|
+| Candidates | 24 |
+| machine_accepted | 12 |
+| rejected | 12 |
+| deduplicated | 0 |
+| Emitted pending_human_review | 12 |
+| Outcome machine_review_passed true / false | 12 / 12 |
+| human_verified=true | 0 |
+| market_validated=true | 0 |
+| purchase_validated=true | 0 |
+
+Local-only state report:
+`D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase4-worktree/output/phase41-state-check/phase41-state-check.md`.
+New insights.json and metrics.json are beside it; all ignored, no customer data committed.
+The original Phase 4 review below remains historical, including its old flag names and manual findings.
+
+Known semantic overclaim/causality/context/shallow misses remain; the patch corrects state meaning,
+not acceptance quality. They are expected inputs to future human review, not a demand for perfect AI
+before Phase 5. Phase 5 still requires explicit authorization; Next Phase = DO NOT START.
+
+## Phase 4 baseline — historical results before schema/state patch
+
 ## Phạm vi đã thực hiện
 
 - Base `v2-phase-3-pattern-engine@6b743fd3c21cee57c5cb8b4846d82dfed5582ca0`; branch `v2-phase-4-evidence-insight`. Authorization DEC-035; architecture DEC-036–040, implementation DEC-041 pending review.
 - Thêm Evidence models/engine và Insight models/engine/validator; `patterns.json v2.patterns.1 → insights.json v2.insights.1`, CLI build-insights độc lập.
 - Revalidate source/hash/refs, code-built evidence/profile links/scope/support/variants/counters, closed pattern-ID transport, deterministic guards, separate semantic review and per-statement-part pattern mapping with code offsets. Output replay validation; conservative dedupe.
-- Insight Statement DERIVED, pending_human_review. Source-grounded/evidence-backed là đánh giá trong workflow; human_verified, market_validated, purchase_validated luôn false. Text kể chuyện mua/hành vi vẫn là customer_speech.
+- Insight Statement DERIVED, pending_human_review. Historical v2.insights.1 used source_grounded/evidence_backed; superseded by DEC-042; human_verified, market_validated, purchase_validated luôn false. Text kể chuyện mua/hành vi vẫn là customer_speech.
 - Không priority score, Content/Product Opportunity, Topic/Angle/hook/script, Value Map, offer, experiment, Reelo integration, ingestion state, YouTube, multi-tenancy hoặc rename legacy package.
 - Default legacy runtime behavior changed: **NO**. Phase 1–3 modules/behaviors, dependencies và legacy run giữ nguyên; runtime mới chỉ qua command/API Insight riêng.
 
@@ -59,7 +113,7 @@ Gồm 10 representative candidates có ít nhất ba source comments, 3–5 exac
 
 ## Known issues / architect review bắt buộc
 
-- **Manual inspection phát hiện OVERCLAIM, FALSE CAUSALITY và CONTEXT LEAK vẫn qua semantic reviewer.** Ví dụ ở mức loại lỗi: suy động cơ tự bảo vệ/đặc điểm bẩm sinh; ghép trải nghiệm khác người thành cohort; coi lời nhắm audience trong promotion/advice là self-report. Không coi machine acceptance/evidence_backed flag là semantic guarantee hoặc customer truth đã duyệt.
+- **Manual inspection phát hiện OVERCLAIM, FALSE CAUSALITY và CONTEXT LEAK vẫn qua semantic reviewer.** Ví dụ ở mức loại lỗi: suy động cơ tự bảo vệ/đặc điểm bẩm sinh; ghép trải nghiệm khác người thành cohort; coi lời nhắm audience trong promotion/advice là self-report. Không coi machine acceptance/attached support/machine review là semantic guarantee hoặc customer truth đã duyệt.
 - Một số statements còn SHALLOW hoặc dùng từ phổ quát/mức độ mạnh hơn evidence. Per-part mappings kiểm ID/range/coverage, không tự chứng minh entailment. Grounding và máy review không thay human judgment.
 - Tám relationship mismatch bị chặn; model có thể chọn relation label không khớp các category/path thực sự được chọn. Code không tự đổi label để salvage. Guards EN/VI có thể over-reject hoặc bỏ sót cách diễn đạt khác; số liệu trong generated prose bị chặn bảo thủ dù nguồn có số.
 - Deterministic dedupe chỉ xử lý normalized near-identical wording + same support/type. Paraphrase cùng ý nhưng khác wording/support có thể còn trùng; không merge chỉ vì giống keywords.

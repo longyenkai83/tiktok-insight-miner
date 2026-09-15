@@ -1,14 +1,26 @@
 # 06 — DEFINITION OF DONE
 
+## Phase 4.1 delivery checks
+
+- Explicit v2.insights.2 schema/version error for old artifacts; no implicit migration.
+- Machine outcome machine_accepted; emitted candidates pending_human_review only.
+- Structural provenance/support and machine_review_passed validated independently of human truth.
+- Negative/missing/invalid review cannot claim machine_review_passed; tampered flags rejected.
+- human_verified/market_validated/purchase_validated cannot become true from comments.
+- Existing guards and reviewer retained; no new reviewer architecture or acceptance-rate target.
+- All offline tests green, same local 50-comment cached replay with state counts, no private data committed.
+- Record both routers, normalized contract, review-source evidence rule, lifecycle and platform-neutral naming.
+- Phase 5 Human Governor is authoritative semantic review, future-only; no runtime router/scheduler/adapters.
+
 ## Phase 4 — ready for architect review only
 
 - Business OS north-star memory and DEC-035–041 recorded; agents read 00–11.
-- patterns.json feeds independent Evidence/Insight Engine and emits v2.insights.1.
+- patterns.json feeds independent Evidence/Insight Engine and emits v2.insights.2.
 - Single/cross-pattern candidates express a supported relationship/tension; no renamed-label
   shortcut. Pattern-ID-only synthesis, code-built refs/metrics/profile/scope, separate review.
 - Provenance, exact quotes, context variants, possible contradictions and unknown metrics
   remain intact. No invented demographics/numbers/causality/customer demand.
-- DERIVED, pending_human_review, source-grounded/evidence-backed separated from human/market/
+- DERIVED, pending_human_review, structural grounding/attached support/machine review separated from human/market/
   purchase flags false. Current speech never auto-promoted to purchase evidence.
 - No priority score, content/product opportunity, topic/angle/hook, Value Map, experiment,
   Reelo integration, ingestion state, YouTube, multi-tenancy or default legacy change.

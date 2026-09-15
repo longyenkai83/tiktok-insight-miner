@@ -1,5 +1,57 @@
 # 11 — BUSINESS OS NORTH STAR
 
+## Phase 4.1 — Source Router and Downstream Router (ACCEPTED future architecture)
+
+Customer Intelligence is the FIRST sensing layer of Business OS. Agents execute.
+Evidence informs. Human approves consequential decisions. Phase 5 Human Approval is the
+first explicit Human Governor gate and authoritative semantic gate; not implemented here.
+Phase 4 ends at Insight Candidates, not Verified Insights; machine review remains fallible.
+
+### SOURCE ROUTER — activate only what the user needs
+
+| Route | Sources |
+|---|---|
+| A. SOCIAL LISTENING | TikTok; YouTube comments; Facebook public posts/groups; Reddit |
+| B. OWNED CUSTOMER VOICE | Facebook Page comments; Facebook Inbox; future owned channels |
+| C. REVIEW MINING | Google Maps; Trustpilot; Shopee; Lazada; future review sources |
+| D. FORUM / COMMUNITY / PUBLIC DISCUSSION | VOZ; Webtretho; Tinhte; comments under news articles; future forums |
+| E. MANUAL RESEARCH | Paste; CSV; Excel |
+
+Every route may be independently enabled, disabled, run manually or scheduled independently.
+Ingestion frequency and analysis frequency are separate: Facebook Inbox may ingest daily
+and analyze weekly; Trustpilot may activate only for market/product research; YouTube may
+activate for a specific research project. These are examples, not configured schedules.
+
+All active routes converge to Normalized Evidence → Signal → Context → Pattern → Insight
+Candidate. No source creates a separate intelligence engine. Adapter target fields and
+UNKNOWN != ZERO are in [02](02-DATA-SCHEMA.md); review purchase rules in [03](03-EVIDENCE-RULES.md).
+No router/scheduler/new adapter or state-store runtime in Phase 4.1.
+
+### DOWNSTREAM ROUTER — only after HUMAN-VERIFIED insight
+
+```text
+A. CONTENT RESEARCH
+Verified Insight → Content Opportunity → Topic → Angle → Human Selection
+→ Content Intelligence Packet → Reelo
+
+B. PRODUCT DISCOVERY
+Verified Insight → Priority Need → Product Opportunity → Possible Value Map
+→ Assumptions → Experiments → Evidence → Decision
+
+C. CUSTOMER PROFILE UPDATE
+Verified Insight → propose update to living Customer Profile
+→ human approve supersession/merge
+```
+
+Future Business OS agents may consume the same verified insight contract. Product Opportunity
+remains PROPOSED; human approval does not prove market demand. Profile updates cannot silently
+replace conflicting knowledge. Reelo continues Writer → Critic → Output after direct typed
+packet ingestion. Drive remains legacy compatibility/backup, never the primary future bridge.
+Retain existing Topic/Angle/Human Selection gates even in condensed transport diagrams.
+
+New V2 modules/endpoints/concepts must be platform-neutral. Do not introduce tiktok_* names
+unless specifically a TikTok source adapter; do not rename the legacy Python package.
+
 ## Accepted product principles — Phase 4 authorization
 
 Customer Intelligence is the sensing/understanding layer of an AI-native Business OS:
@@ -59,11 +111,11 @@ handoff. brief.md is not the contract.
 
 Preserve useful /nap-insight dedupe, supersession, provenance and human approval
 when replacing contradictory customer knowledge. Implement transport later, not
-in Phase 4. Evidence-backed is not human-, market- or purchase-validated.
+in Phase 4. Attached evidence is not human-, market- or purchase-validated.
 
 ## Operational rule
 
 Read docs/v2/00–11 before architecture/product-logic work; STOP and report conflicts
-with accepted decisions or Strategyzer foundations. Phase 4 ends at evidence-backed
+with accepted decisions or Strategyzer foundations. Phase 4 ends at evidence-linked
 Insight Candidates. No priority ranking, downstream generation, Reelo integration,
 YouTube, ingestion state or Phase 5 is authorized by this north star.

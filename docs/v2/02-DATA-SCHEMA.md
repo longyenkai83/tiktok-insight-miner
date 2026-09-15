@@ -1,6 +1,48 @@
 # 02 — DATA SCHEMA
 
-## Phase 4 — executable `v2.insights.1`
+## Phase 4.1 schema transition — explicit rejection, no implicit migration
+
+`v2.insights.1` → `v2.insights.2` is an intentional unreleased V2 contract break.
+Readers reject old/unknown versions with an explicit expected-version error, before
+validating the payload. Keep old artifacts as historical files; do not only edit their
+version or rename evidence_backed. Rebuild from the original validated patterns plus
+saved candidate/review transports (or explicitly requested new synthesis), writing a
+separate file. No silent promotion, automatic migration or Phase 1–3 schema change.
+
+- Remove verification.evidence_backed; add evidence_support_present=true and
+  machine_review_passed (strict boolean, required in verification).
+- machine_accepted replaces outcome accepted; Insight status remains pending_human_review.
+- Each outcome also carries machine_review_passed: true only for a usable, correctly
+  bound review passing all existing checks; false for negative, missing, duplicate,
+  stale, malformed or invalid-support review, and candidates never reviewed.
+  False alone does not distinguish failed from not run: inspect review/issues.
+- Deduplicated candidates still passed review; they point to the retained candidate.
+- Envelope replay checks outcome flags against reviews and emitted verification against
+  code-built evidence. An empty/missing/forged evidence bundle cannot claim support.
+- Structural source validity and attached support are not semantic certainty. Phase 5
+  alone may later approve a Verified Insight; its schema/workflow is not implemented.
+
+## Future normalized source adapter contract — design only (DEC-045)
+
+Target fields:
+
+```text
+source_platform, source_type, source_item_id, thread_or_parent_id,
+source_url, source_title_or_context, text, author, created_at,
+likes, reply_count, rating, verified_purchase,
+received_at, processed_at, processing_status, processing_batch_id, content_hash
+```
+
+Unavailable fields remain unknown/null: UNKNOWN != ZERO. This includes verified_purchase:
+missing is not false. A reliable explicit source verified_purchase field may be represented
+separately by a future adapter with provenance; star rating/text/platform cannot fill it.
+Preserve author privacy; do not infer identity. No new adapter or source-store runtime here.
+Source item lifecycle NEW → PROCESSING → PROCESSED; FAILED/IGNORED side states.
+Durable source ID (namespaced to source) is primary dedupe key when available, content hash
+secondary protection. Do not reprocess PROCESSED by default; FAILED can retry; retain batch
+trace. Analysis can be periodic/manual independently of ingestion.
+
+## Phase 4.1 — executable `v2.insights.2`
 
 Strict envelope: schema_version, generated_at UTC, method=closed_patterns_semantic_review.1,
 producer/model/prompt version, input_patterns_hash and embedded v2.patterns.1 snapshot,
@@ -50,9 +92,10 @@ Current v2.patterns.1 sources only support customer_speech, including text self-
 behavior or payment. No promotion from platform/name/keywords. Future stronger evidence needs
 typed observations and a separately reviewed adapter/schema; enum existence is not proof.
 
-Verification is source_grounded=true, evidence_backed=true only for accepted candidates;
+Verification has source_grounded=true and evidence_support_present=true for emitted candidates;
+machine_review_passed=true is computed from the bound automated review, not semantic certainty.
 human_verified=false, market_validated=false, purchase_validated=false are enforced literals.
-Outcome status accepted/rejected/deduplicated preserves candidate, issues and review binding;
+Outcome status machine_accepted/rejected/deduplicated preserves candidate, issues and review binding;
 deduplicated items reference the kept insight. Rejected malformed transport is not imported
 as customer truth. Reader revalidates nested provenance and replays deterministic fields,
 statement construction, review binding, code guards and dedupe. Hashes are not signatures.

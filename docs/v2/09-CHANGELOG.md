@@ -1,5 +1,22 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 4.1 state semantics and router memory
+
+- DEC-042–047: source_grounded is structural provenance; evidence_support_present replaces
+  evidence_backed; machine_review_passed records fallible automated review. Outcome machine_accepted,
+  emitted candidates pending_human_review. Human/market/purchase flags remain false.
+- Bump v2.insights.1 → v2.insights.2; explicit old/unknown-version error, no implicit migration.
+  Rebuild from original patterns and saved transports into a new file; preserve historical artifacts.
+- Phase 5 Human Approval is authoritative semantic gate/first explicit Human Governor, future-only.
+  Record Source Router, Downstream Router, normalized sources, review evidence, incremental lifecycle,
+  platform-neutral naming, direct Reelo contract and existing B2C/Strategyzer/Business OS principles.
+- Current guards/prompts/reviewer retained, no extra reviewers or future router/scheduler/adapters.
+- Full suite 317 passed in 2.22s; 20 new offline cases. Same-50 cached replay: 24 candidates,
+  12 machine_accepted / 12 rejected, all 12 pending_human_review, zero human/market/purchase true.
+  Non-state payload unchanged; no claim of improved semantics. All private artifacts local-only.
+- Same Phase 4 branch; IMPLEMENTED — PENDING ARCHITECT REVIEW; Next Phase DO NOT START.
+  Default legacy behavior unchanged. No Phase 5 or merge main.
+
 ## 2026-09-15 — Phase 4 Evidence + Insight Engine / Business OS memory
 
 - DEC-035 mở Phase 4 trên base 6b743fd; DEC-036–040 ghi Business OS, human Governor, productization, platform-neutral sources, future incremental ingestion và direct typed Reelo handoff. Thêm 11-BUSINESS-OS-NORTH-STAR; agents đọc 00–11. Không triển khai future integrations.

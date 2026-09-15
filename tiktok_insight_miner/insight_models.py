@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, StrictBool, model_validator
 
 from .evidence_models import EvidenceBundle, Verification
 from .pattern_models import PatternsEnvelope, artifact_hash
@@ -69,7 +69,7 @@ class Insight(EvidenceBundle):
     statement_support: list[StatementSupport]
     relationship_type: RelationshipType
     support_pattern_ids: list[str]
-    verification: Verification = Field(default_factory=Verification)
+    verification: Verification
     status: Literal["pending_human_review"] = "pending_human_review"
     semantic_review: SemanticReview
     validation_issues: list[ValidationIssue]
@@ -79,14 +79,15 @@ class CandidateOutcome(StrictModel):
     item_index: int
     candidate: InsightCandidate | None
     semantic_review: SemanticReview | None = None
-    status: Literal["accepted", "rejected", "deduplicated"]
+    status: Literal["machine_accepted", "rejected", "deduplicated"]
+    machine_review_passed: StrictBool = False
     insight_id: str | None = None
     duplicate_of: str | None = None
     validation_issues: list[ValidationIssue] = Field(default_factory=list)
 
 
 class InsightsEnvelope(StrictModel):
-    schema_version: Literal["v2.insights.1"] = "v2.insights.1"
+    schema_version: Literal["v2.insights.2"] = "v2.insights.2"
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     method: Literal["closed_patterns_semantic_review.1"] = "closed_patterns_semantic_review.1"
     producer: str
@@ -97,6 +98,15 @@ class InsightsEnvelope(StrictModel):
     outcomes: list[CandidateOutcome]
     upstream_issues: list[ValidationIssue]
     validation_issues: list[ValidationIssue]
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_schema_version(cls, data):
+        if isinstance(data, dict) and data.get("schema_version", "v2.insights.2") != "v2.insights.2":
+            raise ValueError("Unsupported insight schema version; expected v2.insights.2. "
+                             "Rebuild from original patterns and saved model transports; "
+                             "v2.insights.1 is not implicitly migrated.")
+        return data
 
     @model_validator(mode="after")
     def validate_artifact(self):
@@ -114,6 +124,9 @@ class InsightsEnvelope(StrictModel):
         candidate_counts = Counter(o.candidate.insight_candidate_id for o in self.outcomes if o.candidate)
         for outcome in self.outcomes:
             candidate = outcome.candidate
+            review_passed = candidate is not None and not review_issues(candidate, outcome.semantic_review)
+            if outcome.machine_review_passed != review_passed:
+                raise ValueError("machine_review_passed does not match bound semantic review")
             if outcome.status == "rejected":
                 if not outcome.validation_issues or outcome.insight_id or outcome.duplicate_of:
                     raise ValueError("invalid rejection outcome")

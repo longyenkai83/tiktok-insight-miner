@@ -1,5 +1,43 @@
 # 07 — DECISIONS
 
+## Phase 4.1 — ACCEPTED scope and architecture, implementation pending architect review
+
+- **DEC-042 — State semantics and Human Governor.** Owner authorizes Phase 4.1 on
+  v2-phase-4-evidence-insight@960225de80d4dc8c5ee58ebd98679f004ae803ea, same branch.
+  Supersede DEC-040's executable evidence_backed name with evidence_support_present;
+  source_grounded is structural provenance, machine_review_passed is fallible automated review.
+  Output is Insight Candidates, outcome machine_accepted, status pending_human_review.
+  v2.insights.2 deliberately rejects v2.insights.1; rebuild from original inputs/transports.
+  Keep DEC-041 checks/reviewer, no multi-reviewer architecture. Human/market/purchase flags false.
+  Phase 5 Human Approval is the first explicit Human Governor and authoritative semantic gate;
+  only future human approval creates Verified Insight. Future approved/edited_and_approved/rejected
+  decisions are not implemented. AI perfection is not a prerequisite; known misses stay visible.
+- **DEC-043 — Source Router.** Five independently activated routes: Social Listening;
+  Owned Customer Voice; Review Mining; Forum/Community/Public Discussion; Manual Research.
+  Each can be enabled, disabled, manual or independently scheduled. All converge to one
+  Normalized Evidence → Signal → Context → Pattern → Insight Candidate engine. Route catalog
+  in [11](11-BUSINESS-OS-NORTH-STAR.md). No separate intelligence engine per source.
+- **DEC-044 — Downstream Router.** Only after HUMAN-VERIFIED insight: Content Research,
+  Product Discovery, or propose a living Customer Profile update with human supersession/merge
+  approval. Future Business OS agents consume the same verified insight contract.
+  Refines DEC-024/025 with an explicit human gate and third downstream route; no runtime now.
+- **DEC-045 — Normalized sources and incremental processing.** Future adapter fields in
+  [02](02-DATA-SCHEMA.md); unavailable values unknown/null, UNKNOWN != ZERO. NEW → PROCESSING
+  → PROCESSED, FAILED/IGNORED side states; durable source ID primary dedupe, content hash
+  secondary, no default reprocessing of PROCESSED, retry FAILED, trace batch IDs. Ingestion
+  frequency independent of periodic/manual analysis. No adapters/scheduler/state store now.
+- **DEC-046 — Review evidence.** Negative and 1–2 star reviews are customer evidence, not
+  automatic purchase evidence. Never infer payment from rating/text/platform. A reliable
+  explicit verified_purchase field may be represented separately by future adapters;
+  current public text remains customer_speech.
+- **DEC-047 — Platform-neutral Business OS and handoff.** Preserve DEC-036–039: CI is FIRST
+  sensing layer; agents execute, evidence informs, human approves consequential decisions.
+  New V2 modules/endpoints/concepts use platform-neutral names; tiktok_* only for TikTok
+  source adapters. Do not rename legacy package. Drive is legacy compatibility/backup;
+  typed direct Reelo handoff follows Human-Verified Insight → Content Opportunity → typed
+  Packet → direct ingestion → Writer → Critic → Output, retaining Topic/Angle/Human Selection
+  gates. No downstream implementation or Phase 5 in this patch. B2C-first remains unchanged.
+
 Ngày ghi nhận: 2026-09-15. ACCEPTED là quyết định thiết kế theo chỉ thị trực tiếp của chủ dự án, không có nghĩa đã triển khai. PROPOSED/OPEN dưới đây là trạng thái quyết định, khác với truth_type của customer claim.
 
 ## Quyết định nền tảng — ACCEPTED, trừ mục đã SUPERSEDED
@@ -104,7 +142,7 @@ semantic quality remains subject to review.
   or equivalent structured handoff; retain dedupe/supersession/provenance and human
   approval for conflicting knowledge replacement. Keep existing Topic/Angle gates;
   no Reelo implementation in Phase 4, no brief.md contract.
-- DEC-040: Source-grounded, evidence-backed, human-verified, market-validated and
+- DEC-040 (verification naming superseded by DEC-042): Source-grounded, evidence-backed, human-verified, market-validated and
   purchase-validated are separate properties. Phase 4 emits DERIVED customer
   understanding pending human review. Text describing behavior/payment is still
   customer_speech; no automatic evidence promotion, demand claim or importance score.

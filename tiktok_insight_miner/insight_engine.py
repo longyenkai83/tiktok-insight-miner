@@ -10,6 +10,7 @@ from typing import Protocol
 from pydantic import ValidationError
 
 from .evidence_engine import checked_patterns, evidence_from_checked
+from .evidence_models import Verification
 from .insight_models import (CandidateBatch, CandidateOutcome, Insight, InsightCandidate,
     InsightStatement, InsightsEnvelope, SemanticReview, SemanticVerdict, VerdictBatch)
 from .insight_validator import candidate_issues, dedupe_key, problem, review_issues, statement_parts
@@ -164,6 +165,7 @@ def assemble_insight(patterns, candidate, review):
         statement_support=[dict(start=len(prefix) + p["start"], end=len(prefix) + p["end"],
                                 support_pattern_ids=sorted(mapping[p["part_id"]])) for p in statement_parts(candidate)],
         relationship_type=candidate.relationship_type, support_pattern_ids=sorted(candidate.support_pattern_ids),
+        verification=Verification(machine_review_passed=not review_issues(candidate, review)),
         semantic_review=review, validation_issues=[])
 
 
@@ -235,6 +237,7 @@ def build_insights(patterns, *, provider=None):
                         "Expected one review for candidate")]
                 if outcome.validation_issues:
                     continue
+                outcome.machine_review_passed = True
                 key = dedupe_key(candidate)
                 if key in seen:
                     outcome.status = "deduplicated"
@@ -242,7 +245,7 @@ def build_insights(patterns, *, provider=None):
                     continue
                 insight = assemble_insight(patterns, candidate, outcome.semantic_review)
                 seen[key] = insight.insight_id
-                outcome.status = "accepted"
+                outcome.status = "machine_accepted"
                 outcome.insight_id = insight.insight_id
                 insights.append(insight)
     return InsightsEnvelope(producer=provider.name, input_patterns_hash=artifact_hash(patterns),

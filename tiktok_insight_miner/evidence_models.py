@@ -2,7 +2,7 @@
 from enum import Enum
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, StrictBool
 
 from .pattern_models import ContextVariant, CounterEvidence, EvidenceRef, Support, Variation
 from .signal_models import StrictModel
@@ -17,8 +17,10 @@ class EvidenceKind(str, Enum):
 
 
 class Verification(StrictModel):
+    """Structural support and fallible machine review, never human approval."""
     source_grounded: Literal[True] = True
-    evidence_backed: Literal[True] = True
+    evidence_support_present: Literal[True] = True
+    machine_review_passed: StrictBool
     human_verified: Literal[False] = False
     market_validated: Literal[False] = False
     purchase_validated: Literal[False] = False

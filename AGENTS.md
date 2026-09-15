@@ -1,10 +1,18 @@
 # V2 SOURCE-OF-TRUTH — bắt buộc trước khi sửa code
 
+## Phase 4.1 memory patch
+
+DEC-042–047 refine accepted architecture. Phase 4 output is Insight Candidates only:
+machine_accepted / pending_human_review, never verified customer truth. Read 00–11 as below.
+Phase 5 Human Approval is the first explicit Human Governor and authoritative semantic gate;
+DO NOT START. Source/Downstream Routers, schedulers, adapters and state store remain future
+documentation only. Keep current semantic review; do not add an expensive multi-reviewer system.
+
 Mọi coding agent **bắt buộc đọc đủ mười hai file từ [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) đến [11-BUSINESS-OS-NORTH-STAR.md](docs/v2/11-BUSINESS-OS-NORTH-STAR.md) trước khi sửa code, đặc biệt trước architecture/product-logic changes**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
 
 Strategyzer foundations và Business OS north star là explicit architecture dependencies; đọc đủ docs/v2/00–11. **If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.** Không âm thầm diễn giải lại quyết định/nguyên tắc để hợp thức hóa implementation.
 
-Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ evidence-backed Insight Candidates pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
+Current Phase = Phase 4 — Evidence + Insight Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-035. Chỉ Insight Candidates có evidence đính kèm pending_human_review; human/market/purchase verification = false. Không priority ranking, downstream generation, Reelo integration, ingestion state, YouTube hoặc multi-tenancy. **Do not start Phase 5.**
 
 Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Test xanh hoặc push code không tự mở phase kế tiếp.
 
