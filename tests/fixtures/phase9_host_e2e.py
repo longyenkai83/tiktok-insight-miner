@@ -40,11 +40,12 @@ def main():
                                     explanation='Synthetic framing is not established external evidence.')
                                for r in packet.external_evidence_requirements])
     passed = dict(verdict='PASS', truth_preserved=True, selected_intent_preserved=True,
-                  limitations_preserved=True, external_claims_safe=True, title_criteria=[True]*8, issues=[])
-    failed = dict(passed, verdict='FAIL', issues=['synthetic_first_review_requires_revision'])
+                  limitations_preserved=True, external_claims_safe=True, title_criteria=[True]*8, blocking_issues=[], notes=[],
+                  creator_truth_preserved=True, context_scope_preserved=True, source_verification_complete=True)
+    failed = dict(passed, verdict='REVISE', blocking_issues=['synthetic_first_review_requires_revision'])
     # Test dependency injection in the copy ONLY. Production code has no synthetic bypass.
-    stub = 'const fixtureResponses='+json.dumps([draft, failed, draft, passed])+';\n'
-    stub += 'const agent=async(prompt,options)=>{if(!prompt.includes("IMMUTABLE PACKET"))throw new Error("missing_context"); return fixtureResponses.shift();};\n'
+    stub = 'const fixtureResponses='+json.dumps(dict(WRITER=draft, CRITIC1=failed, REWRITE=draft, CRITIC2=passed))+';\n'
+    stub += 'const agent=async(prompt,options)=>{if(!prompt.includes("IMMUTABLE PACKET"))throw new Error("missing_context"); return fixtureResponses[V2_BOUND.stage.stage_type];};\n'
     template = (args.reelo_workspace/'.claude/workflows/batch-content.js').read_text(encoding='utf-8')
     workflow.write_bytes(template.replace('/* V2_BOUND_CONTEXT */', '/* V2_BOUND_CONTEXT */\n'+stub).encode('utf-8'))
     config = dict(execution_workspace=str(workspace), executable=str(args.executable),
@@ -70,7 +71,7 @@ def main():
                   result=result.model_dump(mode='json'), root=str(root))
     (root/'e2e-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps(dict(status='PASS', root=str(root), generation_id=result.generation_id,
-                          packet_id=packet.packet_id, task_id=result.host['task_id'])))
+                          packet_id=packet.packet_id, task_ids=[s['host']['task_id'] for s in result.host['stages']])))
 
 
 if __name__ == '__main__':

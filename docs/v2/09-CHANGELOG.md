@@ -1,5 +1,23 @@
 # 09 — CHANGELOG
 
+
+## 2026-09-15 — C5.4 stage-wise host orchestration; semantic quality blocker
+
+- Replace only V2's long Workflow chain with four explicit local-code transitions, one host
+  invocation per stage. Keep Writer/Critic/rewrite craft and identical authoritative A/B/C.
+- Persist independently verified raw/normalized stage artifacts, identity/parent/input hashes
+  and host correlation. Stop on unknown/malformed/mismatch with predecessors retained; no retry.
+- Critic semantics remain PASS/REVISE; at most one rewrite, no Notion/publication or approval.
+  Adapt synthetic host fixture to the bound stage. Legacy and Phase8 contract unchanged.
+- Full tests: Insight 489 PASS (52.92s), Reelo final 91 PASS (3.88s). The pre-live Reelo suite
+  had 83 PASS; eight additional provenance cases passed while live runtime remained unchanged.
+- Sole live attempt: Writer 397.755s -> Critic1 219.397s -> technical DRAFT_READY (622.554s wall).
+  Two independent terminal tasks; PASS/zero blockers/12 notes, no rewrite. 16 assets/A/B unchanged.
+- Quality BLOCKED: Critic noticed unverified two-person inference from author-null comments but
+  put it in notes; cross-source causal speculation also softened rather than blocked. Machine
+  result retained honestly; no self-acceptance, retry, second draft run or source mutation.
+- REPORT-C5.4.md is the single owner-mediated handoff. STOP for Architect; no merge/new scope.
+
 ## 2026-09-15 - C5.3 permission boundary patch; native wait-ceiling blocker
 
 - Exact post-terminal output Read denial can become an audit note only after Python

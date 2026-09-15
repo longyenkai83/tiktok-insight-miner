@@ -121,3 +121,23 @@ host allowlist. Every other denial or validation failure remains blocking. Main/
 is unnecessary and not authoritative. Q1 and the creative/packet schemas are unchanged.
 Owner authorizes one final controlled attempt, no retry or merge. Human quality review and
 Architect integrity review remain separate from technical completion.
+
+## C5.4 — deterministic stage boundary
+
+Owner/Architect explicitly authorizes the minimum Phase 9 state machine in Reelo's local
+integration layer. Each native 2.1.270 invocation runs one Writer/Critic/rewrite agent only.
+Identical canonical A/B/C plus identity/lineage accompany every stage; only the required
+previous draft and review accompany that stage. Creative prompts/craft and packet .1 stay intact.
+
+Code validates and atomically persists each terminal output before choosing the next stage.
+Completed stage records retain identity, parent stage/artifact hash, raw/normalized outputs and
+host task/session correlation. Prior records are checked before continuation and final PASS.
+Malformed/stopped/timeout/identity mismatch stops UNKNOWN without retry, preserving predecessors.
+One rewrite maximum; final REVISE = CRITIC_FAILED. DRAFT_READY requires final Critic PASS and zero
+blockers plus immutable context/identity/hash checks. Approval PENDING, published false, no Notion.
+
+Timeout and budget are per stage, at most four invocations. No generic queue/resume system,
+legacy refactor, Phase8 schema change, Source Router, Unified Web or merge. Existing synthetic
+live-host fixture is adapted to return the controlled response for each bound stage; it is not
+creative-quality evidence. C5.4 permits exactly one real-assets controlled acceptance after full
+suites pass; its local REPORT-C5.4.md is the sole owner-mediated review handoff.

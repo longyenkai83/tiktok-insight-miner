@@ -1,5 +1,41 @@
 # 08 — PROJECT STATE
 
+
+## Latest checkpoint — C5.4 technical DRAFT_READY; quality BLOCKED
+
+Current Phase = Phase 9 — Direct Reelo Integration
+C5 Status = BLOCKED — unresolved author/scope inference was classified as a non-blocking Critic note.
+Phase 9 NOT ACCEPTED. Next Phase DO NOT START. No merge.
+
+Reelo now owns the minimum deterministic stage machine: one native Workflow/creative agent per
+Writer, Critic1, optional Rewrite, Critic2. Identical A/B/C and lineage; strict stage envelope and
+Python output validation, durable raw/normalized stage records, parent/artifact/input hashes.
+Later failure retains earlier results; no automatic retry. C5.3 permission boundary remains closed.
+Legacy outside V2, existing creative constraints/schemas and canonical Phase8 contract unchanged.
+
+Full suites before the sole real-assets run: Insight 489 PASS / Reelo 83 PASS. Additional offline
+provenance regression cases then brought Reelo to 91 PASS; no runtime edits during acceptance.
+ONE C5.4 controlled synthetic packet + 16 real read-only assets: Writer terminal 397.755s,
+Critic1 terminal 219.397s; wall 622.554s. Tasks wfg9tjpyi / wbh1n8ap9. Independent host sessions.
+Execution GEN-229d33f1768f46beb4cf66d159344a38 = DRAFT_READY, Critic PASS/zero blockers,
+12 informational notes. No rewrite/Critic2 because Critic1 reported PASS. No automatic retry.
+A/B/packet and all 16 asset hashes unchanged. No permission denials. No Notion, source writeback,
+publication, approval or historical execution mutation. human_approval PENDING, published false.
+
+Human-facing code review of the actual draft/review found the remaining quality blocker:
+source snapshots have author=null and packet warns aliases are not verified people. Draft says
+"two people"; Critic explicitly identifies that unsupported inference but places it in notes,
+while asserting truth/context/limitations preserved. It also accepts cross-source causal
+speculation as soft wording. Technical DRAFT_READY is preserved as the actual machine result;
+it is NOT C5 acceptance. Do not hide the contradiction or rewrite the recorded verdict.
+Synthetic-comment framing also needs explicit owner/Architect review before any real use.
+
+Sole handoff: local REPORT-C5.4.md (includes draft with private source passage redacted;
+full original and raw evidence remain in LOCALAPPDATA). Next actor: Architect reviews this
+semantic quality blocker and specifies any bounded follow-up through anh Tuan. Codex STOP.
+
+## Historical checkpoints
+
 ## Latest checkpoint - C5.3 BLOCKED at native print wait ceiling
 
 Current Phase = Phase 9 - Direct Reelo Integration
