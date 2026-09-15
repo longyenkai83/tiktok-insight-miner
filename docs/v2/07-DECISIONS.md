@@ -36,6 +36,14 @@ Loại khỏi target: economic buyer, decision committee, channel partner, recom
 
 Theo xác nhận trực tiếp của chủ dự án, tên field chuẩn là `audience_segment`, `context`, `situation`, `life_or_business_stage`, `user_buyer_distinction` (optional). Dùng một field `life_or_business_stage` thống nhất. Đây là cập nhật tên field trong DEC-012/019; kiểu dữ liệu và validation chi tiết vẫn cần review. Không mở Phase 1.
 
+## DEC-021 — Cho phép Phase 1 độc lập — ACCEPTED
+
+Yêu cầu trực tiếp “PHASE 1 — SIGNAL EXTRACTION” của chủ dự án chỉ định base `v2-phase-0@dd5c945`, branch `v2-phase-1-signal-extraction` và phạm vi raw Comment → multi-signal customer evidence. Đây là authorization mở Phase 1, thay giới hạn tài liệu-only của DEC-014; không phải tự mở phase từ test/push. Chỉ OBSERVED/DERIVED trong Phase 1; không HYPOTHESIS/PROPOSED, không Audience/context segmentation (Phase 2), không các tầng sau. Model resolution riêng, CLI riêng và legacy default giữ nguyên.
+
+## DEC-022 — Hình thức schema Phase 1 — IMPLEMENTED, PENDING ARCHITECT REVIEW
+
+Flat typed signal list; LANGUAGE cũng mang claim/quote/provenance. Hậu kiểm từng item sau structured JSON, lưu source hash/spans. Claim extractive giữ lời quote để không chấp nhận paraphrase thêm facts chỉ vì quote có thật; DERIVED là interpretation khi categorization. Đây là lựa chọn implementation bảo thủ cần review, không tuyên bố kiến trúc sư đã duyệt chi tiết. Giới hạn và khác ví dụ conceptual ghi tại 02/03. Không mở Phase 2.
+
 ## Chưa quyết định — không được coi là quyền triển khai
 
 | ID | Trạng thái | Nội dung cần review |

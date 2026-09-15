@@ -1,35 +1,36 @@
 # 08 — PROJECT STATE
 
-Current Phase = Phase 0
+Current Phase = Phase 1 — Signal Extraction
 
-Status = ARCHITECTURE DOCUMENTATION
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 
-Next Phase = Phase 1 Signal Extraction
+Next Phase = DO NOT START
 
-Do not start Phase 1 without review.
+Do not start Phase 2. Wait for architecture review.
 
-## Trạng thái thực tế
+## Phạm vi đã thực hiện
 
-- Audit CURRENT STATE đã được chủ dự án chấp nhận; baseline và hash ở [00-PROJECT-OS.md](00-PROJECT-OS.md).
-- Bộ source-of-truth V2 `00`–`09` được chuẩn hóa cho review, cùng quy tắc đọc docs trong CLAUDE.md/AGENTS.md.
-- Architecture correction đã được ghi nhận: V2 B2C-first, DEC-019 thay DEC-004; loại logic hệ sinh thái B2B khỏi target. Customer Identity dùng audience_segment/context/situation, `life_or_business_stage` khi liên quan; `user_buyer_distinction` (optional) chỉ khi cần cho B2C. Chi tiết schema/implementation còn PROPOSED/OPEN.
-- V2 Signal Extraction, Pattern, Evidence/Insight, typed packet, Writer integration và Unified Agent: **NOT IMPLEMENTED trong lần thay đổi này**.
-- Runtime behavior changed: **NO**. Không sửa business logic, pipeline, prompt, runtime config hoặc tests.
-- Chưa có review cho phép bắt đầu Phase 1. Sau bàn giao phải STOP.
+- Base `v2-phase-0@dd5c945`; branch `v2-phase-1-signal-extraction`; được cho phép bằng yêu cầu trực tiếp của chủ dự án (DEC-021).
+- signal_models.py + signal_extractor.py: raw Comment → typed multi-signal artifact, quote/ID hậu kiểm, source snapshot/provenance, per-item rejection, status/issues và model resolution riêng.
+- CLI `tim extract-signals -i path/to/raw_comments.json [-o path/to/signals.json] [--model MODEL] [--batch-size 10]`. Mặc định signals.json nằm cạnh input. Exit 0 khi complete, exit 2 khi artifact có partial/error/global issue; input/output lỗi exit 1. Không ghi đè chính raw input.
+- Default legacy runtime behavior changed: **NO**. Legacy classifier, run, bank/selection, report/brief, selected_angles và Reelo không đổi. Chỉ có execution path opt-in mới.
+- Audience/context segmentation, Pattern, Insight, Topic, Angle, Packet, Writer integration, Unified Agent: **NOT IMPLEMENTED** trong Phase 1. Không mở Phase 2.
 
-## Kiểm chứng bàn giao
+## Kiểm chứng
 
-Architecture correction chỉ sửa tài liệu; kiểm link và diff, không đổi runtime. Kết quả test dưới đây thuộc lần bàn giao Phase 0 trước correction, không phải lần chạy mới.
+- Full suite: `python -m pytest tests -q -p no:cacheprovider` → **127 passed in 1.21s**, Python 3.13.15 / pytest 8.4.2 (2026-09-15).
+- 37 test cases mới: 36 cho extractor/CLI/provenance/serialization/error handling và 1 regression classifier. Tất cả dùng fixture tổng hợp/mock; không test nào gọi API thật. 90 existing tests vẫn pass.
+- Kiểm `extract-signals --help`, diff whitespace, link tài liệu và phạm vi legacy không đổi.
 
-- Lệnh: `python -m pytest tests -q -p no:cacheprovider --basetemp output/v2-phase0-pytest-temp`.
-- Kết quả ngày 2026-09-15: **90 passed in 0.52s**, Python 3.13.15, pytest 8.4.2.
+- Mẫu thật cục bộ: **50 processed; ok=1, no_signal=5, partial=44, error=0; 82 claims rejected**.
+- Artifact không commit: `D:/Tuan-CoWork/TUAN-insight-miner/output/v2-phase1-worktree/output/phase1-real-review/signals.json`.
+- Tỷ lệ partial cao cần architect review; không tự sửa claim bị loại thành accepted và không coi kết quả này là duyệt chất lượng extraction.
 
-Existing tests chỉ kiểm regression hiện có, không chứng minh các invariant V2 đã được triển khai. Kiểm phạm vi diff chỉ gồm mười file chuẩn và hai chỉ dẫn root. Branch/commit/push được xác nhận bằng Git và báo trong kết quả bàn giao; không giả lập hash trong tài liệu.
+## Giới hạn cần architect review
 
-## Việc tiếp theo được phép
+- Claim extractive, chưa hỗ trợ paraphrase tự do; category/subcategory có thể DERIVED. Không coi substring check là chứng minh mọi phân loại ngữ nghĩa đều đúng.
+- Legacy zero thiếu raw proof chuyển null có ghi chú; không khôi phục được thông tin nguồn đã bị adapter trước đây bỏ mất.
+- CLI không retry chọn lọc ID/claim lỗi; artifact giữ partial/error để người vận hành review/rerun. Không tự đổi nhãn hoặc lấp bằng config.
+- Artifact có source text/metadata riêng tư: chỉ lưu local, không commit. Bộ fixture test là tổng hợp.
 
-Chủ dự án review bộ docs/v2. Chỉ sau khi có quyết định cho phép mới cập nhật state và chuẩn bị Phase 1 Signal Extraction theo gate ở [05-ROADMAP.md](05-ROADMAP.md). Không tạo module, schema executable, prompt, adapter, migration hay thay đổi pipeline để “chuẩn bị sẵn” trong Phase 0.
-
-## Câu hỏi mở
-
-Schema chi tiết, nguồn fixture, chính sách scope/dedup/support, lựa chọn model, storage/transport và UI chưa chốt; xem DEC-012/016/017/018. Đây là việc review tương lai, không cản bàn giao bộ tài liệu Phase 0.
+STOP. Wait for architecture review. Next Phase = DO NOT START.

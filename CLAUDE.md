@@ -2,9 +2,9 @@
 
 Mọi coding agent **bắt buộc đọc đủ mười file `00`–`09` trong [docs/v2](docs/v2/00-PROJECT-OS.md) trước khi sửa code**. Đọc [PROJECT-STATE](docs/v2/08-PROJECT-STATE.md) để kiểm tra phase và [DECISIONS](docs/v2/07-DECISIONS.md) để kiểm tra quyết định; không suy diễn quyền triển khai từ audit hoặc roadmap.
 
-Current Phase = Phase 0. Status = ARCHITECTURE DOCUMENTATION. Next Phase = Phase 1 Signal Extraction. **Do not start Phase 1 without review.** Phạm vi hiện tại chỉ là tài liệu, existing tests, commit và push; không sửa business logic, refactor pipeline, prompt hoặc runtime behavior.
+Current Phase = Phase 1 — Signal Extraction. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án đã cho phép Phase 1 qua yêu cầu trực tiếp (DEC-021). V2 chạy độc lập bằng `extract-signals`; giữ nguyên default legacy run/classifier/output. **Do not start Phase 2. Wait for architecture review.**
 
-Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Approval của audit, test xanh hoặc push docs không tự mở Phase 1.
+Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Test xanh hoặc push code không tự mở phase kế tiếp.
 
 ---
 

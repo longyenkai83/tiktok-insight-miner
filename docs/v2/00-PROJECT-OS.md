@@ -2,15 +2,15 @@
 
 ## Trạng thái và quyền thực thi
 
-Current Phase = Phase 0
+Current Phase = Phase 1 — Signal Extraction
 
-Status = ARCHITECTURE DOCUMENTATION
+Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 
-Next Phase = Phase 1 Signal Extraction
+Next Phase = DO NOT START
 
-Do not start Phase 1 without review.
+Do not start Phase 2. Wait for architecture review.
 
-Bộ tài liệu này là source-of-truth cho thiết kế V2, không tuyên bố V2 đã chạy. Audit hiện tại đã được chủ dự án chấp nhận; việc chấp nhận audit không đồng nghĩa duyệt triển khai V2. Phạm vi thay đổi lần này chỉ gồm tài liệu và chỉ dẫn cho coding agent. Không sửa business logic, pipeline, prompt, cấu hình hay runtime; không bắt đầu Phase 1.
+Bộ tài liệu này là source-of-truth cho V2. Yêu cầu trực tiếp “PHASE 1 — SIGNAL EXTRACTION”, base `dd5c945`, đã cho phép triển khai riêng Source → Signals (DEC-021). Phase 1 hiện chờ architect review; các tầng sau vẫn là thiết kế, chưa triển khai. Không đổi default legacy behavior; không bắt đầu Phase 2.
 
 ## Nguồn và thứ tự ưu tiên
 

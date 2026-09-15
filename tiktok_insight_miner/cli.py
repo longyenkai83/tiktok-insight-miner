@@ -153,6 +153,28 @@ def cmd_fb_fetch(args: argparse.Namespace) -> None:
     print("👉 Bước tiếp: tim classify -i <file này> -o classified.json")
 
 
+def cmd_extract_signals(args: argparse.Namespace) -> None:
+    """Opt-in V2 path. Does not call or modify any legacy stage."""
+    from collections import Counter
+    from tiktok_insight_miner.signal_extractor import (
+        extract_signals, load_raw_sources, save_signals_json,
+    )
+
+    input_path = Path(args.input)
+    output_path = Path(args.output) if args.output else input_path.with_name("signals.json")
+    if input_path.resolve() == output_path.resolve():
+        sys.exit("Output must not overwrite the raw input")
+    try:
+        result = extract_signals(load_raw_sources(input_path), model=args.model, batch_size=args.batch_size)
+        save_signals_json(result, output_path)
+    except (OSError, ValueError) as exc:
+        sys.exit(f"Signal extraction input/output error: {type(exc).__name__}")
+    counts = Counter(r.extraction_status for r in result.records)
+    print(f"Signals: {len(result.records)} comments; {dict(counts)} -> {output_path}")
+    if result.issues or counts["partial"] or counts["error"]:
+        sys.exit(2)  # artifact preserved, incomplete run is visible to automation
+
+
 def cmd_classify(args: argparse.Namespace) -> None:
     comments = load_comments_json(Path(args.input))
     print(f"Loaded {len(comments)} comments từ {args.input}")
@@ -780,6 +802,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_fb.add_argument("--probe", action="store_true", help="Chỉ in response thô mẫu để đối chiếu field, không ghi file")
     p_fb.add_argument("-o", "--output", type=str, default="output/fb_raw_comments.json", help="File JSON đầu ra")
     p_fb.set_defaults(func=cmd_fb_fetch)
+
+    p_signals = sub.add_parser("extract-signals", help="V2: extract grounded signals from raw comments")
+    p_signals.add_argument("-i", "--input", required=True, help="Raw comments JSON")
+    p_signals.add_argument("-o", "--output", help="Default: signals.json beside input")
+    p_signals.add_argument("--model", help="Override SIGNAL_MODEL / ANTHROPIC_MODEL")
+    p_signals.add_argument("--batch-size", type=int, default=10)
+    p_signals.set_defaults(func=cmd_extract_signals)
 
     p_classify = sub.add_parser("classify", help="Classify comments bằng Claude")
     p_classify.add_argument(

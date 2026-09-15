@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 1 Signal Extraction, pending architect review
+
+- Thêm V2 models/extractor và CLI opt-in extract-signals, không cần classified.json.
+- Typed Jobs/Pains/Gains/Behavior/Language, claim-level OBSERVED/DERIVED, exact evidence spans, source hashes, nullable metrics và extraction status/issues.
+- Code hậu kiểm quote/claim/ID, giữ valid claims khi item lỗi; structured JSON không thay validation.
+- Test offline fixture tổng hợp và regression classifier cũ; kết quả full suite/mẫu 50 comment tại PROJECT-STATE.
+- Cập nhật phase gate, schema, evidence rules và DEC-021/022; user authorization cho Phase 1 không mở Phase 2.
+- Không đổi legacy default runtime, không thay Reelo hoặc triển khai tầng tiếp theo.
+
 ## 2026-09-15 — Chuẩn hóa tên field Customer Identity
 
 - DEC-020 chốt `audience_segment`, `context`, `situation`, `life_or_business_stage`, `user_buyer_distinction` (optional).

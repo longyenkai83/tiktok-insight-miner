@@ -1,8 +1,34 @@
 # 02 — DATA SCHEMA
 
-## Phạm vi
+## Phase 1 — schema đã triển khai, chờ architect review
 
-Đây là hợp đồng thiết kế, không phải schema executable đã triển khai. Các nguyên tắc trong DEC-001–010 là ACCEPTED theo yêu cầu; tên field và bố cục dưới đây là PROPOSED để review trước triển khai. Không phụ thuộc Pydantic/JSON Schema/V1. Dùng thống nhất `truth_type ∈ {OBSERVED, DERIVED, HYPOTHESIS, PROPOSED}`.
+`signal_models.py` định nghĩa `SignalsEnvelope` với `schema_version="v2.signals.1"`, `generated_at` UTC, model đã resolve, `prompt_version="phase1.extractive.1"`, `derivation_method="source_span_categorization"`, records[] và issues[]. Không phụ thuộc classified.json.
+
+Mỗi record gồm comment_id, source, signals[] và extraction_status (ok/no_signal/partial/error), issues[]. Mỗi signal có category/subcategory, claim, truth_type **chỉ OBSERVED hoặc DERIVED**, evidence_quote, confidence high/medium/low, signal_id, source_record_id, source_snapshot_hash, start/end. Offset nửa mở theo Unicode code point trong source.text gốc. LANGUAGE cũng dùng record có kiểu để giữ cùng provenance, không chỉ chuỗi rời.
+
+Taxonomy thực thi:
+
+| category | subcategory |
+|---|---|
+| jobs | functional, social, emotional, supporting |
+| pains | negative_outcomes, obstacles, risks_fears, costs, frustrations |
+| gains | required, expected, desired, unexpected |
+| behavior | trigger, current_solution, alternatives, workarounds, decision_criteria, objections |
+| language | exact_phrases, emotional_wording, repeated_expressions |
+
+Khác ví dụ conceptual: dùng danh sách signal phẳng có category/subcategory thay các mảng lồng nhau; mảng rỗng nghĩa không tìm thấy signal. Không thêm AudienceContext/CustomerIdentity hoặc CONTEXT category trong Phase 1. Segmentation thuộc Phase 2. Generic schema phía dưới vẫn là thiết kế tương lai; không yêu cầu HYPOTHESIS, audience_context_ref, Pattern hoặc Insight để chạy Phase 1.
+
+Lựa chọn triển khai bảo thủ, chờ review: claim giữ cùng lời nguồn với evidence_quote (cho phép chuẩn hóa whitespace ở semantic claim). DERIVED biểu diễn phép diễn giải khi gán category/subcategory, không sinh paraphrase tự do. Ví dụ claim được viết lại trong yêu cầu conceptual sẽ bị từ chối nếu thêm/đổi lời nguồn; không tự thay claim lỗi thành claim hợp lệ. Đây là giới hạn có chủ đích để quote hợp lệ không che một kết luận bịa demographics/motivation/context. LANGUAGE giữ nguyên tuyệt đối cả whitespace của đoạn nguồn.
+
+Source giữ comment_id, text, author, likes/reply_count nullable, created_at/video_url/platform khi có, metadata gốc và metric_notes. Hash SHA-256 bao phủ source snapshot; source ID lấy từ platform/URL/comment ID. Signal ID xác định bởi snapshot, category/subcategory và span. Model chỉ nhận ID + toàn bộ text, không nhận metadata riêng tư, persona/config hay sản phẩm. Không truncate text.
+
+Giữ raw input ở metadata để trace, không chứng nhận raw metadata là customer fact. Metric thiếu/không được source cung cấp là null; legacy zero không có raw proof là null với lý do, giá trị input vẫn giữ riêng. Không phục hồi thông tin đã bị adapter cũ làm mất. Source time để nguyên giá trị nguồn; generated_at không giả làm thời điểm scrape.
+
+File `signals.json` là artifact riêng. `load_signals_json()` kiểm lại schema/version, source hash/ref và quote spans khi đọc. Không là typed Content Intelligence Packet, chưa đủ điều kiện Writer. Không có clustering, profile, insight, topic, angle hoặc hypothesis generation.
+
+## Phạm vi thiết kế đích (ngoài schema Phase 1 phía trên)
+
+Phần generic dưới đây là hợp đồng thiết kế cho các phase tương lai, không phải toàn bộ schema executable hiện hành. Các nguyên tắc trong DEC-001–010 là ACCEPTED theo yêu cầu; tên field và bố cục dưới đây là PROPOSED để review trước triển khai. Không phụ thuộc Pydantic/JSON Schema/V1. Dùng thống nhất `truth_type ∈ {OBSERVED, DERIVED, HYPOTHESIS, PROPOSED}`.
 
 Ký hiệu: `T[]` là danh sách; `T?` cho phép null; `Ref<T>` gồm ID và version của bản ghi T. Khi đã serialize, ID phải duy nhất trong namespace và ổn định qua export; không đánh lại ID theo bucket/run. Mọi Ref phải phân giải được trong snapshot hoặc manifest nguồn được kiểm chứng.
 

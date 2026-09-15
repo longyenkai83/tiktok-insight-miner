@@ -1,5 +1,19 @@
 # 03 — EVIDENCE RULES
 
+## Phase 1 — hậu kiểm đã triển khai
+
+`signal_extractor.validate_batch()` xử lý JSON theo từng item sau structured output bằng JSON Schema sinh từ Pydantic. Dùng `messages.create(output_config=...)` thay `messages.parse()` để một claim sai kiểu không làm mất toàn batch trước khi salvage. Chỉ log issue code, ID/index và token/cache counters, không log lời khách hay exception body/API key.
+
+- Unknown model ID: loại record lạ, ghi envelope issue; missing ID: giữ source với status error; duplicate ID: không chọn tùy tiện một bản, trả error cho ID đó.
+- Input ID trùng hoặc không có locator hợp lệ: từ chối input trước API, không tạo ID giả.
+- Quote phải có trong source sau duy nhất whitespace normalization, phân biệt hoa/thường, dấu và punctuation. Lưu lại exact source span; không gộp quote của nhiều comment.
+- Claim giữ đúng lời quote theo contract extractive; trường demographic/context lạ hoặc claim thêm ý bị loại. HYPOTHESIS/PROPOSED không qua schema Phase 1.
+- Claim lỗi loại riêng và có issue/index; comment có lỗi item là partial kể cả không còn claim, không đánh nhầm no_signal. no_signal chỉ là response hợp lệ với signals rỗng. Record/batch không dùng được là error.
+- LANGUAGE phải OBSERVED và literal; repeated_expressions chỉ hợp lệ khi lặp ít nhất hai lần trong chính comment, không tổng hợp xuyên comment.
+- API/refusal/truncated/JSON lỗi tạo error records để không mất nguồn. Authentication error dừng các request còn lại; artifact vẫn giữ đủ source cùng lỗi. Không biến API failure thành empty success.
+
+Giới hạn: code bảo đảm nguồn text/ID/shape và ngăn claim thêm lời, không chứng minh nhãn category hay cách hiểu sarcasm của model luôn đúng. Confidence là mức tự đánh giá, không là bằng chứng. Cần architect review chất lượng trước giai đoạn sau; semantic entailment/paraphrase tự do chưa triển khai.
+
 ## Phân biệt điều quan sát và điều kết luận
 
 OBSERVED chỉ có nghĩa hệ thống ghi nhận được lời nói hoặc metadata từ nguồn. Nếu khách nói “sản phẩm X gây Y”, chỉ được trình bày đó là lời khách phản ánh; chưa thể khẳng định X thực sự gây Y. Chuẩn hóa ý nghĩa, phân biệt `user_buyer_distinction` (optional) khi cần hoặc suy nguyên nhân là DERIVED/HYPOTHESIS tùy bằng chứng.

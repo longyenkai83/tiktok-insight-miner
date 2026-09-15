@@ -1,6 +1,16 @@
 # 06 — DEFINITION OF DONE
 
-## Phase 0 — nghiệm thu tài liệu
+## Phase 1 — sẵn sàng cho architect review
+
+- Raw Comment/raw_comments.json chạy trực tiếp qua CLI extract-signals và xuất signals.json có version/provenance.
+- 0..n signals/comment; đủ Jobs/Pains/Gains/Behavior/Language theo taxonomy đã giao.
+- Chỉ OBSERVED/DERIVED; quote và LANGUAGE kiểm nguồn bằng code; claim lỗi không làm mất claim tốt.
+- Unknown/missing/duplicate result IDs và input IDs không rõ được xử lý có trạng thái/lỗi.
+- Không segmentation, B2B roles, hypothesis, clustering, insight, topic, angle, content hoặc Reelo change.
+- Test offline các trường hợp bắt buộc, serialization và legacy classifier; full suite pass, không secret/raw private vào commit.
+- Docs/state cập nhật, commit/push nhánh riêng. IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START.
+
+## Phase 0 — nghiệm thu tài liệu (lịch sử)
 
 - Có đủ mười tài liệu `00`–`09`, link nội bộ hợp lệ, nhiệm vụ mỗi file rõ ràng.
 - CURRENT STATE có baseline audit và snapshot commit; không được gọi V1 là target V2.
