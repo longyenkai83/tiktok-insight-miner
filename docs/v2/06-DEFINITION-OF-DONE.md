@@ -1,5 +1,20 @@
 # 06 — DEFINITION OF DONE
 
+## Phase 3 — điều kiện bàn giao cho architect review
+
+- Signals + compatible contexts tạo patterns.json v2.patterns.1; missing context hợp lệ, orphan không tự tạo pattern.
+- Mọi member/quote/path/hash/span/truth type truy về accepted upstream claim; persisted output replay kiểm membership và support.
+- Semantic similarity qua closed relation provider; deterministic complete-link grouping; exact-only baseline có nhãn rõ.
+- Multi-signal không inflate comment/author counts; missing metrics có null/coverage; không priority score.
+- Corpus language bank giữ exact phrases và distinct support; không đổi Phase 1 repeated_expressions.
+- Wording/context variations và possible contradictions có refs; phản chứng không tính vào supporting count.
+- Chỉ candidate DERIVED patterns, không HYPOTHESIS/PROPOSED/Verified Insight, product/content opportunity, topic, angle, Reelo hoặc final segmentation.
+- Offline tests và full suite pass; cùng 50 saved comments được review locally, đủ metrics/top 10/10 representative patterns và kiểm over-merge/over-split/fabrication/context mixing.
+- Không commit customer data; cập nhật docs, commit/push đúng branch, không merge main. Default legacy unchanged.
+- State = Phase 3 — Pattern Engine / IMPLEMENTED — PENDING ARCHITECT REVIEW / Next Phase = DO NOT START. Không bắt đầu Phase 4.
+
+Các tiêu chí Phase 2/1 bên dưới là phạm vi lịch sử của từng lần bàn giao, không ghi đè authorization Phase 3.
+
 ## Phase 2 — điều kiện bàn giao cho architect review
 
 - Official architecture có shared engine và hai mode Content Research/Product Discovery; đủ DEC-024–032 và evidence-first product rules.

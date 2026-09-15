@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-15 — Phase 3 Pattern Engine, pending architect review
+
+- DEC-033 cho phép Phase 3 trên base 62b03a2; DEC-034 ghi lựa chọn implementation cần review. Final segmentation giữ ở downstream; không mở Phase 4.
+- Thêm pattern_models.py, pattern_engine.py, pattern_similarity.py và CLI build-patterns độc lập. Source-validated closed catalog, scoped semantic relations, deterministic complete-link groups, DERIVED extractive labels, context/wording variants, possible contradictions, exact language bank và support có unknown coverage.
+- Giữ input Phase 1/2 snapshots/hashes/issues; replay validation chống fabricated members/quotes/metrics/labels. Không sửa extraction behavior, dependencies hoặc default legacy runtime.
+- Real same-50 sample: 85 patterns / 64 singleton / 21 with 2+ / 10 with 3+ / 15 with possible contradictions / 28 with variations. Semantic pass complete, 154 relations, giữ 8 upstream quote issues. Không đặt numeric pass threshold.
+- Local-only review gồm top 10 và manual over-merge/over-split/fabrication/context-mix findings; không commit customer data. Tests/path/limitations tại PROJECT-STATE.
+- Cập nhật architecture/schema/evidence/roadmap/DoD/state và agent gates; Strategyzer vẫn là explicit architecture dependency. IMPLEMENTED — PENDING ARCHITECT REVIEW; Next Phase = DO NOT START.
+
 ## 2026-09-15 — Phase 2.1 Documentation Memory Patch
 
 - Thêm 10-STRATEGYZER-FOUNDATIONS.md, bản ghi nhớ ngắn từ nền tảng đã duyệt; tách SOURCE PRINCIPLE / V2 DECISION / DERIVED IMPLEMENTATION RULE, không chép knowledge base 14 bài.

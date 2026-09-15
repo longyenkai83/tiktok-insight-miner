@@ -4,7 +4,7 @@ Mọi coding agent **bắt buộc đọc đủ mười một file từ [00-PROJE
 
 Strategyzer foundations là explicit architecture dependency. **If implementation conflicts with accepted decisions or Strategyzer foundations: STOP and report.** Không âm thầm diễn giải lại quyết định/nguyên tắc để hợp thức hóa implementation.
 
-Current Phase = Phase 2 — Customer Context. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép qua DEC-032. Chỉ per-comment context từ signals.json, không clustering/content/product generation/router. Giữ Phase 1 và default legacy compatibility. **Do not start Phase 3. Wait for architecture review.**
+Current Phase = Phase 3 — Pattern Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép Phase 3 qua DEC-033 trên base 62b03a2. Chỉ candidate patterns, language bank, context variants và possible contradictions; không final segmentation/Verified Insight/content/product generation/router. Giữ Phase 1/2 và default legacy compatibility. **Do not start Phase 4. Wait for architecture review.**
 
 Kiến trúc V2 lấy `docs/v2` làm chuẩn. Nội dung dự án V1 bên dưới chỉ mô tả **CURRENT STATE** và quy tắc bảo trì hiện hữu; không được dùng làm kiến trúc đích hoặc ghi đè quyết định V2. Nếu thiếu tài liệu hoặc có mâu thuẫn, nêu rõ để review trước khi code. Test xanh hoặc push code không tự mở phase kế tiếp.
 

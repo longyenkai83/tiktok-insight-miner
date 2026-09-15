@@ -1,5 +1,19 @@
 # 01 — ARCHITECTURE
 
+## Phase 3 — implemented, pending architect review
+
+`signals.json + contexts.json → closed claim catalog → similarity relations → deterministic complete-link groups → patterns.json`.
+Independent `build-patterns` CLI; không nối vào legacy run, classifier, Reelo hoặc hai downstream modes.
+
+- Revalidate hai schema, hash của input signals và join comment_id/source_hash. Thiếu context record vẫn dùng signal; context orphan ghi issue và bỏ khỏi catalog.
+- Candidate grouping dùng exact whitespace-normalized evidence equality và semantic relations qua interface `RelationProvider`. Adapter Anthropic chỉ so sánh claim IDs có thật, không tạo members/quotes/metrics. Không dùng embedding/dependency mới.
+- Code complete-link theo thứ tự evidence ID ổn định: chỉ thêm member nếu tương thích với **mọi** member đang có, chặn merge bằng chuỗi A–B–C khi A–C chưa có support. Không gộp khác category; context phải cùng field. Subcategory mixed giữ mọi upstream path.
+- Semantic relations `same_meaning`, `variation`, `contradiction` là DERIVED. Relation lỗi/unknown/self/duplicate/cross-category bị loại có issue. Contradiction không làm mất pattern; counter-ref không được tính vào support của pattern bị phản bác.
+- Stage labeling bảo thủ: quote ngắn nhất trong group làm representative label, normalized_meaning chỉ chuẩn hóa whitespace. Cả hai dùng DERIVED, không tự gọi đó là phát biểu bao quát toàn group. Giữ mọi wording variant và context distribution nguyên văn; không sinh free-form customer fact.
+- Singletons vẫn là candidate. Pattern không phải Insight; không importance score, Verified Insight, opportunity, topic, angle, content, experiment hoặc final segment.
+
+Semantic adapter chia similarity requests theo category/context field; một pass riêng trên toàn catalog tìm contradiction. Transport dùng short IDs và enum scoped theo request, code chỉ map exact ID hợp lệ. Giới hạn toàn catalog: tối đa 200 accepted claims và 180,000 ký tự payload, không truncate. Vượt giới hạn/API lỗi trả exact baseline với semantic_status=error và exit 2; không giả là semantic success. `--exact-only` không gọi AI và ghi NOT_CHECKED cho phản chứng. Đây là giới hạn Phase 3 cần review cho corpus lớn.
+
 ## CURRENT STATE — chỉ mô tả baseline đã audit
 
 Theo baseline định danh tại [00-PROJECT-OS.md](00-PROJECT-OS.md):
@@ -31,7 +45,7 @@ Verified Insight → Priority Need → Opportunity Area → Possible Value Map
 
 ## Lõi dùng chung
 
-Normalized Evidence giữ source snapshot, metadata, hash và text để kiểm provenance; không biến lời tự nhận thành fact ngoài đời. Signal Extraction giữ nhiều Jobs/Pains/Gains/Behavior/Language signals trên một comment. Customer Context bổ sung candidates theo đúng năm field đã chốt, vẫn ở cấp comment. Pattern Engine mới chịu trách nhiệm clustering, final segments và tần suất xuyên corpus (Phase 3, chưa bắt đầu).
+Normalized Evidence giữ source snapshot, metadata, hash và text để kiểm provenance; không biến lời tự nhận thành fact ngoài đời. Signal Extraction giữ nhiều Jobs/Pains/Gains/Behavior/Language signals trên một comment. Customer Context bổ sung candidates theo đúng năm field đã chốt, vẫn ở cấp comment. Pattern Engine mới chịu trách nhiệm clustering và tần suất xuyên corpus (Phase 3); giữ context variants, final segmentation thuộc downstream analysis.
 
 Evidence Engine giữ support/phản chứng/scope để đi tới Verified Insight. Verified không có nghĩa model tự cho confidence cao là đúng. Priority Need phải xuất phát từ Jobs/Pains/Gains/Verified Insights có evidence, không từ offer/config tự suy nhu cầu. Chi tiết ranking và tiêu chí verification là thiết kế phase sau, chưa thực thi.
 
@@ -53,4 +67,4 @@ Reuse source snapshot/hash, source-span validation, truth type OBSERVED/DERIVED 
 
 ## Phân biệt CURRENT STATE và thiết kế đích
 
-Audit baseline mô tả legacy, không chứng nhận kiến trúc mới đã chạy. Kiến trúc tuyến tính cũ DEC-011 được thay bởi DEC-024/025 theo yêu cầu trực tiếp; giữ lịch sử trong DECISIONS/CHANGELOG. Phase 1 chạy độc lập; Phase 2 chỉ thêm context. Mọi tầng sau đó cần phạm vi review riêng.
+Audit baseline mô tả legacy, không chứng nhận kiến trúc mới đã chạy. Kiến trúc tuyến tính cũ DEC-011 được thay bởi DEC-024/025 theo yêu cầu trực tiếp; giữ lịch sử trong DECISIONS/CHANGELOG. Phase 1 chạy độc lập; Phase 2 chỉ thêm context. Phase 3 thêm Pattern Engine độc lập; các tầng sau Pattern vẫn cần phạm vi review riêng.

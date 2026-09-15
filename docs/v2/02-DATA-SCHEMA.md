@@ -1,5 +1,28 @@
 # 02 — DATA SCHEMA
 
+## Phase 3 — executable schema `v2.patterns.1`
+
+`pattern_models.py` là contract strict, extra fields bị từ chối. Input Phase 1/2 không đổi schema hoặc extraction behavior.
+
+Envelope: schema_version, generated_at UTC, method=`closed_relations_complete_link.1`, label_method=`extractive_representative.1`, similarity_provider/model/prompt version, semantic_status (`complete`, `not_requested`, `error`), input_signals_hash/input_contexts_hash, embedded input_signals/input_contexts snapshots, accepted relations, patterns, language_bank, validation_issues, limitations. Canonical hashes dùng cùng SHA-256 sort-keys JSON như Phase 2.
+
+Embedded snapshots làm file tự đủ để kiểm cả source span **và claim membership**, không chỉ kiểm quote có trong comment. Artifact này chứa dữ liệu khách, chỉ lưu private/local, không commit. Reader/save revalidate upstream models, source hashes, matching input artifact hash và replay deterministic groups/metrics/labels/refs; output sửa/bịa member/quote/metric/label bị từ chối. Hash không phải chữ ký xác thực.
+
+Pattern: pattern_id (hash của sorted evidence IDs), pattern_type (`jobs/pains/gains/behavior/language/context`), subcategory (hoặc mixed, refs giữ subtype thật), label, normalized_meaning, truth_type=DERIVED, support, evidence_refs, context_distribution, missing_context_comments, variations, contradictions, contradiction_search, pattern_status=candidate, validation_issues.
+
+EvidenceRef: evidence_id, origin signal/context, upstream_claim_id, comment_id, source_record_id, source_hash, start/end, exact evidence_quote, signal_path, original truth_type OBSERVED/DERIVED. Reuse `validate_source_span` và source snapshot models; không tự nâng upstream truth type. Context pattern chỉ dùng claim của context record có matching signal **record**; record no_signal vẫn tồn tại và có thể có context hợp lệ.
+
+Relations: left/right evidence IDs, kind same_meaning/variation/contradiction, truth_type=DERIVED. Không nhận member text hoặc new claims từ model. Pair lặp bị loại có issue. Nếu merge và contradiction xung đột, không merge; giữ possible counter-ref kèm conflicting_relation để review, không giấu phản chứng. Label/variation label DERIVED; counter relationship DERIVED/possible_contradiction, giữ supporting_ref và counter_ref có truth type gốc.
+
+Support tính trên distinct source_record_id: comment_count; unique_authors/source_count nullable; known_author_count/known_source_count và unknown_*_comments; total_likes/total_replies nullable, known_*_sum và unknown_*_comments. Total là null nếu **bất kỳ** member thiếu metric, known sum vẫn có coverage. Measured zero được giữ là zero. Author đếm theo platform+supplied author ID; không xác minh số người thật. Source count theo platform+video_url. Không dedup văn bản trùng giữa các ID khác nhau thành một người; không khôi phục identity/repost mà adapter không có.
+
+Context distribution gồm field, exact representative label, DERIVED, evidence_refs và support; giữ riêng năm field đã khóa. Unknown là missing_context_comments, không final segment. Variations giữ từng exact wording cùng refs, không giả định mọi khác biệt từ vựng là cơ chế đã xác minh.
+
+Language bank nhóm theo **exact original phrase**, giữ refs của accepted language spans và distinct-comment/author counts. Có thể giữ singleton phrase nhưng chỉ từ hai comment phân biệt mới là lặp trong mẫu; không suy market prevalence. Phase 1 repeated_expressions giữ nguyên nghĩa lặp trong một comment; spans đó có thể đóng góp exact phrase ở Phase 3, không sửa input.
+
+CLI: `tim build-patterns --signals signals.json --contexts contexts.json -o patterns.json [--model MODEL] [--exact-only]`.
+Contexts optional; default output cạnh signals. Semantic model explicit → PATTERN_MODEL → ANTHROPIC_MODEL → existing default. Exit 0 complete, 2 khi có upstream/semantic issues, 1 input/output lỗi. Không ghi đè input. Python API `build_patterns(..., provider=None)` là exact offline baseline; CLI mặc định truyền semantic adapter.
+
 ## Phase 2 — per-comment Customer Context
 
 Input duy nhất của CLI là `signals.json` schema `v2.signals.1`, được load và revalidate trước API. Output `contexts.json` schema `v2.contexts.1` không sửa hoặc thay thế signals.json. CustomerContext chưa phải cluster, final segment, customer profile toàn corpus hoặc Verified Insight.
@@ -18,7 +41,7 @@ Phase 2 xử lý mọi source snapshot hợp lệ trong signals.json, kể cả 
 
 CLI: `tim extract-context -i signals.json [-o contexts.json] [--model MODEL] [--batch-size 10]`. Model resolution explicit → CONTEXT_MODEL → ANTHROPIC_MODEL → existing default claude-opus-4-7. Output mặc định cạnh input. Exit 0 complete, 2 khi context có partial/error/global issue, 1 input/output lỗi. Không ghi đè input.
 
-Generic Customer Identity/Profile/Pattern và các downstream types phía dưới vẫn là thiết kế. Ví dụ normalized audience label ở task chỉ là conceptual; implementation Phase 2 giữ nguyên evidence wording làm claim, field assignment là phép DERIVED khi thích hợp. Không thêm free-form label vì quote đúng không chứng minh label đó đúng.
+Generic Customer Identity/Profile và downstream types phía dưới vẫn là thiết kế; executable Pattern schema ở đầu tài liệu. Ví dụ normalized audience label ở task chỉ là conceptual; implementation Phase 2 giữ nguyên evidence wording làm claim, field assignment là phép DERIVED khi thích hợp. Không thêm free-form label vì quote đúng không chứng minh label đó đúng.
 
 ## Downstream design — chưa triển khai
 
@@ -40,7 +63,7 @@ Taxonomy thực thi:
 | behavior | trigger, current_solution, alternatives, workarounds, decision_criteria, objections |
 | language | exact_phrases, emotional_wording, repeated_expressions |
 
-Khác ví dụ conceptual: dùng danh sách signal phẳng có category/subcategory thay các mảng lồng nhau; mảng rỗng nghĩa không tìm thấy signal. Không thêm AudienceContext/CustomerIdentity hoặc CONTEXT category trong Phase 1. Segmentation thuộc Phase 2. Generic schema phía dưới vẫn là thiết kế tương lai; không yêu cầu HYPOTHESIS, audience_context_ref, Pattern hoặc Insight để chạy Phase 1.
+Khác ví dụ conceptual: dùng danh sách signal phẳng có category/subcategory thay các mảng lồng nhau; mảng rỗng nghĩa không tìm thấy signal. Không thêm AudienceContext/CustomerIdentity hoặc CONTEXT category trong Phase 1. Per-comment context thuộc Phase 2; final segmentation thuộc downstream analysis. Generic schema phía dưới vẫn là thiết kế tương lai; không yêu cầu HYPOTHESIS, audience_context_ref, Pattern hoặc Insight để chạy Phase 1.
 
 Phase 1.1: candidate transport chỉ có category, subcategory, evidence_quote, truth_type, confidence. Model không sinh claim. Sau khi quote qua source-span validation, CODE tạo `claim = source.text[start:end]` và giữ exact evidence_quote. Quote bịa/paraphrase không được sửa cho khớp nguồn; field claim do model gửi ngoài contract bị từ chối, không được âm thầm thay bằng quote.
 
@@ -110,7 +133,7 @@ user_buyer_distinction (optional)
 - Span giữ lời gốc OBSERVED. normalized_claim diễn giải ngữ nghĩa dùng DERIVED hoặc HYPOTHESIS đúng mức; không mặc định toàn bộ signal là OBSERVED.
 - Không có mapping tự động `bucket → customer truth`. Nhiều signal có thể dùng cùng span nhưng không được đếm thành nhiều nguồn.
 
-## Pattern
+## Pattern — generic design; executable Phase 3 contract ở đầu tài liệu
 
 - signal_refs[]; grouping_claim; derivation; inclusion_rule; exclusion_rule.
 - sample_scope; source_refs[]; distinct_comment_count; distinct_author_count?; signal_count.

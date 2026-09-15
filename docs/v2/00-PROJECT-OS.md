@@ -2,15 +2,15 @@
 
 ## Trạng thái và quyền thực thi
 
-Current Phase = Phase 2 — Customer Context
+Current Phase = Phase 3 — Pattern Engine
 
 Status = IMPLEMENTED — PENDING ARCHITECT REVIEW
 
 Next Phase = DO NOT START
 
-Do not start Phase 3. Wait for architecture review.
+Do not start Phase 4. Wait for architecture review.
 
-Yêu cầu trực tiếp Phase 2 của chủ dự án cho phép Customer Context từ signals.json trên base `241fa43` (DEC-032). Kiến trúc hai mode dưới đây được khóa trước implementation; các tầng sau Customer Context chưa được triển khai. Legacy default giữ nguyên. Không mở Phase 3.
+Yêu cầu trực tiếp Phase 3 của chủ dự án cho phép Pattern Engine trên base `62b03a26e4c48b971b209d6f55eccdd025ec0ff0` (DEC-033). Implementation DEC-034 chờ architect review. Chỉ candidate patterns; final segmentation và các tầng Evidence/Insight/downstream chưa triển khai. Legacy default giữ nguyên. Không mở Phase 4.
 
 ## Nguồn và thứ tự ưu tiên
 

@@ -153,6 +153,30 @@ def cmd_fb_fetch(args: argparse.Namespace) -> None:
     print("👉 Bước tiếp: tim classify -i <file này> -o classified.json")
 
 
+def cmd_build_patterns(args: argparse.Namespace) -> None:
+    """Independent Phase 3 command; semantic mode is explicit in the artifact."""
+    from tiktok_insight_miner.signal_extractor import load_signals_json
+    from tiktok_insight_miner.customer_context_extractor import load_contexts_json
+    from tiktok_insight_miner.pattern_engine import build_patterns, save_patterns_json
+    from tiktok_insight_miner.pattern_similarity import AnthropicRelations
+
+    signals_path = Path(args.signals)
+    contexts_path = Path(args.contexts) if args.contexts else None
+    output = Path(args.output) if args.output else signals_path.with_name("patterns.json")
+    if output.resolve() in {p.resolve() for p in (signals_path, contexts_path) if p is not None}:
+        sys.exit("Output must not overwrite pattern inputs")
+    try:
+        result = build_patterns(load_signals_json(signals_path),
+            load_contexts_json(contexts_path) if contexts_path else None,
+            provider=None if args.exact_only else AnthropicRelations(model=args.model))
+        save_patterns_json(result, output)
+    except (OSError, ValueError) as exc:
+        sys.exit(f"Pattern input/output error: {type(exc).__name__}")
+    print(f"Patterns: {len(result.patterns)}; semantic={result.semantic_status} -> {output}")
+    if result.validation_issues or result.semantic_status == "error":
+        sys.exit(2)
+
+
 def cmd_extract_context(args: argparse.Namespace) -> None:
     """Independent Phase 2 command; no default pipeline changes."""
     from collections import Counter
@@ -823,6 +847,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_fb.add_argument("--probe", action="store_true", help="Chỉ in response thô mẫu để đối chiếu field, không ghi file")
     p_fb.add_argument("-o", "--output", type=str, default="output/fb_raw_comments.json", help="File JSON đầu ra")
     p_fb.set_defaults(func=cmd_fb_fetch)
+
+    p_patterns = sub.add_parser("build-patterns", help="V2: candidate patterns from signals and contexts")
+    p_patterns.add_argument("--signals", required=True)
+    p_patterns.add_argument("--contexts", help="Optional matching contexts.json")
+    p_patterns.add_argument("-o", "--output")
+    p_patterns.add_argument("--model")
+    p_patterns.add_argument("--exact-only", action="store_true", help="Offline literal baseline, no semantic comparison")
+    p_patterns.set_defaults(func=cmd_build_patterns)
 
     p_context = sub.add_parser("extract-context", help="V2: per-comment context from signals.json")
     p_context.add_argument("-i", "--input", required=True, help="Phase 1 signals.json")

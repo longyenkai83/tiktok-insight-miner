@@ -66,4 +66,4 @@ Product Opportunity là **PROPOSED**, không phải validated demand. Chuỗi n�
 
 Trước thay đổi architecture/product logic, đọc đủ `docs/v2/00`–`10`, đối chiếu quyết định, bằng chứng và phạm vi được phép. Nếu implementation mâu thuẫn accepted decisions hoặc Strategyzer foundations: **STOP and report**; không âm thầm diễn giải lại nền tảng để hợp thức hóa code.
 
-Current Phase = Phase 2 — Customer Context. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Đây là memory patch chỉ tài liệu; không đổi extraction behavior, không mở Phase 3.
+Current Phase = Phase 3 — Pattern Engine. Status = IMPLEMENTED — PENDING ARCHITECT REVIEW. Next Phase = DO NOT START. Chủ dự án cho phép Phase 3 qua DEC-033 trên base 62b03a2. Chỉ candidate patterns, language bank, context variants và possible contradictions; không final segmentation/Verified Insight/content/product generation/router. Giữ Phase 1/2 và default legacy compatibility. **Do not start Phase 4. Wait for architecture review.**

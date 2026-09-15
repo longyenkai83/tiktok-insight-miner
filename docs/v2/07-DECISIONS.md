@@ -64,6 +64,27 @@ Các quyết định dưới đây được ghi theo yêu cầu Phase 2 trực t
 | DEC-031 | V2 remains B2C-first. Giữ đúng năm Customer Identity fields DEC-020, user_buyer_distinction chỉ khi cần; không B2B ecosystem. |
 | DEC-032 | Cho phép Phase 2 Customer Context trên base 241fa436b962341df60034a105f6878fd7fa03ac, branch v2-phase-2-customer-context. Chỉ per-comment context candidates từ signals.json, OBSERVED/DERIVED, exact source grounding. Không final segments, clustering, generation, router hoặc Phase 3. |
 
+## DEC-033 — Phase 3 authorization — ACCEPTED scope
+
+The owner's direct Phase 3 request authorizes an independent Pattern Engine on
+`62b03a26e4c48b971b209d6f55eccdd025ec0ff0`, branch `v2-phase-3-pattern-engine`.
+This supersedes the Phase 3 gate in DEC-032, not the evidence or B2C rules.
+Patterns are candidates, not Verified Insights. Final segmentation remains
+downstream analysis; Phase 3 preserves context variants. Phase 4 is not authorized.
+
+## DEC-034 — Pattern implementation — PENDING ARCHITECT REVIEW
+
+Use a provider-independent relation interface: exact evidence grouping in code,
+optional AI semantic similarity/variation/counter-evidence judgments over a closed
+catalog of existing claims, then deterministic complete-link clustering. Similarity
+requests are scoped by category/context field; counter-evidence search uses the
+whole catalog. Short transport IDs are mapped exactly and checked in code. AI cannot
+add members, quotes, metrics or facts. Labels use an existing representative quote
+and are DERIVED; retain original wording and context variants. No numeric support
+threshold, importance score, automatic verification or final segmentation.
+These implementation choices resolve only the Phase 3 slice of DEC-016/017;
+semantic quality remains subject to review.
+
 ## Chưa quyết định — không được coi là quyền triển khai
 
 | ID | Trạng thái | Nội dung cần review |
