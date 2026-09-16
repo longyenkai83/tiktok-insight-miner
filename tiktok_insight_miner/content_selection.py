@@ -52,10 +52,33 @@ class SelectionLedger(StrictModel):
 
     @model_validator(mode="after")
     def validate_history(self):
+        from .angle_correction import supersessions, PRODUCER
         trees = {artifact_hash(t): t for t in self.trees}
         if len(trees) != len(self.trees):
             raise ValueError("duplicate tree snapshot")
         indexes = {h: n for n, h in enumerate(trees)}
+        for i, tree in enumerate(self.trees):
+            corrections = [b for b in tree.batches if b.producer == PRODUCER]
+            if not corrections:
+                if i and supersessions(self.trees[i-1]):
+                    raise ValueError('cannot_drop_owner_correction_history')
+                continue
+            if not i:
+                raise ValueError('correction_requires_historical_selection')
+            old_tree = self.trees[i-1]
+            if tree.batches[:len(old_tree.batches)] != old_tree.batches:
+                raise ValueError('correction_history_must_be_append_only')
+            for b in tree.batches[len(old_tree.batches):]:
+                if b.producer != PRODUCER:
+                    continue
+                r = b.payload['owner_correction']
+                prior_events = [e for e in self.events if indexes[e.action.tree_hash] < i]
+                prefix = SelectionLedger.model_construct(trees=self.trees[:i], events=prior_events)
+                selected = selection_projection(prefix)
+                if (artifact_hash(prefix) != r['previous_selection_hash'] or
+                        not any(s.angle_id == r['previous_angle_id'] and
+                                s.selection_event_id == r['previous_selection_event_id'] for s in selected)):
+                    raise ValueError('owner_correction_selection_lineage_mismatch')
         previous, requests, position = None, set(), 0
         for n, event in enumerate(self.events, 1):
             a = event.action
@@ -65,6 +88,8 @@ class SelectionLedger(StrictModel):
             angle = next((a2 for a2 in trees[a.tree_hash].angles if a2.angle_id == a.angle_id), None)
             if angle is None or artifact_hash(angle) != a.angle_hash:
                 raise ValueError("stale or unknown angle")
+            if a.decision == 'selected' and a.angle_id in supersessions(trees[a.tree_hash]):
+                raise ValueError('superseded_angle_cannot_be_selected')
             if event.sequence != n or event.previous_event_id != previous or event.selection_event_id != selection_event_id(event):
                 raise ValueError("broken selection history chain")
             if event.selected_at.tzinfo is None or a.request_id in requests:
@@ -92,6 +117,7 @@ class SelectedAngle(StrictModel):
 
 
 def selection_projection(ledger):
+    from .angle_correction import supersessions
     tree = ledger.trees[-1]
     h = artifact_hash(tree)
     latest = {e.action.angle_id: e for e in ledger.events if e.action.tree_hash == h}
@@ -100,7 +126,8 @@ def selection_projection(ledger):
         topic_id=a.topic_id, content_opportunity_id=a.content_opportunity_id,
         selection_event_id=e.selection_event_id, reviewer_id=e.action.reviewer_id,
         selected_at=e.selected_at, selection_rationale=e.action.rationale)
-        for a in tree.angles if (e := latest.get(a.angle_id)) and e.action.decision == "selected"]
+        for a in tree.angles if a.angle_id not in supersessions(tree)
+        and (e := latest.get(a.angle_id)) and e.action.decision == "selected"]
 
 
 class SelectedAnglesEnvelope(StrictModel):
@@ -126,6 +153,9 @@ def prepare_selection(tree, reviews, previous=None):
         return old
     if h in {artifact_hash(t) for t in old.trees}:
         raise ValueError("cannot reactivate historical content tree")
+    from .angle_correction import supersessions
+    if supersessions(old.trees[-1]) and tree.batches[:len(old.trees[-1].batches)] != old.trees[-1].batches:
+        raise ValueError('cannot_drop_owner_correction_history')
     return SelectionLedger(trees=[*old.trees, tree], events=old.events)
 
 

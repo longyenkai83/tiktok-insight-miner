@@ -140,6 +140,7 @@ def dedupe_text(proposal):
 
 
 def compile_tree(project_id, run_id, verified_input, batches):
+    from .angle_correction import PRODUCER, validate_batch_audit
     verified = {i.verified_insight_id: i for i in verified_input.verified_insights}
     opportunities, topics, angles, issues, seen_generations, seen_texts = {}, {}, {}, [], set(), {}
     for batch in batches:
@@ -153,9 +154,15 @@ def compile_tree(project_id, run_id, verified_input, batches):
         parent = parents[batch.parent_id]
         vi = parent if batch.stage == "opportunities" else verified[parent.verified_insight_id]
         raw = batch.payload
-        if batch.error_code or set(raw) != {"candidates"} or not isinstance(raw["candidates"], list):
+        correction = batch.producer == PRODUCER
+        keys = {'candidates', 'owner_correction'} if correction else {'candidates'}
+        if batch.error_code or set(raw) != keys or not isinstance(raw["candidates"], list):
+            if correction:
+                raise ValueError('invalid_owner_correction_transport')
             issues.append(RouteIssue(generation_id=batch.generation_id, code=batch.error_code or "invalid_transport"))
             continue
+        if correction and (batch.stage != 'angles' or len(raw['candidates']) != 1):
+            raise ValueError('invalid_owner_correction_stage')
         counts = Counter(item.get("local_id") for item in raw["candidates"]
                          if isinstance(item, dict) and isinstance(item.get("local_id"), str))
         for n, item in enumerate(raw["candidates"]):
@@ -194,6 +201,8 @@ def compile_tree(project_id, run_id, verified_input, batches):
                 issues.append(RouteIssue(generation_id=batch.generation_id, item_index=n, code="invalid_candidate_schema"))
             except ValueError as exc:
                 issues.append(RouteIssue(generation_id=batch.generation_id, item_index=n, code=str(exc)))
+        if correction:
+            validate_batch_audit(batch, angles, project_id, run_id)
     return list(opportunities.values()), list(topics.values()), list(angles.values()), issues
 
 
@@ -223,6 +232,8 @@ def extend_content_tree(tree, current_reviews, *, stage, parent_id, count=3,
         raise ValueError("unknown parent ID; no generation attempted")
     vi = parent if stage == "opportunities" else next(v for v in tree.verified_input.verified_insights if v.verified_insight_id == parent.verified_insight_id)
     provider = provider or AnthropicContent()
+    if provider.name == 'human-owner-correction.v1':
+        raise ValueError('model_cannot_authorize_owner_correction')
     batch.producer = provider.name
     schema = TRANSPORTS[stage][1].model_json_schema()
     schema["$defs"][TRANSPORTS[stage][0].__name__]["properties"][PARENT_FIELDS[stage]]["enum"] = [parent_id]

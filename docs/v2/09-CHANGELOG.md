@@ -1,5 +1,14 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — C5.15 owner-angle correction and plan quality
+
+Added trusted human correction API/CLI, replayed audit, append-only selection and
+superseded-angle rejection. Reused packet revision .1; customer truth unchanged.
+Reelo internal plan now requires per-section reader value and Story job/payoff.
+One corrected-packet Planner acceptance: BLOCKED: approved_psychology_library_required. No writing or publication.
+Tests: Insight496/Reelo221 PASS. See REPORT-C5.15.md for private local gate details.
+
+
 ## 2026-09-16 — C5.12 source recovery, reconciliation and approved draft
 
 - Original sources readable; all 21 approved hashes match. No source edits/replacement/path changes.

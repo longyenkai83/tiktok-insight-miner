@@ -332,3 +332,12 @@ Không quyết định kế thừa auto-top, regex checkbox/hook V1, số từ h
 ## Quy trình thay quyết định
 
 Ghi ID mới hoặc supersedes ID cũ, lý do, bằng chứng, ảnh hưởng contract/migration, phạm vi được duyệt và ngày/người review. Không sửa lịch sử để biến proposal thành accepted. Cập nhật PROJECT-STATE và CHANGELOG khi có review mở phase; commit/push tài liệu không tự mở Phase 1.
+
+## C5.15 owner authorization ? repair at the angle layer
+
+Owner authorizes explicit human angle correction/supersession, preserving Zone A and
+historical angle/packet/plan/approval. Runtime design is pending architect review.
+Reuse packet .1 revision; no portable contract change. A new corrected packet requires
+a new creative plan and one real human creative gate. Story NONE remains valid; used
+Story needs a source-grounded job/payoff. Each major outline section needs reader value.
+No Writer, Critic, publication, merge or next phase in this task.

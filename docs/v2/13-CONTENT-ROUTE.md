@@ -128,3 +128,32 @@ live model quality. Retained raw proposals may include rejected text and must be
 untrusted private data. Conservative lexical guards may reject useful phrasing or miss
 subtle unsupported implications. Large histories duplicate provenance and replay it, so
 performance is suited to a local MVP and remains a review concern.
+
+## C5.15 ? explicit owner angle correction (implemented, pending review)
+
+`correct-content-angle --reviews CURRENT --selections CURRENT --correction-file REQUEST`
+uses the trusted local operator API `angle_correction.correct_angle_file`. The request
+is an OwnerCorrection: request ID, expected selection hash, previous angle ID/hash,
+reviewer ID, actor_kind=human, human_attested=true, rationale, corrected AngleProposal
+and optional content objective. Never bind this API to model output or provider tools.
+Local attestation is the existing trust boundary, not authenticated multiuser identity.
+
+The operation appends one generation batch marked human-owner-correction.v1 with a
+typed/replayed owner_correction audit in its existing payload container. It preserves
+previous/new argument snapshots, angle hashes, reviewer/time, selection ancestry and
+explicit supersedes/superseded_by. The ordinary compiler still builds all customer
+evidence from the unchanged Verified Insight; corrected prose remains PROPOSED.
+Provider generation cannot claim the reserved human producer or inject audit metadata.
+
+The authoritative selection ledger atomically appends the new tree snapshot and human
+selection event under one file lock and expected hash. Historical trees/events remain.
+Consumers use its latest tree and a fresh apply_selection projection; old tree/selection
+exports are historical and fail currentness. Superseded angles cannot be reselected;
+dropping correction history is rejected. Exact request retries do not duplicate events.
+Like existing tree replacement, adding a new tree makes previous-tree selections stale.
+
+Phase8 packet schema and consumer port remain unchanged: build_packet(previous=old)
+creates a new immutable packet linked to its predecessor. Old snapshots remain readable,
+but current-ledger validation rejects them; consumer intake also prevents execution of
+superseded packets. A previous creative approval cannot match the new context hash.
+No new insight approval, truth type, generic router or automated correction authority.

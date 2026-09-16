@@ -15,6 +15,14 @@ def run_content_route(args):
     from pydantic import ValidationError
     try:
         reviews = load_reviews(args.reviews)
+        if args.command == 'correct-content-angle':
+            from .angle_correction import correct_angle_file
+            current = correct_angle_file(args.selections, reviews,
+                json.loads(Path(args.correction_file).read_text(encoding='utf8')))
+            print(json.dumps({'selection_hash': artifact_hash(current),
+                'tree_hash': artifact_hash(current.trees[-1]),
+                'correction': current.trees[-1].batches[-1].payload['owner_correction']}, ensure_ascii=False))
+            return
         if args.command == "build-content-tree":
             if Path(args.output).exists():
                 raise ValueError("output already exists; choose a new run file")
@@ -49,6 +57,11 @@ def run_content_route(args):
 
 
 def add_content_commands(sub):
+    correction = sub.add_parser('correct-content-angle', help='V2: explicit local human angle correction; append-only selection history')
+    correction.add_argument('--reviews', required=True)
+    correction.add_argument('--selections', required=True)
+    correction.add_argument('--correction-file', required=True, help='OwnerCorrection JSON from an explicit human action, never model output')
+    correction.set_defaults(func=run_content_route)
     build = sub.add_parser("build-content-tree", help="V2: proposed opportunities/topics/angles; no final writing")
     build.add_argument("--verified-insights", required=True)
     build.add_argument("--reviews", required=True, help="CURRENT authoritative Phase 5 review ledger")

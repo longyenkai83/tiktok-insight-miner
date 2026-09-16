@@ -1,6 +1,26 @@
 # 08 — PROJECT STATE
 
-## Latest checkpoint — C5.12 FINAL_DRAFT_READY_FOR_OWNER_EMOTIONAL_REVIEW
+## Latest checkpoint — C5.15 BLOCKED: approved_psychology_library_required
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = BLOCKED: approved_psychology_library_required
+Phase 9 NOT ACCEPTED. No merge. Next Phase = DO NOT START.
+
+C5.12 owner quality review FAILED; C5.13 owner-angle gap is now implemented
+under explicit C5.15 authorization. Append-only human correction and current
+selection preserve the old angle/packet/plan/approval and unchanged Zone A.
+New packet revision 2: CIP-c2e71b3374ca3d63337cef139c9931a38c73a4c9affe4010e75f6854fd03d99a. Portable Phase8 schema unchanged.
+Old packet fails currentness; old creative approval fails the new context.
+
+One Integrated Planner invocation: GEN-feb06dd98dcc489a838897ffa3e64d66, application status UNKNOWN.
+Creative Plan: not available. New human creative approval PENDING.
+No Writer, Critic, Notion, publish or next phase.
+V2 plan requires section reader_value and used Story job/payoff; NONE allowed.
+Full Insight 496 PASS; full Reelo 221 PASS. Same 21 read-only source assets verified.
+Sole handoff: Downloads/REPORT-C5.15.md. Owner/Architect review next; Codex STOP.
+
+
+## Historical checkpoint — C5.12 FINAL_DRAFT_READY_FOR_OWNER_EMOTIONAL_REVIEW
 
 Current Phase = Phase 9 — Direct Reelo Integration
 Status = FINAL_DRAFT_READY_FOR_OWNER_EMOTIONAL_REVIEW
