@@ -1,5 +1,16 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — C5.12 source recovery, reconciliation and approved draft
+
+- Original sources readable; all 21 approved hashes match. No source edits/replacement/path changes.
+- Exact official native host 2.1.270 restored locally after extension update removed old executable; checksum/signature verified, guard unchanged.
+- Append-only reconciliation REC-9d37c245b6ee4666b6e23e1e0b8c739b PASS; historical UNKNOWN preserved.
+- Real owner approval reused. Writer and Critic1 terminal completed; DRAFT_READY/PASS, zero hard findings/blockers, four advisories.
+- No rewrite/Critic2 required, no Planner rerun. Currentness/provenance/A-B preserved.
+- Full tests: Reelo 215 PASS, Insight 489 PASS. No runtime-code/prompt change in this checkpoint.
+- FINAL_DRAFT_READY_FOR_OWNER_EMOTIONAL_REVIEW; final approval PENDING; Phase9 not accepted; no Notion/publish/merge/next phase.
+
+
 ## 2026-09-16 — C5.11 audited reconciliation; source availability blocker
 
 - Add Reelo-local append-only reconciliation audit with exact generation/artifact/packet/context/plan/approval/source bindings.

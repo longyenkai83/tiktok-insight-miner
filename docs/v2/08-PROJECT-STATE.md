@@ -1,6 +1,35 @@
 # 08 — PROJECT STATE
 
-## Latest checkpoint — C5.11 BLOCKED: approved source assets unavailable
+## Latest checkpoint — C5.12 FINAL_DRAFT_READY_FOR_OWNER_EMOTIONAL_REVIEW
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = FINAL_DRAFT_READY_FOR_OWNER_EMOTIONAL_REVIEW
+Phase 9 NOT ACCEPTED. No merge. Next Phase = DO NOT START.
+
+Original J: sources readable; all 21 approved asset hashes match before/after execution.
+All twelve C5.11 checks pass. Append-only REC-9d37c245b6ee4666b6e23e1e0b8c739b grants exact
+continuation; original GEN-e53cd228d7074e43bfd09a76c8ffcc74 remains historically UNKNOWN.
+Existing actual owner approval CPA-c297280453f2437ca48eea7fe174a9a7 reused, not re-requested.
+
+New GEN-a4856ef459c448cabe5f81f017cacba8: Writer terminal completed 261.992s; Critic1 terminal
+completed 212.429s, PASS, zero hard findings/blockers. No rewrite or Critic2 needed. DRAFT_READY.
+SHORT_ARTICLE and exact approved hook/title preserved; CC1 ADJACENT, optional Brian Tracy omitted.
+All approval/reconciliation/currentness/provenance checks pass; Zone A/B unchanged.
+
+Four Critic advisories remain: concluding comparison shifts toward all expenses; editorial
+header misidentifies latest entries; internal fixture labels interrupt reader flow; CTA repetition.
+Do not hide these or equate machine PASS with owner emotional/creative acceptance.
+Final human content approval PENDING. Twelve publication requirements remain unresolved.
+No Notion/publication. Customer evidence remains synthetic, not real market validation.
+
+The old VS Code 2.1.270 executable path no longer existed. Restored exact official 2.1.270
+in isolated local runtime directory; official checksum and Anthropic signature verified.
+No version guard/source path/historical config change. No runtime code or prompt edits in C5.12.
+Full Reelo: 215 PASS (9.41s). Full Insight: 489 PASS (49.60s).
+Sole handoff: Downloads/REPORT-C5.12.md with final article and unresolved advisories.
+Next actor: Anh Tuan personally reads final draft for emotional review. Codex STOP.
+
+## Historical checkpoint — C5.11 BLOCKED: approved source assets unavailable
 
 Current Phase = Phase 9 — Direct Reelo Integration
 Status = BLOCKED — reconciliation_source_unavailable
