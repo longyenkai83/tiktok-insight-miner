@@ -1,5 +1,21 @@
 # 08 — PROJECT STATE
 
+## Current checkpoint — Journey restoration, owner-approved product correction
+
+Current Phase = Phase 9 — Reelo integration / Journey restoration.
+Architecture correction ACCEPTED by owner's 2026-09-16 directive (DEC-068).
+Opt-in Reelo Journey implementation and deterministic compatibility tests PASS.
+Status = DERIVED STORY PLAN PENDING OWNER CREATIVE REVIEW / OFFER BENCHMARK SCOPE PENDING.
+One native Story Planner terminal returned a rejected candidate; a separately audited
+operator-derived proposal passes validation, never relabeled as native acceptance.
+Original UNKNOWN retained. No real Writer/Critic yet; diversified quality NOT ACCEPTED.
+Customer Intelligence runtime and portable CIP schema unchanged. Phase 9 NOT ACCEPTED.
+RP4 article “ít bạn” PAUSED, all prior approvals/UNKNOWN/drafts retained.
+Real campaign scope/offer availability and diversified creative-quality benchmark remain
+subject to actual owner gates, not historical campaign labels. No Notion/publish/main merge.
+Canonical scope: [17-REELO-JOURNEY.md](17-REELO-JOURNEY.md); Reelo integrations/journey/README.md.
+One owner handoff: local REPORT-JOURNEY-RESTORATION.md. Earlier checkpoints below are history.
+
 ## Latest checkpoint — C5.15 BLOCKED: approved_psychology_library_required
 
 Current Phase = Phase 9 — Direct Reelo Integration

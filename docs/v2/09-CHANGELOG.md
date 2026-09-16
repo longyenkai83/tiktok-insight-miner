@@ -1,5 +1,15 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — Owner-authorized Reelo Journey restoration
+
+DEC-068 / doc17 record Journey-first content strategy with Insight as one optional source.
+Customer truth/selection/CIP/currentness unchanged; no CI runtime/schema modifications.
+Reelo opt-in typed campaigns/source matching, scoped execution authority/calibration,
+sequence memory and existing purified Planner/Writer/Critic integration are implemented
+on its working branch. J: sources and legacy history are not migrated in place.
+RP4 article repair paused. Real diversified quality and offer-campaign gates remain separate;
+no Notion/publication/main merge or Phase9 acceptance. See single local Journey report.
+
 ## 2026-09-16 — C5.15 owner-angle correction and plan quality
 
 Added trusted human correction API/CLI, replayed audit, append-only selection and

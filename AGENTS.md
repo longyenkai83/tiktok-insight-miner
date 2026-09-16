@@ -1,3 +1,5 @@
+> Owner Journey correction 2026-09-16: read Insight docs/v2/17-REELO-JOURNEY.md and Reelo integrations/journey/README.md before architecture/product changes. Journey precedes source matching; Insight is one source. Preserve real CI truth/angle/CIP/currentness gates. RP4 article paused; no Notion/publish/main merge. This explicit owner directive supersedes conflicting historical phase-only scope, not truth safeguards.
+
 # V2 SOURCE-OF-TRUTH — read before code changes
 
 Read all seventeen documents [00-PROJECT-OS.md](docs/v2/00-PROJECT-OS.md) through

@@ -1,5 +1,18 @@
 # 07 — DECISIONS
 
+## DEC-068 — Reelo Journey first; Insight is one source — ACCEPTED owner correction
+
+2026-09-16 LONG-RUN DIRECTIVE authorizes audit → contract → implementation → compatibility
+→ deterministic tests autonomously. Supersedes only the global Insight-required reading
+of DEC-007 and earlier prohibitions that conflict with this explicit Journey restoration.
+Insight-led evidence/current human approval/selected angle/typed CIP/Zone A-B remain intact.
+Campaign goal/journey/sequence precede source matching and shared purified writing engine.
+Exactly one primary + zero-to-two useful supports; four simple routes, one writing engine.
+Awareness is strategy, never customer truth. CTA strategy and creator wording are separate.
+Campaign-scoped Guided/Autopilot authority is not fabricated per-piece human approval.
+RP4 “ít bạn” repair paused; preserve history. See [17](17-REELO-JOURNEY.md).
+No Notion/publication/main merge. Technical completion does not imply creative acceptance.
+
 ## DEC-067 — Phase 9 scope and host boundary — ACCEPTED owner/architect requirements
 
 2026-09-15: owner instructs implementation after architect C4.1 PASS, shared map r6.
