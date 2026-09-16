@@ -1,5 +1,15 @@
 # 09 — CHANGELOG
 
+## 2026-09-16 — C5.11 audited reconciliation; source availability blocker
+
+- Add Reelo-local append-only reconciliation audit with exact generation/artifact/packet/context/plan/approval/source bindings.
+- Replay native terminal correlation, permission/transport evidence and current validator; require current governance at continuation.
+- Guard remains closed for unreconciled UNKNOWN and all RUNNING/RECEIVED; SQL audit records reject update/delete/replace.
+- Real preflight BLOCKED: five J: assets unavailable. No success record, Planner rerun or Writer/Critic execution.
+- Original UNKNOWN and owner approval preserved. Restore sources before revalidation; no repeated creative approval.
+- Full Reelo 215 PASS; Insight 489 PASS. Phase9 not accepted; no merge/next phase/publication.
+
+
 ## 2026-09-16 — C5.10 real owner approval; execution blocked
 
 - Persist actual EDIT_AND_APPROVE with original plan/hash/revision, edited hook/title and SHORT_ARTICLE mode.

@@ -1,6 +1,29 @@
 # 08 — PROJECT STATE
 
-## Latest checkpoint — C5.10 BLOCKED before Writer
+## Latest checkpoint — C5.11 BLOCKED: approved source assets unavailable
+
+Current Phase = Phase 9 — Direct Reelo Integration
+Status = BLOCKED — reconciliation_source_unavailable
+Phase 9 NOT ACCEPTED. No merge. Next Phase = DO NOT START.
+
+Owner creative approval remains recorded and must not be requested again.
+Append-only reconciliation for the exact Planner psychology whitespace false negative is
+implemented. UNKNOWN normally blocks; only a matching audited record with current evidence,
+approval, sources and governance checks can allow the existing guard to continue. No overwrite
+of execution history, raw native events or original UNKNOWN. No generic bypass/retry.
+
+Live preflight stops at source verification: five approved assets under J:/My Drive/Reelo
+are unavailable (about-me, voice-profile, Story, editorial index, Brian Tracy WIKI).
+Native terminal/artifact correlation is available, but all twelve conditions cannot pass.
+No successful reconciliation record created. No new Writer generation or native creative calls.
+Final draft NOT_AVAILABLE; original parent remains UNKNOWN. Approval is not revoked.
+
+Full Reelo suite: 215 PASS. Full Insight suite: 489 PASS (52.47s).
+Next action: restore the original J: sources, then recheck every hash and reconciliation condition.
+No new owner plan approval needed. No Notion/publication/merge/next phase.
+Sole current handoff: Downloads/REPORT-C5.11.md.
+
+## Historical checkpoint — C5.10 BLOCKED before Writer
 
 Current Phase = Phase 9 — Direct Reelo Integration
 Status = BLOCKED — reconcile_previous_execution_first
